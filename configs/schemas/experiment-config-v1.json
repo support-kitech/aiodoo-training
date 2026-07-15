@@ -2,15 +2,74 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://aiodoo.dev/schemas/experiment-config-v1.json",
   "title": "AIODOO Training Experiment Config",
+  "description": "Composed experiment document after include merge. additionalProperties remains true so operator documentation keys (progressive_training, schedule, etc.) are allowed. Required fields stay minimal for examples; production EXP-0001 sets critical training fields explicitly.",
   "type": "object",
   "required": ["schema_version", "name"],
   "properties": {
-    "schema_version": { "type": "string" },
-    "name": { "type": "string" },
+    "schema_version": { "type": "string", "minLength": 1 },
+    "name": { "type": "string", "minLength": 1 },
     "seed": { "type": "integer" },
     "include": {
       "type": "array",
-      "items": { "type": "string" }
+      "items": { "type": "string" },
+      "description": "Relative YAML fragments composed before validation. Production EXP-0001 uses sibling files only."
+    },
+    "model": {
+      "type": "object",
+      "properties": {
+        "identifier": { "type": "string", "minLength": 1 },
+        "family": { "type": "string" },
+        "precision": { "type": "string" },
+        "backend": { "type": "string" },
+        "local_path": { "type": ["string", "null"] },
+        "tokenizer_binding": { "type": ["string", "null"] }
+      },
+      "additionalProperties": true
+    },
+    "adaptation": {
+      "type": "object",
+      "properties": {
+        "adapter_type": { "type": "string" },
+        "strategy": { "type": "string" },
+        "rank": { "type": ["integer", "null"] },
+        "alpha": { "type": ["integer", "null"] },
+        "dropout": { "type": ["number", "null"] },
+        "target_modules": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": true
+    },
+    "training": {
+      "type": "object",
+      "properties": {
+        "backend": { "type": "string" },
+        "learning_rate": { "type": "number" },
+        "weight_decay": { "type": "number" },
+        "warmup_ratio": { "type": "number" },
+        "num_epochs": { "type": "number" },
+        "per_device_batch_size": { "type": "integer" },
+        "gradient_accumulation_steps": { "type": "integer" },
+        "logging_steps": { "type": "integer" },
+        "max_steps": { "type": ["integer", "null"] }
+      },
+      "additionalProperties": true
+    },
+    "execution": { "type": "object", "additionalProperties": true },
+    "packing": { "type": "object", "additionalProperties": true },
+    "curriculum": { "type": "object", "additionalProperties": true },
+    "checkpointing": { "type": "object", "additionalProperties": true },
+    "evaluation": { "type": "object", "additionalProperties": true },
+    "export": { "type": "object", "additionalProperties": true },
+    "tracking": { "type": "object", "additionalProperties": true },
+    "determinism": { "type": "object", "additionalProperties": true },
+    "distributed": { "type": "object", "additionalProperties": true },
+    "datasets": {
+      "oneOf": [
+        { "type": "array" },
+        { "type": "object" }
+      ]
     }
   },
   "additionalProperties": true

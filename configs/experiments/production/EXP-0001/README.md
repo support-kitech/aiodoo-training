@@ -272,9 +272,8 @@ Colab sets `AIODOO_COLAB_*` path overlays and invokes:
 python train.py --config <aiodoo-training>/configs/experiments/production/EXP-0001/experiment.yaml
 ```
 
-### Smoke test
-
-See [SMOKE.md](./SMOKE.md) — same model/training/export, smaller JSONL only.
+See also: [CONFIGURATION.md](./CONFIGURATION.md) (isolation / resolution chain),
+[SMOKE.md](./SMOKE.md).
 
 ---
 

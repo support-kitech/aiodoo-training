@@ -2,6 +2,13 @@ schema_version: "1.0"
 name: example-phase0
 seed: 42
 
+# EXAMPLE / TESTS ONLY — never used for production EXP-0001.
+# Production: configs/experiments/production/EXP-0001/experiment.yaml
+#
+# Includes framework templates under configs/{models,adaptation,training,datasets}/
+# so newcomers can see fragment composition. Production experiments must NOT
+# include these paths.
+
 include:
   - ../models/qwen25-coder-0.5b.yaml
   - ../adaptation/lora-r8.yaml

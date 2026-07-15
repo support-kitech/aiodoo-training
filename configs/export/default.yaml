@@ -1,4 +1,9 @@
-# Empty placeholder — export profiles arrive in later phases.
+# Example export fragment
+#
+# ROLE: Reusable template / example only.
+# NOT loaded by configs/experiments/production/EXP-0001/.
+# Production export lives in experiments/production/EXP-0001/export.yaml.
+
 export_types:
   - peft_adapter
   - manifest

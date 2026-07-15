@@ -1,4 +1,9 @@
 # Example adaptation profile fragment
+#
+# ROLE: Reusable template / example only.
+# NOT loaded by configs/experiments/production/EXP-0001/.
+# Consumed only when explicitly included (e.g. configs/experiments/example.yaml).
+
 adapter_type: lora
 rank: 8
 alpha: 16

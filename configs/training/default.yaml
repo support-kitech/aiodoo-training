@@ -1,4 +1,9 @@
 # Example training hyperparameters fragment
+#
+# ROLE: Reusable template / example only.
+# NOT loaded by configs/experiments/production/EXP-0001/.
+# Consumed only when explicitly included (e.g. configs/experiments/example.yaml).
+
 learning_rate: 0.0002
 weight_decay: 0.0
 warmup_ratio: 0.03

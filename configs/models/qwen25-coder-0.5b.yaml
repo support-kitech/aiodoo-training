@@ -1,4 +1,9 @@
 # Example model profile fragment
+#
+# ROLE: Reusable template / example only.
+# NOT loaded by configs/experiments/production/EXP-0001/.
+# Consumed only when explicitly included (e.g. configs/experiments/example.yaml).
+
 identifier: Qwen/Qwen2.5-Coder-0.5B
 family: qwen
 precision: bf16
