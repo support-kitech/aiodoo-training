@@ -8,8 +8,8 @@
 
 export:
   enabled: true
-  # Production export uses HF/PEFT exporter when registered; stub validates contract in CI
-  backend: huggingface
+  # Production export uses registered HF PEFT exporter key (hf_peft)
+  backend: hf_peft
   profile: peft_default
   # Relative export root; Colab remaps into models/exports/EXP-0001/
   output_dir: artifacts/export/EXP-0001
