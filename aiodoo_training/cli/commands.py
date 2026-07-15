@@ -174,10 +174,17 @@ def cmd_doctor() -> int:
     return 0
 
 
-def cmd_train(_config_path: Path) -> int:
-    raise NotImplementedError(
-        "Full train CLI wiring uses Pipeline; use tests/harness or existing train path."
+def cmd_train(config_path: Path) -> int:
+    """Public train entry via application orchestrator."""
+    from aiodoo_training.application import (
+        emit_execution_result,
+        run_train_from_config,
+        train_exit_code,
     )
+
+    result = run_train_from_config(config_path)
+    emit_execution_result(result)
+    return train_exit_code(result)
 
 
 def cmd_resume(_checkpoint_path: Path) -> int:

@@ -8,17 +8,17 @@
 # CI installs ONLY requirements/dev.txt (CPU) and uses StubModelBackend /
 # DeterministicStubTokenizer. Never add CUDA wheels to CI.
 #
-# Phase 1: transformers optional for HuggingFaceTokenizerAdapter.
-# Phase 2: torch + peft optional for HuggingFaceCausalLMBackend / LoRA / QLoRA.
-# Install locally when exercising real backends:
+# Colab / production GPU host (Qwen3-8B QLoRA):
 #   pip install -r requirements/train.txt
-transformers>=4.40.0
-torch>=2.2.0
-peft>=0.11.0
-
-# Optional (QLoRA 4/8-bit); never imported outside infrastructure:
-# bitsandbytes>=0.43.0
-
-# Deferred to later phases:
-# accelerate
-# deepspeed
+#
+# Verified compatible ranges for EXP-0001 (Tesla T4 / Colab):
+transformers>=4.44.0,<5
+torch>=2.2.0,<3
+peft>=0.12.0,<0.15
+accelerate>=0.33.0,<1.1
+bitsandbytes>=0.43.0,<0.46
+huggingface_hub>=0.24.0,<1
+safetensors>=0.4.0,<1
+# datasets package (HF) — used by some Trainer codepaths; keep aligned with transformers
+datasets>=2.20.0,<4
+# trl is NOT required by aiodoo-training ports today (HF Trainer path uses transformers.Trainer)

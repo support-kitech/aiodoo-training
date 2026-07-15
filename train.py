@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run a training experiment (Phase 0: not implemented)."""
+"""Run a training experiment via the public application orchestrator."""
 
 from __future__ import annotations
 

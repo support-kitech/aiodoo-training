@@ -24,9 +24,9 @@ training:
   weight_decay: 0.01
   # Warm ~3% of steps into cosine decay for stable early updates
   warmup_ratio: 0.03
-  # Micro-batch 1: only safe size for 8B QLoRA @ 2048 on 16 GB
+  # Micro-batch 1: only safe size for 8B QLoRA @ 2048 on ~15 GB usable T4 VRAM
   per_device_batch_size: 1
-  # Accum 16 → effective batch 16 (quality), memory ≈ batch-1 peak
+  # Accum 16 → effective batch 16 (quality). Peak VRAM ≈ micro-batch (accum is compute time)
   gradient_accumulation_steps: 16
 
 adaptation:
@@ -39,7 +39,8 @@ adaptation:
   alpha: 32
   # Mild dropout reduces stage-overfitting across progressive datasets
   dropout: 0.05
-  # Full attention + MLP projections: highest practical PEFT quality on causal LMs
+  # Full attention + MLP projections — Qwen3 / Qwen2.5 MoE-style module names
+  # (q/k/v/o + gate/up/down). Confirmed PEFT-targetable on Qwen causal LMs.
   target_modules:
     - q_proj
     - k_proj
@@ -79,7 +80,7 @@ execution:
   precision:
     # fp16: T4-safe AMP (bf16 needs Ampere+)
     compute: fp16
-    # 4-bit load is mandatory for Qwen3-8B weights on 16 GB
+    # 4-bit load is mandatory for Qwen3-8B weights on ~15 GB usable T4 VRAM
     load_in_4bit: true
     load_in_8bit: false
   memory:

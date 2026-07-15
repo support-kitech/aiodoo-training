@@ -19,9 +19,10 @@ export:
     - manifest
     - model_card
     - bundle
-  # Require Stage 8 production eval before merging
-  require_evaluation: true
-  require_pass_for_export: true
+  # Stage 1–7: export adapters without blocking on production eval gate.
+  # Stage 8: set both true after enabling evaluation.enabled.
+  require_evaluation: false
+  require_pass_for_export: false
   validation_policy: strict
   required_roles:
     - peft_adapter

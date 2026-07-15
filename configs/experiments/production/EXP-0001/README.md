@@ -260,11 +260,21 @@ runs) set Colab/env overlays for model and outputs.
 1. Mount Drive / prepare workspace (`AIODOO/`).
 2. Place datasets at `AIODOO/datasets/v1.0.0/`.
 3. Ensure `Qwen/Qwen3-8B` is cached under `AIODOO/models/base/Qwen__Qwen3-8B/`.
-4. Copy this experiment to `AIODOO/experiments/EXP-0001/`  
-   (root `experiment.yaml` + `config/*.yaml` mirrors of these fragments), **or**
-   point training at this repository path after clone.
-5. Launch notebook / `main.py`; Colab sets `AIODOO_COLAB_*` paths and invokes
-   `python train.py --config <experiment.yaml>`.
+4. Clone/update `aiodoo-training` under `AIODOO/training/aiodoo-training`
+   (canonical EXP-0001 configs live there and are auto-discovered).
+5. Optional: mirror configs under `AIODOO/experiments/EXP-0001/config/` for
+   Drive-local overrides; otherwise Colab loads the training-repo canonical set.
+6. Launch `notebooks/01_train.ipynb` with `EXPERIMENT_ID = "EXP-0001"`.
+
+Colab sets `AIODOO_COLAB_*` path overlays and invokes:
+
+```text
+python train.py --config <aiodoo-training>/configs/experiments/production/EXP-0001/experiment.yaml
+```
+
+### Smoke test
+
+See [SMOKE.md](./SMOKE.md) — same model/training/export, smaller JSONL only.
 
 ---
 

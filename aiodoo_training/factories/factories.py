@@ -61,13 +61,6 @@ def _require_key[T](registry: Registry[T], key: str, kind: str) -> None:
     raise FactoryError(f"No {kind} registered for key '{key}'. Known keys: {known}.")
 
 
-def _phase0_backend_unavailable(factory_name: str, key: str) -> FactoryError:
-    return FactoryError(
-        f"{factory_name} cannot instantiate '{key}' in Phase 0 "
-        "(no infrastructure backends are registered yet)."
-    )
-
-
 class DatasetSourceFactory:
     """Construct :class:`DatasetSource` implementations from the registry."""
 
@@ -77,7 +70,8 @@ class DatasetSourceFactory:
 
     def create(self, key: str) -> DatasetSource:
         _require_key(self._registry, key, "DatasetSource")
-        raise _phase0_backend_unavailable("DatasetSourceFactory", key)
+        source_cls = self._registry.get(key)
+        return source_cls()
 
 
 class TokenizerFactory:
@@ -88,7 +82,8 @@ class TokenizerFactory:
 
     def create(self, key: str) -> TokenizerPort:
         _require_key(self._registry, key, "TokenizerPort")
-        raise _phase0_backend_unavailable("TokenizerFactory", key)
+        tokenizer_cls = self._registry.get(key)
+        return tokenizer_cls()
 
 
 class ModelBackendFactory:

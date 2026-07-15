@@ -107,7 +107,10 @@ class ResolveExecutionStage(PipelineStageHandler):
         config = require_config(context)
         updates: dict[str, object] = {}
         if context.get("execution") is None:
-            planner = ResourcePlannerFactory().create("static")
+            from aiodoo_training.pipeline.stage_helpers import resource_planner_key
+
+            planner_key = resource_planner_key(context)
+            planner = ResourcePlannerFactory().create(planner_key)
             execution = planner.resolve_spec(config.execution)
             digest = f"{execution.selected_device.value}:{execution.accelerator.value}"
             updates["execution"] = execution
@@ -179,27 +182,87 @@ class AssembleDatasetsStage(PipelineStageHandler):
     def run(self, context: PipelineContext) -> tuple[PipelineContext, StageResult]:
         if context.get("dataset_session") is not None:
             return context, _ok(self._name, self.stage, "dataset_session restored")
+
+        from aiodoo_training.factories.factories import DatasetSourceFactory
+        from aiodoo_training.pipeline.stage_helpers import (
+            missing_dataset_paths,
+            trainer_backend_key,
+        )
+
         config = require_config(context)
         experiment_id = (
             context.experiment_id or config.experiment_id or ExperimentId(value=config.name)
         )
         run_id = context.run_id or RunId(value="run")
-        session = DatasetSession(
-            session_id=f"ds-{uuid4().hex[:12]}",
-            experiment_id=experiment_id,
-            run_id=run_id,
-            shuffle_seed=config.seed,
-        )
+        backend = trainer_backend_key(context, config)
+        updates: dict[str, object] = {}
+
+        if config.datasets.datasets:
+            missing = missing_dataset_paths(config)
+            if missing:
+                paths = ", ".join(str(path) for path in missing)
+                if backend == "stub":
+                    # Stub trainers do not require dataset files; keep going.
+                    session = DatasetSession(
+                        session_id=f"ds-{uuid4().hex[:12]}",
+                        experiment_id=experiment_id,
+                        run_id=run_id,
+                        shuffle_seed=config.seed,
+                    )
+                    updates["dataset_session"] = session
+                    message = f"dataset paths missing ({paths}); stub backend continues"
+                else:
+                    raise PipelineError(
+                        f"Dataset path(s) not found for training backend '{backend}': {paths}"
+                    )
+            else:
+                from aiodoo_training.datasets.fingerprinting import fingerprint_dataset_mix
+
+                source = DatasetSourceFactory().create("jsonl")
+                examples = tuple(source.load_mix(config.datasets))
+                fingerprint = fingerprint_dataset_mix(
+                    config.datasets.datasets,
+                    shuffle=config.datasets.shuffle,
+                    seed=config.datasets.seed,
+                )
+                session = DatasetSession(
+                    session_id=f"ds-{uuid4().hex[:12]}",
+                    experiment_id=experiment_id,
+                    run_id=run_id,
+                    dataset_fingerprint=fingerprint,
+                    mix_fingerprint=fingerprint,
+                    examples_total=len(examples),
+                    shuffle_seed=config.datasets.seed if config.datasets.shuffle else None,
+                )
+                updates["dataset_session"] = session
+                updates["training_examples"] = examples
+                message = f"loaded={len(examples)}"
+        else:
+            session = DatasetSession(
+                session_id=f"ds-{uuid4().hex[:12]}",
+                experiment_id=experiment_id,
+                run_id=run_id,
+                shuffle_seed=config.seed,
+            )
+            updates["dataset_session"] = session
+            message = "ok"
+
         dist_ctx = context.get("distributed_context")
         if dist_ctx is not None:
             from aiodoo_training.distributed.shard_planner import ShardPlanner
 
-            session = ShardPlanner().apply(session, dist_ctx.session.topology)
-        return context.with_values(dataset_session=session), _ok(self._name, self.stage)
+            dataset_session = updates["dataset_session"]
+            if not isinstance(dataset_session, DatasetSession):
+                raise PipelineError("dataset_session missing before shard planning")
+            updates["dataset_session"] = ShardPlanner().apply(
+                dataset_session, dist_ctx.session.topology
+            )
+
+        return context.with_values(**updates), _ok(self._name, self.stage, message)
 
 
 class TokenizeStage(PipelineStageHandler):
-    """Phase 3: rely on upstream tokenization when present; otherwise skip."""
+    """Resolve tokenizer via factory; encode examples when present."""
 
     def __init__(self) -> None:
         self._name = StageName(value="tokenize")
@@ -215,7 +278,33 @@ class TokenizeStage(PipelineStageHandler):
     def run(self, context: PipelineContext) -> tuple[PipelineContext, StageResult]:
         if context.get("token_batches") is not None:
             return context, _ok(self._name, self.stage)
-        return context, _skip(self._name, self.stage, "No token_batches; stub path skips tokenize.")
+
+        from aiodoo_training.factories.factories import TokenizerFactory
+        from aiodoo_training.pipeline.stage_helpers import model_backend_key, tokenizer_registry_key
+
+        config = require_config(context)
+        tokenizer = context.get("tokenizer")
+        updates: dict[str, object] = {}
+        if tokenizer is None:
+            backend = model_backend_key(context, config)
+            tokenizer = TokenizerFactory().create(tokenizer_registry_key(backend))
+            tokenizer.load(config.model)
+            updates["tokenizer"] = tokenizer
+            if hasattr(tokenizer, "fingerprint"):
+                updates["tokenizer_fingerprint"] = tokenizer.fingerprint()
+
+        examples = context.get("training_examples") or context.get("examples") or ()
+        if examples and hasattr(tokenizer, "encode_examples"):
+            updates["token_batches"] = tokenizer.encode_examples(tuple(examples))
+            return context.with_values(**updates), _ok(self._name, self.stage, "encoded examples")
+
+        if updates:
+            return context.with_values(**updates), _ok(
+                self._name,
+                self.stage,
+                "tokenizer resolved; no examples to encode",
+            )
+        return context, _skip(self._name, self.stage, "No token_batches; skip tokenize.")
 
 
 class LoadModelStage(PipelineStageHandler):
@@ -233,8 +322,31 @@ class LoadModelStage(PipelineStageHandler):
     def run(self, context: PipelineContext) -> tuple[PipelineContext, StageResult]:
         if context.get("base_model") is not None or context.get("trainable_model") is not None:
             return context, _ok(self._name, self.stage, "model already present")
-        # Callers / builders should pre-inject models for Phase 3 stub engine tests.
-        return context, _skip(self._name, self.stage, "No model loader injection; skipped.")
+
+        from aiodoo_training.factories.factories import ModelBackendFactory, ResourcePlannerFactory
+        from aiodoo_training.models import ModelLoader
+        from aiodoo_training.pipeline.stage_helpers import model_backend_key, resource_planner_key
+
+        config = require_config(context)
+        backend_key = model_backend_key(context, config)
+        planner = ResourcePlannerFactory().create(resource_planner_key(context))
+        updates: dict[str, object] = {}
+        execution = context.get("execution")
+        if execution is None:
+            execution = planner.resolve_spec(config.execution)
+            updates["execution"] = execution
+            updates["execution_digest"] = (
+                f"{execution.selected_device.value}:{execution.accelerator.value}"
+            )
+
+        loaded = ModelLoader(ModelBackendFactory().create(backend_key), planner).load(
+            config.model,
+            execution=execution,
+        )
+        updates["base_model"] = loaded.handle
+        updates["model_fingerprint"] = loaded.fingerprint.digest
+        updates["model_backend_key"] = backend_key
+        return context.with_values(**updates), _ok(self._name, self.stage, f"backend={backend_key}")
 
 
 class ApplyAdaptationStage(PipelineStageHandler):
@@ -252,7 +364,40 @@ class ApplyAdaptationStage(PipelineStageHandler):
     def run(self, context: PipelineContext) -> tuple[PipelineContext, StageResult]:
         if context.get("trainable_model") is not None:
             return context, _ok(self._name, self.stage)
-        return context, _skip(self._name, self.stage, "No trainable_model; skipped.")
+
+        from aiodoo_training.adaptation import AdaptationApplier
+        from aiodoo_training.config.model_config import strategy_key_for
+        from aiodoo_training.factories.factories import AdaptationStrategyFactory
+        from aiodoo_training.pipeline.stage_helpers import raw_config
+
+        config = require_config(context)
+        base = context.get("base_model")
+        execution = context.get("execution")
+        if base is None or execution is None:
+            return context, _skip(
+                self._name,
+                self.stage,
+                "base_model and execution required; skipped.",
+            )
+
+        # Prefer immutable ExperimentConfig.adaptation; allow raw strategy override.
+        strategy_key = config.adaptation.adapter_type.value
+        adaptation_raw = raw_config(context).get("adaptation")
+        if isinstance(adaptation_raw, dict):
+            from aiodoo_training.config.model_config import parse_adaptation_config
+
+            strategy_key = strategy_key_for(parse_adaptation_config(adaptation_raw))
+        elif isinstance(config.adaptation.extra.get("strategy"), str):
+            strategy_key = str(config.adaptation.extra["strategy"])
+
+        adapted = AdaptationApplier(AdaptationStrategyFactory().create(strategy_key)).apply(
+            base, config.adaptation, execution
+        )
+        return context.with_values(
+            trainable_model=adapted.handle,
+            adapter_fingerprint=adapted.fingerprint.digest,
+            adaptation_strategy_key=strategy_key,
+        ), _ok(self._name, self.stage, f"strategy={strategy_key}")
 
 
 class PlanPackingStage(PipelineStageHandler):
@@ -411,10 +556,13 @@ class CreateTrainerStage(PipelineStageHandler):
 
     def run(self, context: PipelineContext) -> tuple[PipelineContext, StageResult]:
         config = require_config(context)
+        from aiodoo_training.pipeline.stage_helpers import trainer_backend_key
+
         fragments = context.get("phase3_fragments") or {}
-        backend_key = str(fragments.get("trainer_backend_key") or "stub")
+        backend_key = trainer_backend_key(context, config)
         trainer = context.get("trainer") or TrainerBackendFactory().create(backend_key)
-        store = context.get("checkpoint_store") or CheckpointStoreFactory().create("stub")
+        store_key = "hf" if backend_key in {"hf_trainer", "huggingface", "hf"} else "stub"
+        store = context.get("checkpoint_store") or CheckpointStoreFactory().create(store_key)
         rng = context.get("rng") or RngControllerFactory().create("python")
         manager = context.get("checkpoint_manager") or CheckpointManager(
             checkpoint_store=store, rng=rng

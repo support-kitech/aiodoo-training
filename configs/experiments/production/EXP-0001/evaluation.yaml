@@ -3,9 +3,10 @@
 # ============================================================
 
 evaluation:
-  # Enabled for Stage 8 and smoke checks; Stage 1–7 may keep enabled with lightweight metrics
-  enabled: true
-  # stub until HF eval profiler is bound for this host; switch to registered HF key when ready
+  # Stage 1 default: off (use SMOKE procedure / Stage 8 for gated eval).
+  # Set enabled: true when running Stage 8 production gate.
+  enabled: false
+  # stub for fast CI / Colab smoke; swap to registered HF evaluator when profiled
   backend: stub
   profile: default
   metrics:

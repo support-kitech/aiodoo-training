@@ -71,8 +71,14 @@ class CLIFragment(BaseModel):
 
 
 def parse_tracking_config(raw: dict[str, Any] | None) -> TrackingFragment:
+    data = dict(raw or {})
+    # YAML experiments use tracker_type; fragment field is backend.
+    if "tracker_type" in data:
+        tracker_type = data.pop("tracker_type")
+        if "backend" not in data:
+            data["backend"] = "null" if tracker_type is None else str(tracker_type)
     try:
-        return TrackingFragment.model_validate(raw or {})
+        return TrackingFragment.model_validate(data)
     except Exception as exc:  # noqa: BLE001
         raise ConfigError(f"Invalid tracking config: {exc}") from exc
 

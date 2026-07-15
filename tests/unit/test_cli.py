@@ -47,5 +47,5 @@ def test_build_training_validate_only() -> None:
     assert build_training.main(["--config", str(EXAMPLE), "--validate-only"]) == 0
 
 
-def test_train_not_implemented() -> None:
-    assert train.main(["--config", str(EXAMPLE)]) == 2
+def test_train_script_runs_example() -> None:
+    assert train.main(["--config", str(EXAMPLE)]) == 0

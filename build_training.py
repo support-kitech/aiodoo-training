@@ -2,19 +2,17 @@
 """
 AIODOO Training orchestrator entrypoint.
 
-Phase 0 validates the experiment config and stops before any training logic.
-Later phases will compose the full TrainingPipeline here (similar to
-aiodoo-datasets/build_dataset.py).
+Validates configuration and, unless ``--validate-only`` is set, runs the
+public training pipeline (same path as ``train.py``).
 """
 
 from __future__ import annotations
 
 import argparse
-import sys
 from pathlib import Path
 
 from aiodoo_training.cli import run
-from aiodoo_training.cli.commands import cmd_validate_config
+from aiodoo_training.cli.commands import cmd_train, cmd_validate_config
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -25,7 +23,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--validate-only",
         action="store_true",
-        help="Only validate configuration (Phase 0 default behavior).",
+        help="Only validate configuration; do not train.",
     )
     args = parser.parse_args(argv)
 
@@ -35,12 +33,7 @@ def main(argv: list[str] | None = None) -> int:
             return code
         if args.validate_only:
             return 0
-        print(
-            "Training pipeline is not implemented in Phase 0. "
-            "Re-run with --validate-only or wait for later phases.",
-            file=sys.stderr,
-        )
-        return 2
+        return cmd_train(args.config)
 
     return run(_command)
 
