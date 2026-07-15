@@ -1,0 +1,60 @@
+schema_version: "1.0"
+name: example-phase0
+seed: 42
+
+include:
+  - ../models/qwen25-coder-0.5b.yaml
+  - ../adaptation/lora-r8.yaml
+  - ../training/default.yaml
+  - ../datasets/coding-example.yaml
+
+model:
+  identifier: Qwen/Qwen2.5-Coder-0.5B
+  family: qwen
+  precision: bf16
+
+adaptation:
+  adapter_type: lora
+  rank: 8
+  alpha: 16
+
+training:
+  learning_rate: 0.0002
+  per_device_batch_size: 1
+
+determinism:
+  seed: 42
+  cudnn_deterministic: true
+  cudnn_benchmark: false
+
+execution:
+  device:
+    preferred: auto
+    allow_cpu_fallback: true
+  precision:
+    compute: bf16
+  memory:
+    activation_checkpointing: false
+  accelerator: none
+
+distributed:
+  enabled: false
+  world_size: 1
+  num_nodes: 1
+
+checkpointing:
+  output_dir: artifacts/checkpoints/example-phase0
+  save_steps: 500
+  save_total_limit: 3
+
+evaluation:
+  enabled: false
+
+export:
+  output_dir: artifacts/export/example-phase0
+  export_types:
+    - peft_adapter
+    - manifest
+
+tracking:
+  tracker_type: null

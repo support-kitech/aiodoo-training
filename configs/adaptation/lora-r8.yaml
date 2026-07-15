@@ -1,0 +1,10 @@
+# Example adaptation profile fragment
+adapter_type: lora
+rank: 8
+alpha: 16
+dropout: 0.05
+target_modules:
+  - q_proj
+  - k_proj
+  - v_proj
+  - o_proj

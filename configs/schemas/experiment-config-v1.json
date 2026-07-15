@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aiodoo.dev/schemas/experiment-config-v1.json",
+  "title": "AIODOO Training Experiment Config",
+  "type": "object",
+  "required": ["schema_version", "name"],
+  "properties": {
+    "schema_version": { "type": "string" },
+    "name": { "type": "string" },
+    "seed": { "type": "integer" },
+    "include": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,40 @@
+# Tooling configuration only.
+# This repository is NOT packaged or published.
+# Run scripts from the repository root with: python3 <script>.py
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+files = ["aiodoo_training"]
+
+[[tool.mypy.overrides]]
+module = ["aiodoo_training.infrastructure.*"]
+ignore_errors = true
+
+[[tool.mypy.overrides]]
+module = ["transformers.*", "transformers"]
+ignore_missing_imports = true
+
+[tool.coverage.run]
+branch = true
+source = ["aiodoo_training"]
+omit = [
+    "aiodoo_training/infrastructure/*",
+]
+
+[tool.coverage.report]
+show_missing = true
+fail_under = 60
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

@@ -1,0 +1,4 @@
+# Empty placeholder — export profiles arrive in later phases.
+export_types:
+  - peft_adapter
+  - manifest

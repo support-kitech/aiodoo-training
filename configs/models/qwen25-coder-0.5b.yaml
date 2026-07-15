@@ -1,0 +1,4 @@
+# Example model profile fragment
+identifier: Qwen/Qwen2.5-Coder-0.5B
+family: qwen
+precision: bf16

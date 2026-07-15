@@ -1,0 +1,2 @@
+# Convenience meta-file. Prefer the split files under requirements/.
+-r requirements/base.txt
