@@ -1,7 +1,7 @@
-# Example dataset mix fragment (paths are placeholders — loading arrives in Phase 1)
+# Example dataset mix fragment
 datasets:
   - name: coding
-    path: ../datasets/coding_v1_0.jsonl
+    path: ../../tests/fixtures/datasets/coding.jsonl
     dataset_type: coding
     protocol_version: "1.0"
     weight: 1.0
