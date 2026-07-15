@@ -2,26 +2,26 @@
 #
 # Boundary rules:
 #   requirements/base.txt  — config, YAML, pydantic (always)
-#   requirements/train.txt — optional ML libs (this file)
+#   requirements/train.txt — base + ML/training dependencies
 #   requirements/dev.txt   — base + pytest/ruff/mypy (CI)
 #
 # CI installs ONLY requirements/dev.txt (CPU) and uses StubModelBackend /
 # DeterministicStubTokenizer. Never add CUDA wheels to CI.
 #
-# Colab / production GPU host (Qwen3-8B QLoRA):
+# Colab / production GPU host (EXP-0001 - Qwen3-8B QLoRA):
 #   pip install -r requirements/train.txt
 #
-# Verified compatible ranges for EXP-0001 (Tesla T4 / Colab):
+# Verified compatible ranges for EXP-0001 (Tesla T4 / Colab)
 
 -r base.txt
 
-transformers>=4.44.0,<5
+transformers>=4.51,<5
 torch>=2.2.0,<3
 peft>=0.12.0,<0.15
 accelerate>=0.33.0,<1.1
 bitsandbytes>=0.43.0,<0.46
-huggingface_hub>=1.2.0,<2
+huggingface_hub>=0.24.0,<1
 safetensors>=0.4.0,<1
-# datasets package (HF) — used by some Trainer codepaths; keep aligned with transformers
 datasets>=2.20.0,<4
-# trl is NOT required by aiodoo-training ports today (HF Trainer path uses transformers.Trainer)
+
+# HF Trainer is used; TRL is intentionally excluded.
