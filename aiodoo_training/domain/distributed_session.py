@@ -62,9 +62,7 @@ class DistributedTopology:
     local_rank: int
     node_id: str
     nodes: tuple[Node, ...] = ()
-    groups: Mapping[str, ProcessGroupHandle] = field(
-        default_factory=lambda: MappingProxyType({})
-    )
+    groups: Mapping[str, ProcessGroupHandle] = field(default_factory=lambda: MappingProxyType({}))
     mesh_digest: str = ""
 
     def __post_init__(self) -> None:

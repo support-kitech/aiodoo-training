@@ -37,9 +37,7 @@ class ExportLifecycle:
             )
         return session.with_status(target, message=message)
 
-    def preflight(
-        self, session: ExportSession, *, message: str | None = None
-    ) -> ExportSession:
+    def preflight(self, session: ExportSession, *, message: str | None = None) -> ExportSession:
         """``PENDING`` → ``VALIDATING``."""
         return self._transition(session, ExportStatus.VALIDATING, message=message)
 

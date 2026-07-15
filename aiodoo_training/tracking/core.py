@@ -58,12 +58,8 @@ _SINK_VALID: dict[TrackingSinkStatus, frozenset[TrackingSinkStatus]] = {
             TrackingSinkStatus.DEGRADED,
         }
     ),
-    TrackingSinkStatus.FLUSHING: frozenset(
-        {TrackingSinkStatus.OPEN, TrackingSinkStatus.CLOSED}
-    ),
-    TrackingSinkStatus.DEGRADED: frozenset(
-        {TrackingSinkStatus.OPEN, TrackingSinkStatus.CLOSED}
-    ),
+    TrackingSinkStatus.FLUSHING: frozenset({TrackingSinkStatus.OPEN, TrackingSinkStatus.CLOSED}),
+    TrackingSinkStatus.DEGRADED: frozenset({TrackingSinkStatus.OPEN, TrackingSinkStatus.CLOSED}),
 }
 
 
@@ -101,9 +97,7 @@ class TrackingContext:
 class TrackingLifecycle:
     """Owns allowed tracking sink session transitions (COW)."""
 
-    def transition(
-        self, ctx: TrackingContext, target: TrackingSinkStatus
-    ) -> TrackingContext:
+    def transition(self, ctx: TrackingContext, target: TrackingSinkStatus) -> TrackingContext:
         allowed = _SINK_VALID.get(ctx.sink_status, frozenset())
         if target not in allowed:
             raise TrackingLifecycleError(
@@ -128,9 +122,7 @@ class ExperimentLifecycle:
     """Allowed ExperimentStatus transitions."""
 
     _VALID: dict[ExperimentStatus, frozenset[ExperimentStatus]] = {
-        ExperimentStatus.PENDING: frozenset(
-            {ExperimentStatus.ACTIVE, ExperimentStatus.FAILED}
-        ),
+        ExperimentStatus.PENDING: frozenset({ExperimentStatus.ACTIVE, ExperimentStatus.FAILED}),
         ExperimentStatus.ACTIVE: frozenset(
             {ExperimentStatus.ARCHIVED, ExperimentStatus.FAILED, ExperimentStatus.ACTIVE}
         ),
@@ -154,9 +146,7 @@ class RunLifecycle:
 
     _VALID: dict[RunState, frozenset[RunState]] = {
         RunState.PENDING: frozenset({RunState.RUNNING, RunState.RESUMED}),
-        RunState.RUNNING: frozenset(
-            {RunState.COMPLETED, RunState.FAILED, RunState.ABORTED}
-        ),
+        RunState.RUNNING: frozenset({RunState.COMPLETED, RunState.FAILED, RunState.ABORTED}),
         RunState.RESUMED: frozenset({RunState.RUNNING}),
         RunState.COMPLETED: frozenset({RunState.RESUMED}),
         RunState.FAILED: frozenset({RunState.RESUMED}),
@@ -543,9 +533,7 @@ class TrackingCoordinator:
                     "run_id": self._ctx.run_record.run_id.value,
                     "experiment_id": self._ctx.run_record.experiment_id.value,
                     "state": self._ctx.run_record.state.value,
-                    "tracking_protocol_version": (
-                        self._ctx.run_record.tracking_protocol_version
-                    ),
+                    "tracking_protocol_version": (self._ctx.run_record.tracking_protocol_version),
                 },
             )
         except TrackingLifecycleError:

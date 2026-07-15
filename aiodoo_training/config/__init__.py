@@ -5,6 +5,12 @@ from aiodoo_training.config.curriculum_config import (
     to_curriculum_spec,
     validate_phase5_curriculum_fragments,
 )
+from aiodoo_training.config.distributed_config import (
+    parse_phase7_distributed_config,
+    to_distributed_spec,
+    to_runtime_policy,
+    validate_phase7_distributed_fragments,
+)
 from aiodoo_training.config.evaluation_config import (
     parse_evaluation_config,
     to_acceptance_policy,
@@ -49,12 +55,6 @@ from aiodoo_training.config.system import (
     ConfigValidator,
     RawExperimentModel,
     deep_merge,
-)
-from aiodoo_training.config.distributed_config import (
-    parse_phase7_distributed_config,
-    to_distributed_spec,
-    to_runtime_policy,
-    validate_phase7_distributed_fragments,
 )
 from aiodoo_training.config.tracking_config import (
     parse_cli_config,

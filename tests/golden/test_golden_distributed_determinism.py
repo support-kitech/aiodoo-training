@@ -53,8 +53,7 @@ def test_golden_sampler_indices() -> None:
     session = DatasetSession(
         session_id="gold", world_size=2, global_rank=0, shard_id=0, num_shards=2, epoch=0
     )
-    indices = list(sampler.sample_indices(16, session, seed=123)
-    )
+    indices = list(sampler.sample_indices(16, session, seed=123))
     assert indices == list(sampler.sample_indices(16, session, seed=123))
 
 

@@ -7,12 +7,8 @@ from aiodoo_training.domain.packing_session import PackingSession
 from aiodoo_training.exceptions import PackingLifecycleError
 
 _VALID: dict[PackingStatus, frozenset[PackingStatus]] = {
-    PackingStatus.PENDING: frozenset(
-        {PackingStatus.PLANNING, PackingStatus.SKIPPED}
-    ),
-    PackingStatus.PLANNING: frozenset(
-        {PackingStatus.READY, PackingStatus.FAILED}
-    ),
+    PackingStatus.PENDING: frozenset({PackingStatus.PLANNING, PackingStatus.SKIPPED}),
+    PackingStatus.PLANNING: frozenset({PackingStatus.READY, PackingStatus.FAILED}),
     PackingStatus.FAILED: frozenset({PackingStatus.PENDING}),
     PackingStatus.READY: frozenset(),
     PackingStatus.SKIPPED: frozenset(),

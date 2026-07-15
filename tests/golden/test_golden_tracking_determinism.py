@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from aiodoo_training.bootstrap import bootstrap_phase6
+from aiodoo_training.bootstrap import bootstrap_phase7
 from aiodoo_training.domain.enums import StageStatus, TrainingStatus
 from aiodoo_training.domain.identifiers import RunId
 from aiodoo_training.pipeline import Pipeline, PipelineContext, build_phase4_pipeline
@@ -18,7 +18,8 @@ from aiodoo_training.training.engine import (
 
 @pytest.fixture(autouse=True)
 def _bootstrap() -> None:
-    bootstrap_phase6(overwrite=True)
+    # Phase 4 pipeline RESOLVE_EXECUTION opens DistributedRuntime (placement registry).
+    bootstrap_phase7(overwrite=True)
 
 
 def _run_pipeline(tmp_path: Path, *, tracking_enabled: bool) -> tuple[object, object]:

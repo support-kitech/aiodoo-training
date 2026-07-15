@@ -149,9 +149,7 @@ class BestFitPacking(PackingStrategy):
                 bin_state.ids.extend(ids)
                 bin_state.mask.extend(mask)
                 bin_state.labs.extend(labs)
-                bin_state.spans.append(
-                    PackedSpan(example.example_id, start, start + need)
-                )
+                bin_state.spans.append(PackedSpan(example.example_id, start, start + need))
                 bin_state.ex.append(example.example_id)
                 new_residual = max_len - len(bin_state.ids)
                 if new_residual > 0:

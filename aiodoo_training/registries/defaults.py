@@ -62,15 +62,9 @@ metric_registry: Registry[MetricDefinition] = Registry("metrics")
 evaluation_profile_registry: Registry[EvaluationProfile] = Registry("evaluation_profiles")
 export_profile_registry: Registry[ExportProfile] = Registry("export_profiles")
 # Phase 7 — distributed readiness
-distributed_backend_registry: Registry[type[DistributedBackend]] = Registry(
-    "distributed_backends"
-)
-placement_strategy_registry: Registry[type[PlacementStrategy]] = Registry(
-    "placement_strategies"
-)
-distributed_sampler_registry: Registry[type[DistributedSampler]] = Registry(
-    "distributed_samplers"
-)
+distributed_backend_registry: Registry[type[DistributedBackend]] = Registry("distributed_backends")
+placement_strategy_registry: Registry[type[PlacementStrategy]] = Registry("placement_strategies")
+distributed_sampler_registry: Registry[type[DistributedSampler]] = Registry("distributed_samplers")
 
 
 def all_registries() -> tuple[Registry[Any], ...]:

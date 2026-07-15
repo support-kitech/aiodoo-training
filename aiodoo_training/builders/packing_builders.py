@@ -163,4 +163,3 @@ def build_packing_session(
         created_at=now,
         updated_at=now,
     )
-

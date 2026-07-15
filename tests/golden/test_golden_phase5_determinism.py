@@ -28,7 +28,5 @@ def test_golden_sampling_identical(backend: str) -> None:
         packing_mode=PackingMode.NONE,
         seed=123,
     )
-    assert [e.example_id for e in a.ordered_examples] == [
-        e.example_id for e in b.ordered_examples
-    ]
+    assert [e.example_id for e in a.ordered_examples] == [e.example_id for e in b.ordered_examples]
     assert a.sampling_fingerprint == b.sampling_fingerprint

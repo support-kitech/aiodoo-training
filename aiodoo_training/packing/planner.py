@@ -167,9 +167,7 @@ class SchedulePlanner:
         )
 
         # Packing
-        token_rows = resolve_token_rows(
-            ordered, max_length=packing_policy.max_sequence_length
-        )
+        token_rows = resolve_token_rows(ordered, max_length=packing_policy.max_sequence_length)
         p_ctx = PackingContext(
             examples=ordered,
             packing_session=p_session,

@@ -210,9 +210,7 @@ def compute_export_fingerprint(manifest_body: Mapping[str, Any]) -> str:
     across publish retries on different machines.
     """
     payload = {
-        k: v
-        for k, v in manifest_body.items()
-        if k not in {"export_fingerprint", "created_at"}
+        k: v for k, v in manifest_body.items() if k not in {"export_fingerprint", "created_at"}
     }
     canonical = json.dumps(payload, sort_keys=True, separators=(",", ":"), default=str)
     return hashlib.sha256(canonical.encode("utf-8")).hexdigest()

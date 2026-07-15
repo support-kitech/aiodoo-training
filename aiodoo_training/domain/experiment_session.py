@@ -65,9 +65,7 @@ class ExperimentSession:
             run_count=self.run_count + 1,
             updated_at=datetime.now(UTC),
             status=(
-                ExperimentStatus.ACTIVE
-                if self.status is ExperimentStatus.PENDING
-                else self.status
+                ExperimentStatus.ACTIVE if self.status is ExperimentStatus.PENDING else self.status
             ),
         )
 

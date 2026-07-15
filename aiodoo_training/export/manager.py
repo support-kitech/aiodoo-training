@@ -304,9 +304,7 @@ class ExportManager:
             created_at=datetime.now(UTC),
             software={
                 "python": (
-                    f"{sys.version_info.major}."
-                    f"{sys.version_info.minor}."
-                    f"{sys.version_info.micro}"
+                    f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}"
                 ),
                 "aiodoo-training": "phase4",
             },

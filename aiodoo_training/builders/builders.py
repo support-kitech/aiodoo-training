@@ -132,7 +132,6 @@ def _as_str_object_dict(value: object | None) -> dict[str, object]:
     raise BuilderError("bind_extra must be a mapping when provided.")
 
 
-
 class DatasetMixBuilder:
     """Builds a :class:`DatasetMixSpec` from dataset references and weights."""
 

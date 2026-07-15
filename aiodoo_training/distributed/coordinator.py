@@ -39,11 +39,7 @@ class DistributedCoordinator:
     ) -> RankRole:
         rank = context.session.topology.global_rank
         if policy.mode is DistributedCheckpointMode.RANK0_FULL:
-            return (
-                RankRole.COORDINATOR
-                if rank == policy.coordinator_rank
-                else RankRole.IDLE
-            )
+            return RankRole.COORDINATOR if rank == policy.coordinator_rank else RankRole.IDLE
         if policy.mode is DistributedCheckpointMode.SHARDED:
             if rank == policy.coordinator_rank:
                 return RankRole.COORDINATOR

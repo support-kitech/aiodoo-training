@@ -25,9 +25,7 @@ class DistributedBackend(ABC):
         """Block until all ranks in the group arrive (or timeout)."""
 
     @abstractmethod
-    def broadcast_bytes(
-        self, group_id: str, payload: bytes, *, src_rank: int
-    ) -> bytes:
+    def broadcast_bytes(self, group_id: str, payload: bytes, *, src_rank: int) -> bytes:
         """Broadcast bytes from src_rank; all ranks receive identical payload."""
 
     @abstractmethod

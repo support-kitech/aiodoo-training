@@ -34,19 +34,22 @@ def maybe_open_tracking(context: PipelineContext) -> PipelineContext:
     if not policy.enabled:
         return context
 
-    experiment_id = (
-        context.experiment_id or config.experiment_id or ExperimentId(value=config.name)
-    )
+    experiment_id = context.experiment_id or config.experiment_id or ExperimentId(value=config.name)
     run_id = context.run_id or RunId(value="run")
     root = policy.root_dir or Path("artifacts/tracking")
 
-    builder = TrackingBuilder().with_policy(policy).with_root(root).with_identity(
-        experiment_id=experiment_id,
-        name=policy.experiment_name or config.name,
-        config_fingerprint=str(context.get("config_fingerprint") or ""),
-        model_fingerprint=str(context.get("model_fingerprint") or ""),
-        adapter_fingerprint=str(context.get("adapter_fingerprint") or ""),
-        execution_digest=str(context.get("execution_digest") or ""),
+    builder = (
+        TrackingBuilder()
+        .with_policy(policy)
+        .with_root(root)
+        .with_identity(
+            experiment_id=experiment_id,
+            name=policy.experiment_name or config.name,
+            config_fingerprint=str(context.get("config_fingerprint") or ""),
+            model_fingerprint=str(context.get("model_fingerprint") or ""),
+            adapter_fingerprint=str(context.get("adapter_fingerprint") or ""),
+            execution_digest=str(context.get("execution_digest") or ""),
+        )
     )
     ctx = builder.build_context(
         run_record=new_run_record(experiment_id=experiment_id, run_id=run_id)
@@ -77,12 +80,8 @@ def maybe_observe_progress(context: PipelineContext) -> None:
     plan = context.get("schedule_plan")
     if plan is not None:
         try:
-            coordinator.observe_statistics_blob(
-                "packing_statistics", plan.packing_statistics
-            )
-            coordinator.observe_statistics_blob(
-                "curriculum_statistics", plan.curriculum_statistics
-            )
+            coordinator.observe_statistics_blob("packing_statistics", plan.packing_statistics)
+            coordinator.observe_statistics_blob("curriculum_statistics", plan.curriculum_statistics)
             run = coordinator.context.run_record.with_fingerprints(
                 packing_fingerprint=plan.packing_fingerprint,
                 curriculum_fingerprint=plan.curriculum_fingerprint,

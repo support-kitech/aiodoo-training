@@ -42,9 +42,7 @@ class DistributedPlacementResolver:
         for dim in shape:
             product *= dim
         if product != world_size:
-            raise ValueError(
-                f"product(mesh_shape)={product} must equal world_size={world_size}."
-            )
+            raise ValueError(f"product(mesh_shape)={product} must equal world_size={world_size}.")
         coords = build_rank_to_coord(world_size, shape)
         digest = compute_mesh_digest(
             world_size=world_size,

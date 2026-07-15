@@ -22,11 +22,19 @@ class DistributedHealth:
     def __post_init__(self) -> None:
         if self.consecutive_barrier_timeouts < 0:
             raise ValueError("consecutive_barrier_timeouts must be >= 0.")
-        workers: dict[int, WorkerStatus] = {}
-        for k, v in self.workers.items():
-            workers[int(k)] = v if isinstance(v, WorkerStatus) else WorkerStatus(str(v))
-        nodes: dict[str, NodeStatus] = {}
-        for k, v in self.nodes.items():
-            nodes[str(k)] = v if isinstance(v, NodeStatus) else NodeStatus(str(v))
-        object.__setattr__(self, "workers", MappingProxyType(workers))
-        object.__setattr__(self, "nodes", MappingProxyType(nodes))
+        worker_map: dict[int, WorkerStatus] = {}
+        for worker_key, worker_status in self.workers.items():
+            parsed_worker: WorkerStatus = (
+                worker_status
+                if isinstance(worker_status, WorkerStatus)
+                else WorkerStatus(str(worker_status))
+            )
+            worker_map[int(worker_key)] = parsed_worker
+        node_map: dict[str, NodeStatus] = {}
+        for node_key, node_status in self.nodes.items():
+            parsed_node: NodeStatus = (
+                node_status if isinstance(node_status, NodeStatus) else NodeStatus(str(node_status))
+            )
+            node_map[str(node_key)] = parsed_node
+        object.__setattr__(self, "workers", MappingProxyType(worker_map))
+        object.__setattr__(self, "nodes", MappingProxyType(node_map))

@@ -123,9 +123,7 @@ class ExportContextBuilder:
             validation_policy = ArtifactValidationPolicy.STRICT
 
         compatibility = self._pieces.get("compatibility_policy")
-        if compatibility is not None and not isinstance(
-            compatibility, ArtifactCompatibilityPolicy
-        ):
+        if compatibility is not None and not isinstance(compatibility, ArtifactCompatibilityPolicy):
             raise BuilderError("compatibility_policy must be ArtifactCompatibilityPolicy")
 
         export_types_obj = self._pieces.get("export_types")
@@ -166,9 +164,7 @@ class ExportContextBuilder:
             validation_policy=validation_policy,
             compatibility_policy=compatibility,
             require_evaluation=bool(self._pieces.get("require_evaluation") or False),
-            require_pass_for_export=bool(
-                self._pieces.get("require_pass_for_export") or False
-            ),
+            require_pass_for_export=bool(self._pieces.get("require_pass_for_export") or False),
             export_types=export_types,
             tracker=self._pieces.get("tracker"),  # type: ignore[arg-type]
             artifacts=tuple(self._pieces.get("artifacts") or ()),  # type: ignore[arg-type]

@@ -94,13 +94,9 @@ class Phase7DistributedFragment(BaseModel):
     num_nodes: int = Field(default=1, ge=1)
     global_rank: int = Field(default=0, ge=0)
     local_rank: int = Field(default=0, ge=0)
-    communication: DistCommunicationFragment = Field(
-        default_factory=DistCommunicationFragment
-    )
+    communication: DistCommunicationFragment = Field(default_factory=DistCommunicationFragment)
     checkpoint: DistCheckpointFragment = Field(default_factory=DistCheckpointFragment)
-    fault_tolerance: DistFaultToleranceFragment = Field(
-        default_factory=DistFaultToleranceFragment
-    )
+    fault_tolerance: DistFaultToleranceFragment = Field(default_factory=DistFaultToleranceFragment)
     topology: DistTopologyFragment = Field(default_factory=DistTopologyFragment)
 
     @field_validator("backend")
@@ -136,8 +132,7 @@ def to_runtime_policy(fragment: Phase7DistributedFragment) -> DistributedRuntime
         product *= int(dim)
     if fragment.enabled and product != fragment.world_size:
         raise ConfigError(
-            f"topology.mesh_shape product ({product}) must equal world_size "
-            f"({fragment.world_size})"
+            f"topology.mesh_shape product ({product}) must equal world_size ({fragment.world_size})"
         )
     if not fragment.enabled:
         return DistributedRuntimePolicy(enabled=False)

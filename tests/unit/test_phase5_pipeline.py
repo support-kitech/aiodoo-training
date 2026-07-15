@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from aiodoo_training.bootstrap import bootstrap_phase5
+from aiodoo_training.bootstrap import bootstrap_phase7
 from aiodoo_training.domain.enums import StageStatus, TrainingStatus
 from aiodoo_training.domain.identifiers import RunId
 from aiodoo_training.pipeline import Pipeline, PipelineContext, build_phase4_pipeline
@@ -20,7 +20,8 @@ from tests.unit.phase5_helpers import make_examples, plan_once
 
 @pytest.fixture(autouse=True)
 def _bootstrap() -> None:
-    bootstrap_phase5(overwrite=True)
+    # build_phase4_pipeline RESOLVE_EXECUTION requires placement registry (Phase 7).
+    bootstrap_phase7(overwrite=True)
 
 
 def test_plan_packing_and_curriculum_stages_with_examples() -> None:

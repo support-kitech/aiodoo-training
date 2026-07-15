@@ -70,9 +70,15 @@ def test_fake_backend_collectives() -> None:
         )
     )
     runtime = DistributedRuntime()
-    ctx = runtime.open(policy, env, to_distributed_spec(parse_phase7_distributed_config(
-        {"enabled": True, "world_size": 1, "topology": {"mesh_shape": [1]}}
-    )))
+    ctx = runtime.open(
+        policy,
+        env,
+        to_distributed_spec(
+            parse_phase7_distributed_config(
+                {"enabled": True, "world_size": 1, "topology": {"mesh_shape": [1]}}
+            )
+        ),
+    )
     assert ctx.session.status is DistributedStatus.READY
     sync = runtime.sync
     assert sync is not None
@@ -193,9 +199,7 @@ def test_checkpoint_coordinator_roles() -> None:
 
 
 def test_restart_policy_does_not_ignore_mesh_mismatch() -> None:
-    ft = FaultToleranceCoordinator(
-        RestartPolicy(max_restarts=2, require_same_mesh_digest=True)
-    )
+    ft = FaultToleranceCoordinator(RestartPolicy(max_restarts=2, require_same_mesh_digest=True))
     health = DistributedHealth(cluster=ClusterStatus.FAILED, message="worker lost")
     decision = ft.on_incident(
         health,

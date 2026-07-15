@@ -93,9 +93,7 @@ def test_golden_resume_equivalence(tmp_path: Path) -> None:
         output_dir=run_dir,
         resume_from=ckpt,
     )
-    cont_ctx, bundle, cont_progress = resume_from_checkpoint(
-        config=cont_cfg, checkpoint_path=ckpt
-    )
+    cont_ctx, bundle, cont_progress = resume_from_checkpoint(config=cont_cfg, checkpoint_path=ckpt)
 
     assert bundle.manifest.global_step == k_steps
     assert cont_progress.status is TrainingStatus.COMPLETED

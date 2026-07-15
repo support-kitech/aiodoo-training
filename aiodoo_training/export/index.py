@@ -28,9 +28,7 @@ class ArtifactIndex:
         return replace(self, entries=self.entries + (entry,))
 
     def upsert(self, entry: ArtifactIndexEntry) -> ArtifactIndex:
-        filtered = tuple(
-            e for e in self.entries if e.bundle_path != entry.bundle_path
-        )
+        filtered = tuple(e for e in self.entries if e.bundle_path != entry.bundle_path)
         return replace(self, entries=filtered + (entry,))
 
     def save(self, path: Path | None = None) -> Path:

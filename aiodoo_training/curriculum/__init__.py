@@ -18,12 +18,8 @@ from aiodoo_training.ports.packing import CurriculumStrategy
 from aiodoo_training.registries import curriculum_registry
 
 _VALID: dict[CurriculumStatus, frozenset[CurriculumStatus]] = {
-    CurriculumStatus.PENDING: frozenset(
-        {CurriculumStatus.PLANNING, CurriculumStatus.SKIPPED}
-    ),
-    CurriculumStatus.PLANNING: frozenset(
-        {CurriculumStatus.READY, CurriculumStatus.FAILED}
-    ),
+    CurriculumStatus.PENDING: frozenset({CurriculumStatus.PLANNING, CurriculumStatus.SKIPPED}),
+    CurriculumStatus.PLANNING: frozenset({CurriculumStatus.READY, CurriculumStatus.FAILED}),
     CurriculumStatus.READY: frozenset({CurriculumStatus.ACTIVE}),
     CurriculumStatus.ACTIVE: frozenset({CurriculumStatus.COMPLETED}),
     CurriculumStatus.FAILED: frozenset({CurriculumStatus.PENDING}),
@@ -241,9 +237,7 @@ class RandomCurriculum(CurriculumStrategy):
             return (tuple(items),)
         n = len(items)
         k = len(stages)
-        return tuple(
-            tuple(items[(i * n) // k : ((i + 1) * n) // k]) for i in range(k)
-        )
+        return tuple(tuple(items[(i * n) // k : ((i + 1) * n) // k]) for i in range(k))
 
 
 class MixedCurriculum(CurriculumStrategy):
@@ -315,7 +309,5 @@ def curriculum_key_for_mode(mode: CurriculumMode) -> str:
 
 
 def fingerprint_stages(stages: Sequence[Sequence[TrainingExample]]) -> str:
-    material = "||".join(
-        ",".join(e.example_id for e in stage) for stage in stages
-    )
+    material = "||".join(",".join(e.example_id for e in stage) for stage in stages)
     return hashlib.sha256(material.encode("utf-8")).hexdigest()

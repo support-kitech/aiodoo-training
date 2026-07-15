@@ -82,11 +82,7 @@ class FilesystemTracker(ExperimentTracker):
         exp = getattr(context, "experiment_session", None)
         if root is not None and run is not None and exp is not None:
             self._run_dir = (
-                Path(root)
-                / "experiments"
-                / exp.experiment_id.value
-                / "runs"
-                / run.run_id.value
+                Path(root) / "experiments" / exp.experiment_id.value / "runs" / run.run_id.value
             )
             self._run_dir.mkdir(parents=True, exist_ok=True)
         return self

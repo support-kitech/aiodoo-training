@@ -31,9 +31,7 @@ class SyncFacade:
         self._default_group = default_group
         self._require_order = require_deterministic_order
 
-    def barrier(
-        self, name: str = "default", policy: BarrierPolicy | None = None
-    ) -> None:
+    def barrier(self, name: str = "default", policy: BarrierPolicy | None = None) -> None:
         pol = policy or BarrierPolicy()
         group = name or self._default_group
         try:
@@ -48,9 +46,7 @@ class SyncFacade:
         payload = json.dumps(obj, sort_keys=True, separators=(",", ":")).encode(pol.encoding)
         if len(payload) > pol.max_bytes:
             raise DistributedError("Broadcast payload exceeds max_bytes.")
-        out = self._backend.broadcast_bytes(
-            self._default_group, payload, src_rank=pol.src_rank
-        )
+        out = self._backend.broadcast_bytes(self._default_group, payload, src_rank=pol.src_rank)
         return json.loads(out.decode(pol.encoding))
 
     def reduce_metrics(
@@ -64,14 +60,10 @@ class SyncFacade:
             op = policy.reduction.op
             if self._require_order or policy.reduction:
                 values = {k: values[k] for k in sorted(values)}
-            return self._backend.all_reduce_metrics(
-                self._default_group, values, op=op
-            )
+            return self._backend.all_reduce_metrics(self._default_group, values, op=op)
         pol = policy if isinstance(policy, ReductionPolicy) else ReductionPolicy()
         values = {k: float(metrics[k]) for k in sorted(metrics)}
-        return self._backend.all_reduce_metrics(
-            self._default_group, values, op=pol.op
-        )
+        return self._backend.all_reduce_metrics(self._default_group, values, op=pol.op)
 
     def all_reduce(
         self, values: Mapping[str, float], *, op: ReductionOp = ReductionOp.MEAN

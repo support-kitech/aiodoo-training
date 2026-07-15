@@ -30,9 +30,7 @@ _ALLOWED: dict[DistributedStatus, frozenset[DistributedStatus]] = {
     DistributedStatus.PENDING: frozenset(
         {DistributedStatus.INITIALIZING, DistributedStatus.ABORTED}
     ),
-    DistributedStatus.INITIALIZING: frozenset(
-        {DistributedStatus.READY, DistributedStatus.FAILED}
-    ),
+    DistributedStatus.INITIALIZING: frozenset({DistributedStatus.READY, DistributedStatus.FAILED}),
     DistributedStatus.READY: frozenset(
         {DistributedStatus.RUNNING, DistributedStatus.FAILED, DistributedStatus.ABORTED}
     ),
@@ -43,9 +41,7 @@ _ALLOWED: dict[DistributedStatus, frozenset[DistributedStatus]] = {
             DistributedStatus.COMPLETED,
         }
     ),
-    DistributedStatus.DRAINING: frozenset(
-        {DistributedStatus.COMPLETED, DistributedStatus.FAILED}
-    ),
+    DistributedStatus.DRAINING: frozenset({DistributedStatus.COMPLETED, DistributedStatus.FAILED}),
     DistributedStatus.FAILED: frozenset(
         {DistributedStatus.INITIALIZING, DistributedStatus.ABORTED}
     ),
@@ -151,9 +147,7 @@ class DistributedRuntime:
                 mesh=mesh,
                 placement=plan,
                 backend=backend,
-                health=DistributedHealth(
-                    cluster=ClusterStatus.FAILED, message=str(exc)
-                ),
+                health=DistributedHealth(cluster=ClusterStatus.FAILED, message=str(exc)),
             )
             raise DistributedError(f"DistributedRuntime init failed: {exc}") from exc
 

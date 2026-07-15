@@ -68,9 +68,7 @@ def test_filesystem_tracker_and_coordinator(tmp_path: Path) -> None:
     )
     ctx = builder.build_context()
     tracker = TrackerFactory().create("local_jsonl")
-    coord = TrackingCoordinator(
-        tracker=tracker, context=ctx, store=TrackingStore(root)
-    )
+    coord = TrackingCoordinator(tracker=tracker, context=ctx, store=TrackingStore(root))
     coord.open()
     coord.observe_metrics([MetricSnapshot(name="loss", value=1.0, step=0)])
     coord.observe_statistics_blob(
@@ -148,7 +146,7 @@ def test_tracking_protocol_version_metadata_only(tmp_path: Path) -> None:
     )
     coord.open()
     coord.complete()
-    run_json = (root / "experiments" / "e3" / "runs" / ctx.run_record.run_id.value / "run.json")
+    run_json = root / "experiments" / "e3" / "runs" / ctx.run_record.run_id.value / "run.json"
     assert run_json.is_file()
     import json
 

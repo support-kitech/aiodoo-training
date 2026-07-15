@@ -116,9 +116,7 @@ class EvaluationEngine:
         """Run quality gates after evaluation report is finalized."""
         return self._quality_gate.validate(report, context.acceptance_policy)
 
-    def _open_dataset_sessions(
-        self, context: EvaluationContext
-    ) -> tuple[DatasetSession, ...]:
+    def _open_dataset_sessions(self, context: EvaluationContext) -> tuple[DatasetSession, ...]:
         if context.dataset_sessions:
             return context.dataset_sessions
         sessions: list[DatasetSession] = []

@@ -21,9 +21,7 @@ def build_rank_to_coord(world_size: int, mesh_shape: Sequence[int]) -> dict[int,
     for dim in mesh_shape:
         product *= int(dim)
     if product != world_size:
-        raise ValueError(
-            f"product(mesh_shape)={product} must equal world_size={world_size}."
-        )
+        raise ValueError(f"product(mesh_shape)={product} must equal world_size={world_size}.")
     mapping: dict[int, tuple[int, ...]] = {}
     for rank in range(world_size):
         coords: list[int] = []

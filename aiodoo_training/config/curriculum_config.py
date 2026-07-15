@@ -15,9 +15,7 @@ class CurriculumFragment(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     backend: str = "none"
-    mode: Literal[
-        "none", "sequential", "weighted_mix", "difficulty", "random", "mixed"
-    ] = "none"
+    mode: Literal["none", "sequential", "weighted_mix", "difficulty", "random", "mixed"] = "none"
     stages: list[str] = Field(default_factory=list)
     seed: int | None = 42
 

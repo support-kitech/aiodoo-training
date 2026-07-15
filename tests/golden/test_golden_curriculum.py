@@ -40,9 +40,7 @@ def test_golden_curriculum_identical(backend: str, mode: CurriculumMode) -> None
         packing_mode=PackingMode.NONE,
         seed=42,
     )
-    assert [e.example_id for e in a.ordered_examples] == [
-        e.example_id for e in b.ordered_examples
-    ]
+    assert [e.example_id for e in a.ordered_examples] == [e.example_id for e in b.ordered_examples]
     assert [[e.example_id for e in stage] for stage in a.curriculum_stages] == [
         [e.example_id for e in stage] for stage in b.curriculum_stages
     ]

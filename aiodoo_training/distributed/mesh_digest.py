@@ -30,8 +30,7 @@ def compute_mesh_digest(
     """
     coords = rank_to_coord or {}
     coord_part = "|".join(
-        f"{rank}:{'x'.join(str(c) for c in coords[rank])}"
-        for rank in sorted(coords)
+        f"{rank}:{'x'.join(str(c) for c in coords[rank])}" for rank in sorted(coords)
     )
     material = "|".join(
         [

@@ -106,8 +106,7 @@ class QualityGate:
         failure = QualityFailure(
             metric_key=threshold.metric_key,
             message=(
-                f"{threshold.metric_key}={observed} failed "
-                f"{threshold.op.value} {threshold.value}"
+                f"{threshold.metric_key}={observed} failed {threshold.op.value} {threshold.value}"
             ),
             severity=threshold.severity.value,
             observed=observed,

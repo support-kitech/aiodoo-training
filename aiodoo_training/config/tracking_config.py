@@ -132,9 +132,7 @@ def to_logging_policy(fragment: LoggingFragment) -> LoggingPolicy:
 
 
 def to_report_policy(fragment: ReportsFragment) -> ReportPolicy:
-    return ReportPolicy(
-        write_json=fragment.write_json, write_markdown=fragment.write_markdown
-    )
+    return ReportPolicy(write_json=fragment.write_json, write_markdown=fragment.write_markdown)
 
 
 def to_retention_policy(fragment: RetentionFragment) -> RetentionPolicy:

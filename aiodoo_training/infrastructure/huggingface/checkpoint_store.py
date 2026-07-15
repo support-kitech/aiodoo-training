@@ -122,6 +122,4 @@ def register_hf_checkpoint_store(*, overwrite: bool = False) -> None:
     if not checkpoint_store_registry.exists("hf") or overwrite:
         checkpoint_store_registry.register("hf", HFCheckpointStore, overwrite=overwrite)
     if not checkpoint_store_registry.exists("huggingface") or overwrite:
-        checkpoint_store_registry.register(
-            "huggingface", HFCheckpointStore, overwrite=overwrite
-        )
+        checkpoint_store_registry.register("huggingface", HFCheckpointStore, overwrite=overwrite)

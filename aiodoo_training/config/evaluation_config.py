@@ -46,9 +46,7 @@ class EvaluationFragment(BaseModel):
 
     backend: str = "stub"
     profile: str = "default"
-    metrics: list[str] = Field(
-        default_factory=lambda: ["loss", "perplexity", "token_accuracy"]
-    )
+    metrics: list[str] = Field(default_factory=lambda: ["loss", "perplexity", "token_accuracy"])
     max_examples: int | None = None
     seed: int | None = None
     split: Literal["validation", "test", "benchmark", "custom"] = "validation"
@@ -103,9 +101,7 @@ def _parse_op(raw: str) -> ComparisonOp:
 
 
 def to_acceptance_policy(fragment: EvaluationFragment | AcceptanceFragment) -> AcceptancePolicy:
-    acceptance = (
-        fragment.acceptance if isinstance(fragment, EvaluationFragment) else fragment
-    )
+    acceptance = fragment.acceptance if isinstance(fragment, EvaluationFragment) else fragment
     thresholds = tuple(
         QualityThreshold(
             metric_key=t.metric_key,

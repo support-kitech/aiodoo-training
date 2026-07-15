@@ -63,9 +63,7 @@ class FsdpAutoPlacement(PlacementStrategy):
             strategy_key="fsdp_auto",
             world_size=base.world_size,
             rank_to_device_id=base.rank_to_device_id,
-            rank_roles=MappingProxyType(
-                {r: "fsdp" for r in range(base.world_size)}
-            ),
+            rank_roles=MappingProxyType({r: "fsdp" for r in range(base.world_size)}),
             metadata=MappingProxyType({"hint": "fsdp_auto"}),
         )
 
@@ -83,9 +81,7 @@ class DeepspeedZeroPlacement(PlacementStrategy):
             strategy_key="deepspeed_zero",
             world_size=base.world_size,
             rank_to_device_id=base.rank_to_device_id,
-            rank_roles=MappingProxyType(
-                {r: "zero" for r in range(base.world_size)}
-            ),
+            rank_roles=MappingProxyType({r: "zero" for r in range(base.world_size)}),
             metadata=MappingProxyType({"hint": "deepspeed_zero"}),
         )
 

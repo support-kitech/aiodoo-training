@@ -76,9 +76,7 @@ class RunRecord:
         return replace(
             self,
             packing_fingerprint=(
-                self.packing_fingerprint
-                if packing_fingerprint is None
-                else packing_fingerprint
+                self.packing_fingerprint if packing_fingerprint is None else packing_fingerprint
             ),
             curriculum_fingerprint=(
                 self.curriculum_fingerprint

@@ -201,9 +201,7 @@ def cmd_experiments_list(tracking_root: Path) -> int:
     store = TrackingStore(tracking_root)
     meta = MetadataStore(store.root)
     for item in meta.list_experiments():
-        print(
-            f"{item.experiment_id.value}\t{item.name}\t{item.status}\truns={item.run_count}"
-        )
+        print(f"{item.experiment_id.value}\t{item.name}\t{item.status}\truns={item.run_count}")
     return 0
 
 

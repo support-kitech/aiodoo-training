@@ -12,6 +12,7 @@ from aiodoo_training.builders.curriculum_builders import (
     CurriculumContextBuilder,
     CurriculumPlanBuilder,
 )
+from aiodoo_training.builders.distributed_builders import DistributedContextBuilder
 from aiodoo_training.builders.evaluation_builders import (
     EvaluationBuilder,
     EvaluationContextBuilder,
@@ -25,7 +26,6 @@ from aiodoo_training.builders.model_builders import (
     ModelContextBuilder,
 )
 from aiodoo_training.builders.packing_builders import PackingBuilder, PackingContextBuilder
-from aiodoo_training.builders.distributed_builders import DistributedContextBuilder
 from aiodoo_training.builders.tracking_builders import TrackingBuilder
 
 __all__ = [

@@ -69,9 +69,7 @@ class HFEvaluator(Evaluator):
             _require_transformers()
         except DomainError:
             # CPU CI / missing extras: fall back to deterministic stub metrics.
-            return self._stub.evaluate(
-                model, dataset_refs, spec, experiment_id, run_id, execution
-            )
+            return self._stub.evaluate(model, dataset_refs, spec, experiment_id, run_id, execution)
         except FactoryError:
             raise
         # Phase 4: thin wrapper — delegate to stub for deterministic CI parity.

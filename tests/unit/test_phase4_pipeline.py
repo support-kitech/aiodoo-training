@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from aiodoo_training.bootstrap import bootstrap_phase4
+from aiodoo_training.bootstrap import bootstrap_phase7
 from aiodoo_training.builders.evaluation_builders import enable_evaluation
 from aiodoo_training.domain.enums import DatasetType, StageStatus, TrainingStatus
 from aiodoo_training.domain.identifiers import RunId
@@ -21,7 +21,8 @@ from aiodoo_training.training.engine import (
 
 @pytest.fixture(autouse=True)
 def _bootstrap() -> None:
-    bootstrap_phase4(overwrite=True)
+    # build_phase4_pipeline RESOLVE_EXECUTION requires placement registry (Phase 7).
+    bootstrap_phase7(overwrite=True)
 
 
 def _eval_ref(path: Path) -> DatasetRef:

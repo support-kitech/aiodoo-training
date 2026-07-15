@@ -307,9 +307,7 @@ class PlanPackingStage(PipelineStageHandler):
         stages: tuple[str, ...] = ()
         if isinstance(curriculum_raw, dict):
             curriculum_backend = str(curriculum_raw.get("backend", curriculum_backend))
-            curriculum_mode = CurriculumMode(
-                str(curriculum_raw.get("mode", curriculum_mode.value))
-            )
+            curriculum_mode = CurriculumMode(str(curriculum_raw.get("mode", curriculum_mode.value)))
             stages = tuple(str(s) for s in (curriculum_raw.get("stages") or ()))
 
         sampling_backend = "identity"
@@ -345,9 +343,7 @@ class PlanPackingStage(PipelineStageHandler):
             sampling_spec=sampling_spec,
             packing_policy=packing_policy,
             experiment_id=(
-                context.experiment_id
-                or config.experiment_id
-                or ExperimentId(value=config.name)
+                context.experiment_id or config.experiment_id or ExperimentId(value=config.name)
             ),
             run_id=context.run_id or RunId(value="phase5-run"),
             seed=config.seed,
@@ -682,9 +678,7 @@ class EvaluateStage(PipelineStageHandler):
         config = require_config(context)
         raw = context.get("raw_config") or {}
         eval_raw = raw.get("evaluation") if isinstance(raw, dict) else None
-        eval_fragment = parse_evaluation_config(
-            eval_raw if isinstance(eval_raw, dict) else {}
-        )
+        eval_fragment = parse_evaluation_config(eval_raw if isinstance(eval_raw, dict) else {})
 
         evaluation_spec = config.evaluation
         if not evaluation_spec.enabled and not eval_fragment.enabled:
@@ -791,9 +785,7 @@ class ExportStage(PipelineStageHandler):
         config = require_config(context)
         raw = context.get("raw_config") or {}
         export_raw = raw.get("export") if isinstance(raw, dict) else None
-        export_fragment = parse_export_config(
-            export_raw if isinstance(export_raw, dict) else None
-        )
+        export_fragment = parse_export_config(export_raw if isinstance(export_raw, dict) else None)
 
         if not export_fragment.enabled and context.get("force_export") is not True:
             return context, _skip(self._name, self.stage, "export not requested")
@@ -880,8 +872,10 @@ class FinalizeStage(PipelineStageHandler):
         maybe_finalize_tracking(context)
         tracker = context.get("tracker")
         # Coordinator.close already closes the tracker when present.
-        if tracker is not None and context.get("tracking_coordinator") is None and hasattr(
-            tracker, "close"
+        if (
+            tracker is not None
+            and context.get("tracking_coordinator") is None
+            and hasattr(tracker, "close")
         ):
             tracker.close()
         runtime = context.get("distributed_runtime")

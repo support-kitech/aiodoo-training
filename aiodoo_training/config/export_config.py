@@ -37,9 +37,7 @@ class ExportFragment(BaseModel):
     accepted_artifact_protocols: list[str] = Field(
         default_factory=lambda: [ARTIFACT_PROTOCOL_VERSION]
     )
-    required_roles: list[str] = Field(
-        default_factory=lambda: ["peft_adapter", "manifest"]
-    )
+    required_roles: list[str] = Field(default_factory=lambda: ["peft_adapter", "manifest"])
     optional_roles: list[str] = Field(
         default_factory=lambda: ["tokenizer", "model_card", "evaluation_report"]
     )

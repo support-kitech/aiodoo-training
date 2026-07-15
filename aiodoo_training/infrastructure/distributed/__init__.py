@@ -58,9 +58,7 @@ class FakeDistributedBackend(DistributedBackend):
             raise TimeoutError("fake barrier timeout")
         # Single-process: immediate success.
 
-    def broadcast_bytes(
-        self, group_id: str, payload: bytes, *, src_rank: int
-    ) -> bytes:
+    def broadcast_bytes(self, group_id: str, payload: bytes, *, src_rank: int) -> bytes:
         self._require_open()
         assert self._topology is not None
         if src_rank < 0 or src_rank >= self._topology.world_size:
@@ -138,9 +136,7 @@ class RegistrationOnlyDistributedBackend(DistributedBackend):
     def barrier(self, group_id: str, *, timeout_sec: float) -> None:
         raise DistributedError(f"{self._key} backend not initialized")
 
-    def broadcast_bytes(
-        self, group_id: str, payload: bytes, *, src_rank: int
-    ) -> bytes:
+    def broadcast_bytes(self, group_id: str, payload: bytes, *, src_rank: int) -> bytes:
         raise DistributedError(f"{self._key} backend not initialized")
 
     def all_reduce_metrics(

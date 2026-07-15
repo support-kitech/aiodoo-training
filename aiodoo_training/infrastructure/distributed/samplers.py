@@ -47,6 +47,4 @@ def _deterministic_shuffle(items: list[int], seed: int) -> list[int]:
 def register_default_distributed_samplers(*, overwrite: bool = False) -> None:
     from aiodoo_training.registries import distributed_sampler_registry
 
-    distributed_sampler_registry.register(
-        "shard", ShardDistributedSampler, overwrite=overwrite
-    )
+    distributed_sampler_registry.register("shard", ShardDistributedSampler, overwrite=overwrite)

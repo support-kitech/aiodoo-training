@@ -47,9 +47,7 @@ def test_weighted_and_temperature_deterministic() -> None:
 
 def test_balanced_interleaves_strata() -> None:
     examples = make_examples(4)
-    out = BalancedSampling().sample(
-        examples, SamplingSpec(strata_key="dataset_type", seed=1)
-    )
+    out = BalancedSampling().sample(examples, SamplingSpec(strata_key="dataset_type", seed=1))
     types = [e.dataset_type for e in out]
     # Round-robin across sorted strata keys → alternating when counts equal.
     assert len(types) == 4
@@ -69,7 +67,5 @@ def test_sampling_in_planner() -> None:
         packing_mode=PackingMode.NONE,
         seed=99,
     )
-    assert [e.example_id for e in a.ordered_examples] == [
-        e.example_id for e in b.ordered_examples
-    ]
+    assert [e.example_id for e in a.ordered_examples] == [e.example_id for e in b.ordered_examples]
     assert a.sampling_fingerprint == b.sampling_fingerprint
