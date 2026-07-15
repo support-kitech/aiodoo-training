@@ -20,7 +20,7 @@ torch>=2.2.0,<3
 peft>=0.12.0,<0.15
 accelerate>=0.33.0,<1.1
 bitsandbytes>=0.43.0,<0.46
-huggingface_hub>=0.24.0,<1
+huggingface_hub>=1.2.0,<2
 safetensors>=0.4.0,<1
 # datasets package (HF) — used by some Trainer codepaths; keep aligned with transformers
 datasets>=2.20.0,<4
