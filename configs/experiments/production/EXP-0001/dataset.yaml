@@ -1,0 +1,106 @@
+# ============================================================
+# EXP-0001 — Dataset (workspace-relative, no Drive absolute paths)
+# ============================================================
+# Resolution contract (aiodoo-colab):
+#   workspace.datasets / <dataset_version> / <file>
+#   e.g. AIODOO/datasets/v1.0.0/coding_v1_0.jsonl
+#
+# aiodoo-colab sets AIODOO_COLAB_DATASET_PATH to the version root.
+# Paths below are relative to that version root (not host Linux paths).
+#
+# Progressive training order (REQUIRED):
+#   Stage N adapter OUT → Stage N+1 adapter IN (resume_from)
+# ============================================================
+
+dataset_version: "v1.0.0"
+dataset_root: "v1.0.0"
+
+# Progressive curriculum: sequential stages match curriculum.stages in training.yaml
+progressive_training:
+  enabled: true
+  description: >
+    Train one stage at a time. After each stage completes, the exported
+    PEFT adapter becomes the resume/base adapter for the next stage.
+  adapter_naming: "EXP-0001-stage{NN}-{stage_name}"
+  stages:
+    - stage: 1
+      name: coding
+      file: coding_v1_0.jsonl
+      dataset_type: coding
+      input_adapter: null
+      output_adapter: EXP-0001-stage01-coding
+    - stage: 2
+      name: planner
+      file: planner_v1_0.jsonl
+      dataset_type: planner
+      input_adapter: EXP-0001-stage01-coding
+      output_adapter: EXP-0001-stage02-planner
+    - stage: 3
+      name: execution
+      file: execution_dataset.jsonl
+      dataset_type: execution
+      input_adapter: EXP-0001-stage02-planner
+      output_adapter: EXP-0001-stage03-execution
+    - stage: 4
+      name: repair
+      file: repair_v1_0.jsonl
+      dataset_type: repair
+      input_adapter: EXP-0001-stage03-execution
+      output_adapter: EXP-0001-stage04-repair
+    - stage: 5
+      name: context
+      file: context_v1_0.jsonl
+      dataset_type: context
+      input_adapter: EXP-0001-stage04-repair
+      output_adapter: EXP-0001-stage05-context
+    - stage: 6
+      name: conversation
+      file: conversation_dataset.jsonl
+      dataset_type: conversation
+      input_adapter: EXP-0001-stage05-context
+      output_adapter: EXP-0001-stage06-conversation
+    - stage: 7
+      name: approval
+      file: approval_dataset.jsonl
+      dataset_type: approval
+      input_adapter: EXP-0001-stage06-conversation
+      output_adapter: EXP-0001-stage07-approval
+    - stage: 8
+      name: evaluation
+      file: evaluation_dataset.jsonl
+      dataset_type: evaluation
+      input_adapter: EXP-0001-stage07-approval
+      output_adapter: EXP-0001-stage08-evaluation
+
+# Dataset mix consumed by AssembleDatasets (paths relative to dataset version root).
+# Active stage for this run: Stage 1 (coding). Advance stages via README procedure
+# (swap active entry + resume_from), do not train all stages in one process.
+shuffle: true
+seed: 42
+
+datasets:
+  - name: stage01_coding
+    # Workspace: datasets/v1.0.0/coding_v1_0.jsonl
+    path: coding_v1_0.jsonl
+    dataset_type: coding
+    protocol_version: "1.0"
+    weight: 1.0
+
+# Registered for curriculum validation / documentation (not all loaded at once)
+stage_catalog:
+  - file: coding_v1_0.jsonl
+    dataset_type: coding
+  - file: planner_v1_0.jsonl
+    dataset_type: planner
+  - file: execution_dataset.jsonl
+    dataset_type: execution
+  - file: repair_v1_0.jsonl
+    dataset_type: repair
+  - file: context_v1_0.jsonl
+    dataset_type: context
+  - file: conversation_dataset.jsonl
+    dataset_type: conversation
+  - file: approval_dataset.jsonl
+    dataset_type: approval
+  - file: evaluation_dataset.jsonl
+    dataset_type: evaluation

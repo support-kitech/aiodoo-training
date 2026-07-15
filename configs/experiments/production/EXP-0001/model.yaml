@@ -1,0 +1,28 @@
+# ============================================================
+# EXP-0001 — Base model
+# ============================================================
+# Provider: Hugging Face Hub
+# Workspace cache (aiodoo-colab ModelStore):
+#   <workspace>/models/base/Qwen__Qwen3-8B/
+# Colab overlays absolute path via AIODOO_COLAB_MODEL_PATH.
+# Do NOT hardcode Google Drive or Linux host paths here.
+# ============================================================
+
+model:
+  identifier: Qwen/Qwen3-8B
+  family: qwen
+  # fp16: Tesla T4 (sm_75) has no production bf16; fp16 is the stable AMP dtype
+  precision: fp16
+  # HuggingFace Causal LM backend registered as hf_causal
+  backend: hf_causal
+  # local_path left unset; resolved at runtime from workspace model cache
+  tokenizer_binding: qwen
+
+# Future base models (NOT used by EXP-0001 — tracked for EXP-0002)
+future_models:
+  EXP-0002:
+    identifier: deepseek-ai/DeepSeek-R1-0528-Qwen3-8B
+    family: qwen
+    notes: >
+      Successor experiment after EXP-0001 progressive curriculum completes.
+      Same workspace cache layout: models/base/deepseek-ai__DeepSeek-R1-0528-Qwen3-8B/

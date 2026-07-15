@@ -1,0 +1,46 @@
+# ============================================================
+# EXP-0001 — Canonical production experiment (root)
+# ============================================================
+# Invoke:
+#   python train.py --config configs/experiments/production/EXP-0001/experiment.yaml
+#
+# Fragments are composed via include (no duplicated knobs).
+# Workspace paths are logical; aiodoo-colab overlays absolute paths via
+# AIODOO_COLAB_* environment variables at launch time.
+# ============================================================
+
+schema_version: "1.0"
+name: EXP-0001
+seed: 42
+
+include:
+  - dataset.yaml
+  - model.yaml
+  - training.yaml
+  - evaluation.yaml
+  - export.yaml
+
+# Experiment identity (portable; must not embed host-specific absolute paths)
+experiment:
+  id: EXP-0001
+  title: "AIODOO Production — Progressive Odoo Engineering LM"
+  version: "1.0.0"
+  owner: aiodoo
+  stage: production
+
+determinism:
+  seed: 42
+  # True: reproduce fingerprint and resume validity across Colab sessions
+  cudnn_deterministic: true
+  # False: determinism over micro-benchmark speed on T4
+  cudnn_benchmark: false
+
+tracking:
+  # local_jsonl under workspace logs when Colab overlays root_dir
+  tracker_type: local_jsonl
+  enabled: true
+  experiment_name: EXP-0001
+  # Relative; Colab may override via metrics/logs env hints
+  root_dir: artifacts/tracking/EXP-0001
+  flush_every_n_steps: 20
+  nonfatal_sink_errors: true

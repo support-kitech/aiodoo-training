@@ -1,0 +1,64 @@
+# ============================================================
+# EXP-0001 — Export / artifacts
+# ============================================================
+# Colab overlays output via AIODOO_COLAB_EXPORT_OUTPUT /
+# AIODOO_COLAB_MERGED_OUTPUT / AIODOO_COLAB_ADAPTER_OUTPUT.
+# Paths here remain workspace-relative (no Drive absolute paths).
+# ============================================================
+
+export:
+  enabled: true
+  # Production export uses HF/PEFT exporter when registered; stub validates contract in CI
+  backend: huggingface
+  profile: peft_default
+  # Relative export root; Colab remaps into models/exports/EXP-0001/
+  output_dir: artifacts/export/EXP-0001
+  export_types:
+    - peft_adapter
+    - tokenizer
+    - manifest
+    - model_card
+    - bundle
+  # Require Stage 8 production eval before merging
+  require_evaluation: true
+  require_pass_for_export: true
+  validation_policy: strict
+  required_roles:
+    - peft_adapter
+    - manifest
+  optional_roles:
+    - tokenizer
+    - model_card
+    - evaluation_report
+
+# Directory naming conventions (workspace models/)
+directory_naming:
+  adapters: "models/adapters/EXP-0001/<adapter_name>/"
+  checkpoints: "models/adapters/EXP-0001/checkpoints/"
+  merged: "models/merged/EXP-0001/"
+  exports: "models/exports/EXP-0001/"
+  logs: "logs/EXP-0001/"
+  metrics: "logs/EXP-0001/metrics/"
+  fingerprints: "models/exports/EXP-0001/fingerprints/"
+
+# Artifacts produced
+artifacts:
+  adapter:
+    description: PEFT / QLoRA adapter weights + adapter_config.json
+    required: true
+  merged_model:
+    description: Base + adapter merge under models/merged/EXP-0001/
+    required: true
+    after: stage_08_pass
+  metadata:
+    description: Experiment manifest, training hyperparameters, stage chain
+    required: true
+  fingerprints:
+    description: Config / model / adapter / dataset digests for provenance
+    required: true
+  gguf:
+    description: >
+      Future quantised GGUF export for local inference. Not produced by EXP-0001
+      tonight — reserved directory models/exports/EXP-0001/gguf/ for EXP follow-ups.
+    required: false
+    status: reserved

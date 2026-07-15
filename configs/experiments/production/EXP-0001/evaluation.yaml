@@ -1,0 +1,75 @@
+# ============================================================
+# EXP-0001 — Evaluation
+# ============================================================
+
+evaluation:
+  # Enabled for Stage 8 and smoke checks; Stage 1–7 may keep enabled with lightweight metrics
+  enabled: true
+  # stub until HF eval profiler is bound for this host; switch to registered HF key when ready
+  backend: stub
+  profile: default
+  metrics:
+    - loss
+    - perplexity
+    - token_accuracy
+  # Cap examples for Colab wall-clock (smoke); raise for production gate
+  max_examples: 128
+  seed: 42
+  split: validation
+  acceptance:
+    combine: all
+    require_pass_for_export: true
+    thresholds:
+      # Production gate: keep mean eval loss under 2.5 after Stage 8
+      - metric_key: loss
+        op: le
+        value: 2.5
+        severity: error
+      # Soft quality signal
+      - metric_key: token_accuracy
+        op: ge
+        value: 0.35
+        severity: warn
+
+# Evaluation schedule (documented for operators; engine uses evaluation.* above)
+schedule:
+  smoke:
+    when: after_every_stage
+    max_examples: 32
+    purpose: Fast Colab sanity — catch broken adapters before next stage
+  production:
+    when: after_stage_08_evaluation
+    max_examples: 512
+    purpose: Final quality gate before export / merge
+
+# Sample prompts for offline smoke (human / notebook review; not injected into trainer)
+sample_prompts:
+  - id: coding_smoke_01
+    prompt: >
+      Implement an Odoo 18 model method that validates a unique constraint
+      on partner VAT and returns a UserError when violated.
+    expect: Structured answer with model method and raised UserError.
+  - id: planner_smoke_01
+    prompt: >
+      Plan the module changes needed to add a computed field on sale.order
+      that sums untaxed lines with tax-included display option.
+    expect: Ordered plan with models, fields, and views impacted.
+  - id: repair_smoke_01
+    prompt: >
+      Diagnose why an Odoo computed field is not recomputing after related
+      write and propose a minimal patch.
+    expect: Root cause + dependency / @api.depends fix.
+
+# Expected metrics (targets, not runtime schema)
+expected_metrics:
+  smoke:
+    loss_max: 3.5
+    token_accuracy_min: 0.25
+  production:
+    loss_max: 2.5
+    token_accuracy_min: 0.35
+    perplexity_max: 15.0
+
+pass_criteria:
+  smoke: "All smoke prompts produce coherent Odoo-engineering answers; loss ≤ 3.5"
+  production: "Acceptance thresholds pass; Stage 8 eval report recorded under logs/EXP-0001"

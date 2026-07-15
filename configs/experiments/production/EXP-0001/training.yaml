@@ -1,0 +1,187 @@
+# ============================================================
+# EXP-0001 — Training (Tesla T4 / Colab production profile)
+# ============================================================
+# Hardware envelope: Google Colab Tesla T4 (16 GB).
+# Goal: maximum practical quality without chronic OOM —
+#   QLoRA 4-bit + grad checkpointing + seq 2048 + packing +
+#   effective batch 16 (micro-batch 1 × accum 16).
+# Every knob includes a WHY comment.
+# ============================================================
+
+# --- Trainer / model adaptation backends ---------------------------------
+training:
+  # hf_trainer: production trainer backend for Transformers/PEFT loops
+  backend: hf_trainer
+  # 1 epoch per progressive stage — curriculum owns multi-pass progression
+  num_epochs: 1.0
+  # Leave max_steps null so epoch completion governs stage exit
+  # max_steps: null
+  # Frequent enough for Colab disconnect diagnosis without log spam
+  logging_steps: 10
+  # 2e-4 is aggressive for QLoRA on 8B; 1e-4 is the stability/quality sweet spot
+  learning_rate: 0.0001
+  # Light decay; LoRA already is a strong regularizer
+  weight_decay: 0.01
+  # Warm ~3% of steps into cosine decay for stable early updates
+  warmup_ratio: 0.03
+  # Micro-batch 1: only safe size for 8B QLoRA @ 2048 on 16 GB
+  per_device_batch_size: 1
+  # Accum 16 → effective batch 16 (quality), memory ≈ batch-1 peak
+  gradient_accumulation_steps: 16
+
+adaptation:
+  # qlora: 4-bit base + LoRA adapters — required for 8B on T4
+  adapter_type: qlora
+  strategy: qlora
+  # Rank 16: capacity for Odoo engineering patterns without T4 OOM at 2048
+  rank: 16
+  # Alpha = 2×rank keeps LoRA scaling conventional (scale = alpha/rank = 2)
+  alpha: 32
+  # Mild dropout reduces stage-overfitting across progressive datasets
+  dropout: 0.05
+  # Full attention + MLP projections: highest practical PEFT quality on causal LMs
+  target_modules:
+    - q_proj
+    - k_proj
+    - v_proj
+    - o_proj
+    - gate_proj
+    - up_proj
+    - down_proj
+
+optimizer:
+  # AdamW is the PEFT default; matches documented HF Trainer path
+  name: adamw
+  learning_rate: 0.0001
+  weight_decay: 0.01
+  beta1: 0.9
+  beta2: 0.999
+  eps: 1.0e-8
+
+scheduler:
+  # Cosine: smooth decay works well for single-epoch stage runs
+  name: cosine
+  warmup_ratio: 0.03
+
+gradient:
+  # Clip 1.0 prevents rare 4-bit spikes from destabilizing QLoRA
+  max_norm: 1.0
+  # Mirror training.gradient_accumulation_steps for fragment validators
+  accumulation_steps: 16
+
+# --- Precision / memory / device ----------------------------------------
+execution:
+  device:
+    # auto: prefer CUDA when Colab GPU is attached
+    preferred: auto
+    # false for production GPU run — fail visibly if GPU missing
+    allow_cpu_fallback: false
+  precision:
+    # fp16: T4-safe AMP (bf16 needs Ampere+)
+    compute: fp16
+    # 4-bit load is mandatory for Qwen3-8B weights on 16 GB
+    load_in_4bit: true
+    load_in_8bit: false
+  memory:
+    # Checkpoint activations: large VRAM win for long-context PEFT
+    activation_checkpointing: true
+    # Offload only if OOM persists; disabled by default for throughput
+    allow_cpu_offload: false
+  # Single GPU Colab — no DeepSpeed/FSDP in this experiment
+  accelerator: none
+  resource_planner: static
+
+precision:
+  # Training-loop AMP dtype matches execution.precision.compute
+  precision: fp16
+  # Duplicate checkpointing flag for PrecisionSpec consumers
+  gradient_checkpointing: true
+
+# --- Sequence packing / curriculum --------------------------------------
+packing:
+  # concat packing raises tokens/step vs pad-waste on variable-length Odoo samples
+  backend: concat
+  mode: concat
+  # 2048: longest stable context on T4 with 8B QLoRA + packing (4096 OOMs)
+  max_sequence_length: 2048
+  # Cap packed examples so one long sample cannot starve others
+  max_examples_per_sequence: 8
+  overflow: defer
+  drop_last: false
+  seed: 42
+  # Align to tensor core-friendly widths under fp16
+  pad_to_multiple_of: 8
+
+memory_packing:
+  # Soft target helps planner avoid pathological padding ratios
+  target_tokens_per_batch: 2048
+  max_padding_ratio: 0.35
+  prefer_length_buckets: true
+  enable_packed_attention_hints: true
+
+curriculum:
+  # sequential: Stage 1→8 progressive skill chain (see dataset.yaml)
+  backend: sequential
+  mode: sequential
+  stages:
+    - coding
+    - planner
+    - execution
+    - repair
+    - context
+    - conversation
+    - approval
+    - evaluation
+  seed: 42
+
+sampling:
+  # identity: trust curriculum order; shuffle already applied at mix level
+  backend: identity
+  seed: 42
+  temperature: 1.0
+
+# --- Checkpoints / resume -----------------------------------------------
+checkpointing:
+  # Relative artifact tree; Colab overlays adapter/checkpoint dirs
+  output_dir: artifacts/checkpoints/EXP-0001
+  # Every 200 steps: ~12–15 min cadence on T4 without thrashing Drive I/O
+  save_steps: 200
+  # Keep last 3: enough to resume after Colab preempt without filling Drive
+  save_total_limit: 3
+  # Persist emergency state when a stage crashes
+  save_on_failure: true
+  # Fingerprint/strict checks before resume
+  validate_on_load: true
+  retention: keep_last
+  # Stage 1 starts fresh. Later stages set resume_from to prior adapter/ckpt
+  # (see README progressive procedure). Example after Stage 1:
+  # resume_from: artifacts/checkpoints/EXP-0001/stage01-coding/final
+  resume_from: null
+
+resume:
+  # strict: refuse mismatched fingerprints — required for progressive trust
+  policy: strict
+
+# --- Metrics / callbacks / flash-attn note ------------------------------
+metrics:
+  # Written under checkpoint tree (Colab may remap via AIODOO_COLAB_METRICS_OUTPUT)
+  history_path: artifacts/checkpoints/EXP-0001/metrics/history.jsonl
+
+callbacks:
+  names:
+    - logging
+
+# Flash Attention 2: use when the Colab image provides flash-attn for T4/Ampere.
+# Not forced here — missing kernels must not crash the public train path.
+# When available, set HF model load kwarg attn_implementation=flash_attention_2
+# via infrastructure backend extras in the training host environment.
+attn:
+  preferred: sdpa
+  allow_flash_attention_2: true
+
+distributed:
+  enabled: false
+  world_size: 1
+  num_nodes: 1
+  global_rank: 0
+  local_rank: 0
