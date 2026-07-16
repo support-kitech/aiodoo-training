@@ -15,9 +15,9 @@ training:
   # 1 epoch per progressive stage — curriculum owns multi-pass progression
   num_epochs: 1.0
   # Leave max_steps null so epoch completion governs stage exit
-  max_steps: 1
+  # max_steps: 1
   # Frequent enough for Colab disconnect diagnosis without log spam
-  logging_steps: 1
+  logging_steps: 10
   # 2e-4 is aggressive for QLoRA on 8B; 1e-4 is the stability/quality sweet spot
   learning_rate: 0.0001
   # Light decay; LoRA already is a strong regularizer
@@ -27,7 +27,7 @@ training:
   # Micro-batch 1: only safe size for 8B QLoRA @ 2048 on ~15 GB usable T4 VRAM
   per_device_batch_size: 1
   # Accum 16 → effective batch 16 (quality). Peak VRAM ≈ micro-batch (accum is compute time)
-  gradient_accumulation_steps: 1
+  gradient_accumulation_steps: 16
 
 adaptation:
   # qlora: 4-bit base + LoRA adapters — required for 8B on T4
@@ -105,7 +105,7 @@ packing:
   backend: concat
   mode: concat
   # 2048: longest stable context on T4 with 8B QLoRA + packing (4096 OOMs)
-  max_sequence_length: 256
+  max_sequence_length: 2048
   # Cap packed examples so one long sample cannot starve others
   max_examples_per_sequence: 8
   overflow: defer
@@ -147,7 +147,7 @@ checkpointing:
   # Relative artifact tree; Colab overlays adapter/checkpoint dirs
   output_dir: artifacts/checkpoints/EXP-0001
   # Every 200 steps: ~12–15 min cadence on T4 without thrashing Drive I/O
-  save_steps: 1
+  save_steps: 200
   # Keep last 3: enough to resume after Colab preempt without filling Drive
   save_total_limit: 3
   # Persist emergency state when a stage crashes
