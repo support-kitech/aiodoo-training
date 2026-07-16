@@ -27,7 +27,7 @@ training:
   # Micro-batch 1: only safe size for 8B QLoRA @ 2048 on ~15 GB usable T4 VRAM
   per_device_batch_size: 1
   # Accum 16 → effective batch 16 (quality). Peak VRAM ≈ micro-batch (accum is compute time)
-  gradient_accumulation_steps: 16
+  gradient_accumulation_steps: 1
 
 adaptation:
   # qlora: 4-bit base + LoRA adapters — required for 8B on T4
@@ -105,7 +105,7 @@ packing:
   backend: concat
   mode: concat
   # 2048: longest stable context on T4 with 8B QLoRA + packing (4096 OOMs)
-  max_sequence_length: 2048
+  max_sequence_length: 256
   # Cap packed examples so one long sample cannot starve others
   max_examples_per_sequence: 8
   overflow: defer
