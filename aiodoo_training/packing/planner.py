@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from uuid import uuid4
@@ -28,7 +28,7 @@ from aiodoo_training.domain.packing_policies import PackingPolicy, SamplingSpec
 from aiodoo_training.domain.packing_session import PackingSession, PackingStatistics
 from aiodoo_training.packing.context import PackingContext
 from aiodoo_training.packing.lifecycle import PackingLifecycle
-from aiodoo_training.packing.token_rows import resolve_token_rows
+from aiodoo_training.packing.token_rows import TokenRow, resolve_token_rows
 from aiodoo_training.ports.packing import CurriculumStrategy, PackingStrategy, SamplingStrategy
 
 
@@ -92,6 +92,7 @@ class SchedulePlanner:
         seed: int = 42,
         packing_session: PackingSession | None = None,
         curriculum_session: CurriculumSession | None = None,
+        provided_token_rows: Mapping[str, TokenRow] | None = None,
     ) -> SchedulePlan:
         now = datetime.now(UTC)
         examples_t = tuple(examples)
@@ -167,7 +168,11 @@ class SchedulePlanner:
         )
 
         # Packing
-        token_rows = resolve_token_rows(ordered, max_length=packing_policy.max_sequence_length)
+        token_rows = resolve_token_rows(
+            ordered,
+            max_length=packing_policy.max_sequence_length,
+            provided=provided_token_rows,
+        )
         p_ctx = PackingContext(
             examples=ordered,
             packing_session=p_session,

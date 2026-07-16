@@ -23,6 +23,45 @@ class TokenRow:
         return len(self.input_ids)
 
 
+def _trim_trailing_pad(
+    input_ids: Sequence[int],
+    attention_mask: Sequence[int],
+    labels: Sequence[int],
+) -> tuple[tuple[int, ...], tuple[int, ...], tuple[int, ...]]:
+    """Drop trailing padding positions so packing sees effective sequence length."""
+    end = len(input_ids)
+    while end > 0 and attention_mask[end - 1] == 0:
+        end -= 1
+    if end == 0:
+        return tuple(input_ids), tuple(attention_mask), tuple(labels)
+    return (
+        tuple(input_ids[:end]),
+        tuple(attention_mask[:end]),
+        tuple(labels[:end]),
+    )
+
+
+def token_batch_to_rows(batch: TokenBatch) -> dict[str, TokenRow]:
+    """
+    Convert a HuggingFace ``TokenBatch`` into per-example ``TokenRow`` objects.
+
+    Preserves tokenizer ``input_ids``, ``attention_mask``, and ``labels`` without
+    synthesising ids. Trailing pad tokens (``attention_mask == 0``) are removed so
+    packing strategies measure real content length; ``emit_sequences`` re-pads later.
+    """
+    out: dict[str, TokenRow] = {}
+    for example_id, input_ids, attention_mask, labels in zip(
+        batch.example_ids,
+        batch.input_ids,
+        batch.attention_mask,
+        batch.labels,
+        strict=True,
+    ):
+        ids, mask, labs = _trim_trailing_pad(input_ids, attention_mask, labels)
+        out[example_id] = TokenRow(input_ids=ids, attention_mask=mask, labels=labs)
+    return out
+
+
 def build_stub_token_row(example: TrainingExample, *, max_length: int) -> TokenRow:
     """
     Deterministic CPU stub tokens from example identity + message content.

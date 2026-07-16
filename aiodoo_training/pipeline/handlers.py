@@ -295,7 +295,11 @@ class TokenizeStage(PipelineStageHandler):
 
         examples = context.get("training_examples") or context.get("examples") or ()
         if examples and hasattr(tokenizer, "encode_examples"):
-            updates["token_batches"] = tokenizer.encode_examples(tuple(examples))
+            batch = tokenizer.encode_examples(tuple(examples))
+            from aiodoo_training.packing.token_rows import token_batch_to_rows
+
+            updates["token_batches"] = batch
+            updates["token_rows"] = token_batch_to_rows(batch)
             return context.with_values(**updates), _ok(self._name, self.stage, "encoded examples")
 
         if updates:
@@ -439,6 +443,15 @@ class PlanPackingStage(PipelineStageHandler):
             # No examples yet — skip packing (tokenization may not have materialised).
             return context, _skip(self._name, self.stage, "no training examples for packing")
 
+        from aiodoo_training.exceptions import DomainError
+        from aiodoo_training.pipeline.stage_helpers import trainer_backend_key
+
+        if trainer_backend_key(context, config) == "hf_trainer" and not context.get("token_rows"):
+            raise DomainError(
+                "PlanPackingStage requires PipelineContext['token_rows'] when "
+                "training.backend is hf_trainer."
+            )
+
         packing_backend = "none"
         packing_mode = PackingMode.NONE
         max_seq = config.packing.max_sequence_length
@@ -492,6 +505,7 @@ class PlanPackingStage(PipelineStageHandler):
             ),
             run_id=context.run_id or RunId(value="phase5-run"),
             seed=config.seed,
+            provided_token_rows=context.get("token_rows"),
         )
         return context.with_values(
             schedule_plan=plan,
@@ -635,6 +649,12 @@ class CreateTrainerStage(PipelineStageHandler):
                 save_total_limit=config.checkpointing.save_total_limit,
             )
 
+        bind_extra = dict(context.get("bind_extra") or {})
+        for key in ("token_batches", "tokenizer", "schedule_plan"):
+            value = context.get(key)
+            if value is not None:
+                bind_extra[key] = value
+
         training_context = TrainingContext(
             config=config,
             execution=execution,
@@ -662,7 +682,7 @@ class CreateTrainerStage(PipelineStageHandler):
             execution_digest=str(context.get("execution_digest") or ""),
             quantization_digest=str(context.get("quantization_digest") or ""),
             adaptation_strategy_key=str(context.get("adaptation_strategy_key") or ""),
-            bind_extra=dict(context.get("bind_extra") or {}),
+            bind_extra=bind_extra,
         )
         if hasattr(trainer, "bind"):
             trainer.bind(training_context)
