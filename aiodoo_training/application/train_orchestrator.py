@@ -48,7 +48,9 @@ class ExecutionResult:
 
 
 def _env_path(name: str) -> Path | None:
+    logger.info("name: %s", name)
     raw = os.environ.get(name)
+    logger.info("raw: %s", raw)
     if raw is None or not str(raw).strip():
         return None
     return Path(raw)
