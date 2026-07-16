@@ -67,12 +67,14 @@ def apply_colab_path_overrides(resolved: dict[str, Any]) -> dict[str, Any]:
     """
     data = dict(resolved)
     model_path = _env_path("AIODOO_COLAB_MODEL_PATH")
+    logger.info("model_path: %s", model_path)
     if model_path is not None:
         model = _as_dict(data.get("model"))
         model["local_path"] = str(model_path)
         data["model"] = model
 
     dataset_root = _env_path("AIODOO_COLAB_DATASET_PATH")
+    logger.info("dataset_root: %s", dataset_root)
     if dataset_root is not None:
         data["datasets"] = _rewrite_dataset_entries(data.get("datasets"), dataset_root)
 
