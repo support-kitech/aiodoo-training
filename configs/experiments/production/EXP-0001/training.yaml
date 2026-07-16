@@ -90,7 +90,8 @@ execution:
     allow_cpu_offload: false
   # Single GPU Colab — no DeepSpeed/FSDP in this experiment
   accelerator: none
-  resource_planner: static
+  # Production CUDA probe (TorchResourcePlanner); CI/example keep static
+  resource_planner: torch
 
 precision:
   # Training-loop AMP dtype matches execution.precision.compute

@@ -1,8 +1,8 @@
 """
-CPU-first resource planner (no Torch / CUDA imports).
+Resource planners.
 
-Provides a stable ExecutionEnvironment for Phase 1+ until GPU probes land
-under a Torch-backed planner in infrastructure.
+``StaticResourcePlanner`` — CPU-only (CI / default ``static`` / ``cpu`` keys).
+``TorchResourcePlanner`` — production CUDA probe (registry key ``torch``).
 """
 
 from __future__ import annotations
@@ -18,6 +18,7 @@ from aiodoo_training.domain.resources import (
     PrecisionPolicy,
 )
 from aiodoo_training.exceptions import DomainError
+from aiodoo_training.infrastructure.resources.torch_planner import TorchResourcePlanner
 from aiodoo_training.ports.resources import ResourcePlanner
 
 
@@ -85,7 +86,7 @@ class StaticResourcePlanner(ResourcePlanner):
 
 
 def register_default_resource_planners(*, overwrite: bool = False) -> None:
-    """Register the static CPU planner under the 'static' / 'cpu' keys."""
+    """Register CPU (``static``/``cpu``) and production Torch (``torch``) planners."""
     from aiodoo_training.registries import resource_planner_registry
 
     for key in ("static", "cpu"):
@@ -95,3 +96,16 @@ def register_default_resource_planners(*, overwrite: bool = False) -> None:
                 StaticResourcePlanner,
                 overwrite=overwrite,
             )
+    if not resource_planner_registry.exists("torch") or overwrite:
+        resource_planner_registry.register(
+            "torch",
+            TorchResourcePlanner,
+            overwrite=overwrite,
+        )
+
+
+__all__ = [
+    "StaticResourcePlanner",
+    "TorchResourcePlanner",
+    "register_default_resource_planners",
+]
