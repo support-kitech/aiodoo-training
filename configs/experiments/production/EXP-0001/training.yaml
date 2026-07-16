@@ -15,9 +15,9 @@ training:
   # 1 epoch per progressive stage — curriculum owns multi-pass progression
   num_epochs: 1.0
   # Leave max_steps null so epoch completion governs stage exit
-  # max_steps: null
+  max_steps: 1
   # Frequent enough for Colab disconnect diagnosis without log spam
-  logging_steps: 10
+  logging_steps: 1
   # 2e-4 is aggressive for QLoRA on 8B; 1e-4 is the stability/quality sweet spot
   learning_rate: 0.0001
   # Light decay; LoRA already is a strong regularizer
@@ -147,7 +147,7 @@ checkpointing:
   # Relative artifact tree; Colab overlays adapter/checkpoint dirs
   output_dir: artifacts/checkpoints/EXP-0001
   # Every 200 steps: ~12–15 min cadence on T4 without thrashing Drive I/O
-  save_steps: 200
+  save_steps: 1
   # Keep last 3: enough to resume after Colab preempt without filling Drive
   save_total_limit: 3
   # Persist emergency state when a stage crashes
