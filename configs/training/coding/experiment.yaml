@@ -1,16 +1,20 @@
 # ============================================================
-# EXP-0001 — Canonical production experiment (root)
+# coding — Canonical production training (root)
 # ============================================================
 # Invoke:
-#   python train.py --config configs/experiments/production/EXP-0001/experiment.yaml
+#   python train.py --config configs/training/coding/experiment.yaml
 #
 # Fragments are composed via include (no duplicated knobs).
 # Workspace paths are logical; aiodoo-colab overlays absolute paths via
 # AIODOO_COLAB_* environment variables at launch time.
+#
+# Public training id: coding
+# Published adapter:  aiodoo-coding
+# Internal id:        EXP-0001 (bookkeeping / migration only — never Drive paths)
 # ============================================================
 
 schema_version: "1.0"
-name: EXP-0001
+name: coding
 seed: 42
 
 include:
@@ -21,13 +25,18 @@ include:
   - evaluation.yaml
   - export.yaml
 
-# Experiment identity (portable; must not embed host-specific absolute paths)
+# Public training identity (portable; must not embed host-specific absolute paths)
 experiment:
-  id: EXP-0001
+  id: coding
+  internal_id: EXP-0001
   title: "AIODOO Production — Progressive Odoo Engineering LM"
   version: "1.0.0"
   owner: aiodoo
-  stage: production
+  stage: coding
+
+# Framework bookkeeping only — never used for Drive folders or UI labels.
+metadata:
+  internal_id: EXP-0001
 
 determinism:
   seed: 42
@@ -46,8 +55,8 @@ tracking:
   # local_jsonl under workspace logs when Colab overlays root_dir
   tracker_type: local_jsonl
   enabled: true
-  experiment_name: EXP-0001
-  # Production: experiments/EXP-0001/logs/tracking/ under Drive workspace.
-  root_dir: experiments/EXP-0001/logs/tracking
+  experiment_name: coding
+  # Production: experiments/coding/logs/tracking/ under Drive workspace.
+  root_dir: experiments/coding/logs/tracking
   flush_every_n_steps: 20
   nonfatal_sink_errors: true

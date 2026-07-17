@@ -24,6 +24,10 @@ from aiodoo_training.artifacts.publish_contract import (
     write_json,
 )
 from aiodoo_training.exceptions import ConfigError
+from aiodoo_training.naming import (
+    internal_id_for,
+    resolve_public_training_id,
+)
 
 _WORKSPACE_ENV = "AIODOO_WORKSPACE_ROOT"
 _DRIVE_LAYOUT = "drive_v1"
@@ -91,13 +95,21 @@ def should_use_canonical_layout(resolved: dict[str, Any] | None = None) -> bool:
 
 
 def resolve_experiment_id(resolved: dict[str, Any]) -> str:
-    experiment = resolved.get("experiment")
-    if isinstance(experiment, dict) and isinstance(experiment.get("id"), str):
-        return experiment["id"]
-    name = resolved.get("name")
-    if isinstance(name, str) and name.strip():
-        return name
-    return "unknown"
+    """
+    Resolve the public training id from config.
+
+    Name retained for callers; value is always a semantic training id
+    (``coding``, …), never a user-facing ``EXP-NNNN`` string.
+    """
+    try:
+        return resolve_public_training_id(resolved)
+    except ValueError:
+        return "unknown"
+
+
+def resolve_training_id(resolved: dict[str, Any]) -> str:
+    """Alias for :func:`resolve_experiment_id` (preferred public name)."""
+    return resolve_experiment_id(resolved)
 
 
 @dataclass(frozen=True, slots=True)
@@ -115,9 +127,9 @@ class ArtifactOutputManager:
         root = resolve_workspace_root(resolved)
         if root is None:
             return None
-        experiment_id = resolve_experiment_id(resolved)
+        training_id = resolve_training_id(resolved)
         return cls(
-            layout=ArtifactOutputLayout(workspace_root=root, experiment_id=experiment_id),
+            layout=ArtifactOutputLayout.for_training(root, training_id),
             resolved=resolved,
         )
 
@@ -140,12 +152,16 @@ class ArtifactOutputManager:
 
         tracking = dict(data.get("tracking") or {})
         tracking["root_dir"] = str(layout.tracking_root)
+        tracking["experiment_name"] = layout.training_id
         data["tracking"] = tracking
 
         workspace = dict(data.get("workspace") or {})
         workspace["root"] = str(layout.workspace_root)
         workspace["layout"] = _DRIVE_LAYOUT
-        workspace["experiment_id"] = layout.experiment_id
+        workspace["training_id"] = layout.training_id
+        workspace["adapter_id"] = layout.adapter_id
+        # Legacy key: public training id (not EXP-NNNN).
+        workspace["experiment_id"] = layout.training_id
         data["workspace"] = workspace
 
         return data
@@ -188,13 +204,16 @@ class ArtifactOutputManager:
 
         published_at = datetime.now(UTC).isoformat()
         manifest = {
-            "experiment_id": self.layout.experiment_id,
+            "training_id": self.layout.training_id,
+            "adapter_id": self.layout.adapter_id,
+            # Legacy key retained for older readers; value is the public training id.
+            "experiment_id": self.layout.training_id,
             "source_checkpoint": str(checkpoint_dir),
             "published_at": published_at,
             "artifact_type": "peft_adapter",
         }
         artifact_json = build_adapter_artifact_json(
-            experiment_id=self.layout.experiment_id,
+            experiment_id=self.layout.adapter_id,
             resolved=self.resolved,
             source_checkpoint=str(checkpoint_dir),
         )
@@ -221,17 +240,19 @@ class ArtifactOutputManager:
         return model_dir / ARTIFACT_METADATA_FILENAME
 
     def publish_merged_from_bundle(self, bundle_root: Path) -> Path | None:
-        """Copy merged weights from an export bundle to ``models/merged/{EXP}/``."""
+        """Copy merged weights from an export bundle to ``models/merged/{aiodoo-*}/``."""
         merged_src = bundle_root / "artifacts" / "merged"
         if not merged_src.is_dir():
             return None
         dest = self.layout.merged_dir
-        tmp_dir = dest.parent / f".tmp-merged-{self.layout.experiment_id}"
+        tmp_dir = dest.parent / f".tmp-merged-{self.layout.adapter_id}"
         if tmp_dir.exists():
             shutil.rmtree(tmp_dir, ignore_errors=True)
         shutil.copytree(merged_src, tmp_dir)
         manifest = {
-            "experiment_id": self.layout.experiment_id,
+            "training_id": self.layout.training_id,
+            "adapter_id": self.layout.adapter_id,
+            "experiment_id": self.layout.training_id,
             "source_bundle": str(bundle_root),
             "published_at": datetime.now(UTC).isoformat(),
             "artifact_type": "merged_model",
@@ -240,7 +261,7 @@ class ArtifactOutputManager:
         merged_artifact = {
             "artifact_type": "merged_model",
             "protocol_major": 1,
-            "identifier": self.layout.experiment_id,
+            "identifier": self.layout.adapter_id,
         }
         write_json(tmp_dir / ARTIFACT_METADATA_FILENAME, merged_artifact)
         from aiodoo_training.artifacts.publish_contract import atomic_replace_directory
@@ -258,19 +279,26 @@ class ArtifactOutputManager:
         extra: dict[str, Any] | None = None,
     ) -> Path:
         payload: dict[str, Any] = {
-            "experiment_id": self.layout.experiment_id,
+            "training_id": self.layout.training_id,
+            "adapter_id": self.layout.adapter_id,
+            # Legacy key: public training id (semantic), not EXP-NNNN.
+            "experiment_id": self.layout.training_id,
             "run_id": run_id,
             "success": success,
             "duration_seconds": duration_seconds,
             "paths": paths,
             "published_at": datetime.now(UTC).isoformat(),
         }
+        internal = internal_id_for(self.layout.training_id)
+        if internal is not None:
+            # Framework bookkeeping only — never used for Drive folder names.
+            payload["metadata"] = {"internal_id": internal}
         if extra:
             payload.update(extra)
         return self.write_json(self.layout.summary_path, payload)
 
     def snapshot_config(self, config_path: Path) -> Path | None:
-        """Copy experiment config snapshot into ``experiments/{EXP}/config/``."""
+        """Copy config snapshot into ``experiments/{training_id}/config/``."""
         if not config_path.is_file():
             return None
         dest = self.layout.experiment_config_dir / config_path.name
@@ -342,6 +370,7 @@ __all__ = [
     "artifact_paths_from_layout",
     "requires_drive_workspace",
     "resolve_experiment_id",
+    "resolve_training_id",
     "resolve_workspace_root",
     "should_use_canonical_layout",
     "validate_drive_workspace_contract",

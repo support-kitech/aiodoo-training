@@ -1,7 +1,7 @@
 # Example dataset mix fragment
 #
 # ROLE: Example / test fixture pointer only.
-# NOT loaded by configs/experiments/production/EXP-0001/.
+# NOT loaded by configs/training/coding/.
 # Consumed only when explicitly included (e.g. configs/experiments/example.yaml).
 
 datasets:

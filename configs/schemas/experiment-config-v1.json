@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://aiodoo.dev/schemas/experiment-config-v1.json",
   "title": "AIODOO Training Experiment Config",
-  "description": "Composed experiment document after include merge. additionalProperties remains true so operator documentation keys (progressive_training, schedule, etc.) are allowed. Required fields stay minimal for examples; production EXP-0001 sets critical training fields explicitly.",
+  "description": "Composed experiment document after include merge. additionalProperties remains true so operator documentation keys (progressive_training, schedule, etc.) are allowed. Required fields stay minimal for examples; production coding training sets critical training fields explicitly.",
   "type": "object",
   "required": ["schema_version", "name"],
   "properties": {
@@ -12,7 +12,7 @@
     "include": {
       "type": "array",
       "items": { "type": "string" },
-      "description": "Relative YAML fragments composed before validation. Production EXP-0001 uses sibling files only."
+      "description": "Relative YAML fragments composed before validation. Production coding training uses sibling files only."
     },
     "model": {
       "type": "object",

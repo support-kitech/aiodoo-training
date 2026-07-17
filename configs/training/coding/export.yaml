@@ -1,5 +1,5 @@
 # ============================================================
-# EXP-0001 — Export / artifacts
+# coding — Export / artifacts
 # ============================================================
 # Colab overlays output via AIODOO_COLAB_EXPORT_OUTPUT /
 # AIODOO_COLAB_MERGED_OUTPUT / AIODOO_COLAB_ADAPTER_OUTPUT.
@@ -11,8 +11,8 @@ export:
   # Production export uses registered HF PEFT exporter key (hf_peft)
   backend: hf_peft
   profile: peft_default
-  # Fallback when AIODOO_WORKSPACE_ROOT is unset. Production: models/exports/EXP-0001/
-  output_dir: models/exports/EXP-0001
+  # Fallback when AIODOO_WORKSPACE_ROOT is unset. Production: models/exports/aiodoo-coding/
+  output_dir: models/exports/aiodoo-coding
   export_types:
     - peft_adapter
     - tokenizer
@@ -34,13 +34,13 @@ export:
 
 # Directory naming conventions (workspace models/)
 directory_naming:
-  adapters: "models/adapters/EXP-0001/<adapter_name>/"
-  checkpoints: "models/adapters/EXP-0001/checkpoints/"
-  merged: "models/merged/EXP-0001/"
-  exports: "models/exports/EXP-0001/"
-  logs: "logs/EXP-0001/"
-  metrics: "logs/EXP-0001/metrics/"
-  fingerprints: "models/exports/EXP-0001/fingerprints/"
+  adapters: "models/adapters/aiodoo-coding/<adapter_name>/"
+  checkpoints: "models/adapters/aiodoo-coding/checkpoints/"
+  merged: "models/merged/aiodoo-coding/"
+  exports: "models/exports/aiodoo-coding/"
+  logs: "logs/coding/"
+  metrics: "logs/coding/metrics/"
+  fingerprints: "models/exports/aiodoo-coding/fingerprints/"
 
 # Artifacts produced
 artifacts:
@@ -48,7 +48,7 @@ artifacts:
     description: PEFT / QLoRA adapter weights + adapter_config.json
     required: true
   merged_model:
-    description: Base + adapter merge under models/merged/EXP-0001/
+    description: Base + adapter merge under models/merged/aiodoo-coding/
     required: true
     after: stage_08_pass
   metadata:
@@ -59,7 +59,7 @@ artifacts:
     required: true
   gguf:
     description: >
-      Future quantised GGUF export for local inference. Not produced by EXP-0001
-      tonight — reserved directory models/exports/EXP-0001/gguf/ for EXP follow-ups.
+      Future quantised GGUF export for local inference. Not produced by the coding
+      smoke run — reserved directory models/exports/aiodoo-coding/gguf/ for follow-ups.
     required: false
     status: reserved

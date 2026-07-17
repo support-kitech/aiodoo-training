@@ -1,5 +1,5 @@
 # ============================================================
-# EXP-0001 — Base model
+# coding — Base model
 # ============================================================
 # Provider: Hugging Face Hub
 # Workspace cache (aiodoo-colab ModelStore):
@@ -18,11 +18,11 @@ model:
   # local_path left unset; resolved at runtime from workspace model cache
   tokenizer_binding: qwen
 
-# Future base models (NOT used by EXP-0001 — tracked for EXP-0002)
+# Future base models (NOT used by coding — tracked for later training products)
 future_models:
-  EXP-0002:
+  planner_successor:
     identifier: deepseek-ai/DeepSeek-R1-0528-Qwen3-8B
     family: qwen
     notes: >
-      Successor experiment after EXP-0001 progressive curriculum completes.
+      Optional successor base after the coding curriculum completes.
       Same workspace cache layout: models/base/deepseek-ai__DeepSeek-R1-0528-Qwen3-8B/

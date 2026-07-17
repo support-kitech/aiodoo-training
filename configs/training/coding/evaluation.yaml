@@ -1,5 +1,5 @@
 # ============================================================
-# EXP-0001 — Evaluation
+# coding — Evaluation
 # ============================================================
 
 evaluation:
@@ -73,4 +73,4 @@ expected_metrics:
 
 pass_criteria:
   smoke: "All smoke prompts produce coherent Odoo-engineering answers; loss ≤ 3.5"
-  production: "Acceptance thresholds pass; Stage 8 eval report recorded under logs/EXP-0001"
+  production: "Acceptance thresholds pass; Stage 8 eval report recorded under logs/coding"

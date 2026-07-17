@@ -28,30 +28,30 @@ AIODOO/
 ├── training/
 │   ├── aiodoo-training/                # source clone (not artifact storage)
 │   └── cache/
-│       └── EXP-0001/
+│       └── coding/
 │           └── checkpoints/            # transient training checkpoints
 ├── models/
 │   ├── adapters/
-│   │   └── EXP-0001/
+│   │   └── aiodoo-coding/
 │   │       ├── adapter_config.json
 │   │       ├── adapter_model.safetensors
 │   │       ├── tokenizer.json          # when present in checkpoint
 │   │       ├── artifact.json           # validation handoff (required)
 │   │       └── manifest.json           # training publish metadata
 │   ├── merged/
-│   │   └── EXP-0001/
+│   │   └── aiodoo-coding/
 │   │       ├── …                         # inference weights
 │   │       ├── artifact.json
 │   │       └── manifest.json
 │   └── exports/
-│       └── EXP-0001/
-│           ├── bundle-EXP-0001-<fingerprint>/
+│       └── aiodoo-coding/
+│           ├── bundle-coding-<fingerprint>/
 │           │   ├── export_manifest.json
 │           │   ├── checksums.txt
 │           │   └── artifacts/
 │           └── manifest.json
 ├── experiments/
-│   └── EXP-0001/
+│   └── coding/
 │       ├── config/                     # config snapshot
 │       ├── metrics/                      # history.jsonl
 │       ├── validation/                   # evaluation reports
@@ -69,15 +69,15 @@ Base Hugging Face models are cached on Colab local SSD
 
 | Artifact | Destination | Written by |
 |----------|-------------|------------|
-| Training checkpoints | `training/cache/{EXP}/checkpoints/` | `CheckpointManager` |
-| Final adapter | `models/adapters/{EXP}/` | `ArtifactOutputManager.publish_adapter_from_checkpoint` |
-| Merged model | `models/merged/{EXP}/` | `ArtifactOutputManager.publish_merged_from_bundle` |
-| Export bundles | `models/exports/{EXP}/` | `ExportManager` |
-| Metrics history | `experiments/{EXP}/metrics/history.jsonl` | `TrainingHistory` |
-| Validation reports | `experiments/{EXP}/validation/` | Evaluation stage |
-| Run tracking | `experiments/{EXP}/logs/tracking/` | `FilesystemTracker` |
-| Experiment summary | `experiments/{EXP}/summary.json` | `ArtifactOutputManager.write_experiment_summary` |
-| Config snapshot | `experiments/{EXP}/config/` | `ArtifactOutputManager.snapshot_config` |
+| Training checkpoints | `training/cache/{training_id}/checkpoints/` | `CheckpointManager` |
+| Final adapter | `models/adapters/{aiodoo-<training_id>}/` | `ArtifactOutputManager.publish_adapter_from_checkpoint` |
+| Merged model | `models/merged/{aiodoo-<training_id>}/` | `ArtifactOutputManager.publish_merged_from_bundle` |
+| Export bundles | `models/exports/{aiodoo-<training_id>}/` | `ExportManager` |
+| Metrics history | `experiments/{training_id}/metrics/history.jsonl` | `TrainingHistory` |
+| Validation reports | `experiments/{training_id}/validation/` | Evaluation stage |
+| Run tracking | `experiments/{training_id}/logs/tracking/` | `FilesystemTracker` |
+| Experiment summary | `experiments/{training_id}/summary.json` | `ArtifactOutputManager.write_experiment_summary` |
+| Config snapshot | `experiments/{training_id}/config/` | `ArtifactOutputManager.snapshot_config` |
 | Base model `artifact.json` | Colab model cache dir | `ArtifactOutputManager.publish_base_model_artifact` |
 
 ## Publish rules
@@ -124,7 +124,7 @@ Protected trees (never deleted): `models/adapters/`, `models/merged/`,
 Point validation at:
 
 - `--base-model` → Colab SSD cache dir (with `artifact.json`)
-- `--adapter` → `models/adapters/{EXP}/` (with `artifact.json`)
+- `--adapter` → `models/adapters/{aiodoo-<training_id>}/` (with `artifact.json`)
 
 No changes to `aiodoo-validation` are required.
 

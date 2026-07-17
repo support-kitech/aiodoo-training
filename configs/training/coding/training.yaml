@@ -1,5 +1,5 @@
 # ============================================================
-# EXP-0001 — Training (Tesla T4 / Colab production profile)
+# coding — Training (Tesla T4 / Colab production profile)
 # ============================================================
 # Hardware envelope: Google Colab Tesla T4 (16 GB).
 # Goal: maximum practical quality without chronic OOM —
@@ -145,8 +145,8 @@ sampling:
 # --- Checkpoints / resume -----------------------------------------------
 checkpointing:
   # Fallback when AIODOO_WORKSPACE_ROOT is unset (local/tests only).
-  # Production: training/cache/EXP-0001/checkpoints/ under Drive workspace.
-  output_dir: training/cache/EXP-0001/checkpoints
+  # Production: training/cache/coding/checkpoints/ under Drive workspace.
+  output_dir: training/cache/coding/checkpoints
   # Every 200 steps during training; a final checkpoint is always written at
   # train end (covers smoke runs < 200 steps and trailing steps after the last
   # save boundary).
@@ -160,7 +160,7 @@ checkpointing:
   retention: keep_last
   # Stage 1 starts fresh. Later stages set resume_from to prior adapter/ckpt
   # (see README progressive procedure). Example after Stage 1:
-  # resume_from: artifacts/checkpoints/EXP-0001/stage01-coding/final
+  # resume_from: training/cache/coding/stage01-coding/final
   resume_from: null
 
 resume:
@@ -169,8 +169,8 @@ resume:
 
 # --- Metrics / callbacks / flash-attn note ------------------------------
 metrics:
-  # Production: experiments/EXP-0001/metrics/history.jsonl under Drive workspace.
-  history_path: experiments/EXP-0001/metrics/history.jsonl
+  # Production: experiments/coding/metrics/history.jsonl under Drive workspace.
+  history_path: experiments/coding/metrics/history.jsonl
 
 callbacks:
   names:

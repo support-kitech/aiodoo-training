@@ -1,8 +1,8 @@
 # Example export fragment
 #
 # ROLE: Reusable template / example only.
-# NOT loaded by configs/experiments/production/EXP-0001/.
-# Production export lives in experiments/production/EXP-0001/export.yaml.
+# NOT loaded by configs/training/coding/.
+# Production export lives in training/coding/export.yaml.
 
 export_types:
   - peft_adapter

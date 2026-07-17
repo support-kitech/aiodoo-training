@@ -5,43 +5,71 @@ from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path
 
+from aiodoo_training.naming import adapter_product_id, normalize_training_id
+
 
 @dataclass(frozen=True, slots=True)
 class ArtifactOutputLayout:
     """
-    Single source of truth for experiment artifact destinations.
+    Single source of truth for training artifact destinations.
 
     All paths are under ``workspace_root`` (the AIODOO Drive workspace).
     Repository source code must never be used as an output root.
+
+    Path roles:
+    - ``training_id`` (e.g. ``coding``): cache + experiment metadata folders
+    - ``adapter_id`` (e.g. ``aiodoo-coding``): published adapters / merged / exports
     """
 
     workspace_root: Path
-    experiment_id: str
+    training_id: str
+    adapter_id: str
+
+    @classmethod
+    def for_training(
+        cls,
+        workspace_root: Path,
+        training_id: str,
+        *,
+        adapter_id: str | None = None,
+    ) -> ArtifactOutputLayout:
+        """Build layout from a public training id (normalizes legacy EXP ids)."""
+        tid = normalize_training_id(training_id)
+        return cls(
+            workspace_root=workspace_root,
+            training_id=tid,
+            adapter_id=adapter_id or adapter_product_id(tid),
+        )
+
+    @property
+    def experiment_id(self) -> str:
+        """Public training id (alias kept for callers that still say experiment)."""
+        return self.training_id
 
     @property
     def adapter_dir(self) -> Path:
-        """Final published adapter: ``models/adapters/{EXP}/``."""
-        return self.workspace_root / "models" / "adapters" / self.experiment_id
+        """Final published adapter: ``models/adapters/{aiodoo-<training>}/``."""
+        return self.workspace_root / "models" / "adapters" / self.adapter_id
 
     @property
     def adapter_checkpoints_dir(self) -> Path:
-        """Training checkpoints: ``training/cache/{EXP}/checkpoints/``."""
-        return self.workspace_root / "training" / "cache" / self.experiment_id / "checkpoints"
+        """Training checkpoints: ``training/cache/{training_id}/checkpoints/``."""
+        return self.workspace_root / "training" / "cache" / self.training_id / "checkpoints"
 
     @property
     def merged_dir(self) -> Path:
-        """Merged model weights: ``models/merged/{EXP}/``."""
-        return self.workspace_root / "models" / "merged" / self.experiment_id
+        """Merged model weights: ``models/merged/{aiodoo-<training>}/``."""
+        return self.workspace_root / "models" / "merged" / self.adapter_id
 
     @property
     def export_dir(self) -> Path:
-        """Export bundles: ``models/exports/{EXP}/``."""
-        return self.workspace_root / "models" / "exports" / self.experiment_id
+        """Export bundles: ``models/exports/{aiodoo-<training>}/``."""
+        return self.workspace_root / "models" / "exports" / self.adapter_id
 
     @property
     def experiment_dir(self) -> Path:
-        """Experiment metadata root: ``experiments/{EXP}/``."""
-        return self.workspace_root / "experiments" / self.experiment_id
+        """Run metadata root: ``experiments/{training_id}/``."""
+        return self.workspace_root / "experiments" / self.training_id
 
     @property
     def experiment_config_dir(self) -> Path:

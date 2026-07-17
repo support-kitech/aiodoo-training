@@ -1,5 +1,5 @@
 # ============================================================
-# EXP-0001 — Dataset (workspace-relative, no Drive absolute paths)
+# coding — Dataset (workspace-relative, no Drive absolute paths)
 # ============================================================
 # Resolution contract (aiodoo-colab):
 #   workspace.datasets / <dataset_version> / <file>
@@ -21,56 +21,56 @@ progressive_training:
   description: >
     Train one stage at a time. After each stage completes, the exported
     PEFT adapter becomes the resume/base adapter for the next stage.
-  adapter_naming: "EXP-0001-stage{NN}-{stage_name}"
+  adapter_naming: "aiodoo-{stage_name}"
   stages:
     - stage: 1
       name: coding
       file: coding_v1_0.jsonl
       dataset_type: coding
       input_adapter: null
-      output_adapter: EXP-0001-stage01-coding
+      output_adapter: aiodoo-coding
     - stage: 2
       name: planner
       file: planner_v1_0.jsonl
       dataset_type: planner
-      input_adapter: EXP-0001-stage01-coding
-      output_adapter: EXP-0001-stage02-planner
+      input_adapter: aiodoo-coding
+      output_adapter: aiodoo-planner
     - stage: 3
       name: execution
       file: execution_dataset.jsonl
       dataset_type: execution
-      input_adapter: EXP-0001-stage02-planner
-      output_adapter: EXP-0001-stage03-execution
+      input_adapter: aiodoo-planner
+      output_adapter: aiodoo-execution
     - stage: 4
       name: repair
       file: repair_v1_0.jsonl
       dataset_type: repair
-      input_adapter: EXP-0001-stage03-execution
-      output_adapter: EXP-0001-stage04-repair
+      input_adapter: aiodoo-execution
+      output_adapter: aiodoo-repair
     - stage: 5
       name: context
       file: context_v1_0.jsonl
       dataset_type: context
-      input_adapter: EXP-0001-stage04-repair
-      output_adapter: EXP-0001-stage05-context
+      input_adapter: aiodoo-repair
+      output_adapter: aiodoo-context
     - stage: 6
       name: conversation
       file: conversation_dataset.jsonl
       dataset_type: conversation
-      input_adapter: EXP-0001-stage05-context
-      output_adapter: EXP-0001-stage06-conversation
+      input_adapter: aiodoo-context
+      output_adapter: aiodoo-conversation
     - stage: 7
       name: approval
       file: approval_dataset.jsonl
       dataset_type: approval
-      input_adapter: EXP-0001-stage06-conversation
-      output_adapter: EXP-0001-stage07-approval
+      input_adapter: aiodoo-conversation
+      output_adapter: aiodoo-approval
     - stage: 8
       name: evaluation
       file: evaluation_dataset.jsonl
       dataset_type: evaluation
-      input_adapter: EXP-0001-stage07-approval
-      output_adapter: EXP-0001-stage08-evaluation
+      input_adapter: aiodoo-approval
+      output_adapter: aiodoo-evaluation
 
 # Dataset mix consumed by AssembleDatasets (paths relative to dataset version root).
 # Active stage for this run: Stage 1 (coding). Advance stages via README procedure

@@ -70,15 +70,19 @@ dmypy.json
 # AIODOO runtime training outputs (never commit)
 # Do NOT use bare `artifacts/` — it would ignore the source package
 # `aiodoo_training/artifacts/` (production artifact routing).
+# Do NOT use bare `training/` or `experiments/` — they would ignore
+# `configs/training/` and `configs/experiments/`.
 /artifacts/
 configs/**/artifacts/
+/checkpoints/
+/adapters/
+/models/
+/training/
+/experiments/
+/runs/
+/logs/
 checkpoints/
 adapters/
-models/
-training/
-experiments/
-runs/
-logs/
 *.pt
 *.bin
 *.safetensors

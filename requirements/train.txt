@@ -8,10 +8,10 @@
 # CI installs ONLY requirements/dev.txt (CPU) and uses StubModelBackend /
 # DeterministicStubTokenizer. Never add CUDA wheels to CI.
 #
-# Colab / production GPU host (EXP-0001 - Qwen3-8B QLoRA):
+# Colab / production GPU host (coding training - Qwen3-8B QLoRA):
 #   pip install -r requirements/train.txt
 #
-# Verified compatible ranges for EXP-0001 (Tesla T4 / Colab)
+# Verified compatible ranges for coding (Tesla T4 / Colab)
 
 -r base.txt
 
