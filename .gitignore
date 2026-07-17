@@ -67,8 +67,11 @@ dmypy.json
 # Ruff
 .ruff_cache/
 
-# AIODOO training artifacts (never commit)
-artifacts/
+# AIODOO runtime training outputs (never commit)
+# Do NOT use bare `artifacts/` — it would ignore the source package
+# `aiodoo_training/artifacts/` (production artifact routing).
+/artifacts/
+configs/**/artifacts/
 checkpoints/
 adapters/
 models/
