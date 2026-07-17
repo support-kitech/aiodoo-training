@@ -11,8 +11,8 @@ export:
   # Production export uses registered HF PEFT exporter key (hf_peft)
   backend: hf_peft
   profile: peft_default
-  # Relative export root; Colab remaps into models/exports/EXP-0001/
-  output_dir: artifacts/export/EXP-0001
+  # Fallback when AIODOO_WORKSPACE_ROOT is unset. Production: models/exports/EXP-0001/
+  output_dir: models/exports/EXP-0001
   export_types:
     - peft_adapter
     - tokenizer

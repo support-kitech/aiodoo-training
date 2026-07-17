@@ -301,6 +301,7 @@ class ExportManager:
             artifact_paths=paths,
             export_fingerprint=export_fingerprint,
             training_protocol_version=TRAINING_PROTOCOL_VERSION,
+            dataset_version=_dataset_version_from_context(ctx),
             created_at=datetime.now(UTC),
             software={
                 "python": (
@@ -465,6 +466,13 @@ class ExportManager:
             return session.with_status(session.status, message=message)
 
 
+def _dataset_version_from_context(ctx: ExportContext) -> str | None:
+    raw = ctx.bind_extra.get("dataset_version")
+    if isinstance(raw, str) and raw.strip():
+        return raw
+    return None
+
+
 def _relative_path(root: Path, path: Path) -> str:
     try:
         return path.relative_to(root).as_posix()
@@ -499,6 +507,7 @@ def _manifest_to_dict(manifest: ExportManifest) -> dict[str, object]:
         "artifact_paths": list(manifest.artifact_paths),
         "export_fingerprint": manifest.export_fingerprint,
         "created_at": manifest.created_at.isoformat() if manifest.created_at else None,
+        "dataset_version": manifest.dataset_version,
         "software": dict(manifest.software),
     }
 

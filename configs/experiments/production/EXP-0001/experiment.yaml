@@ -36,12 +36,18 @@ determinism:
   # False: determinism over micro-benchmark speed on T4
   cudnn_benchmark: false
 
+# Workspace root is set via AIODOO_WORKSPACE_ROOT (required for drive_v1).
+# aiodoo-colab sets this explicitly; ArtifactOutputManager rewrites all output
+# paths to the canonical Drive layout (see docs/artifact_output_pipeline.md).
+workspace:
+  layout: drive_v1
+
 tracking:
   # local_jsonl under workspace logs when Colab overlays root_dir
   tracker_type: local_jsonl
   enabled: true
   experiment_name: EXP-0001
-  # Relative; Colab may override via metrics/logs env hints
-  root_dir: artifacts/tracking/EXP-0001
+  # Production: experiments/EXP-0001/logs/tracking/ under Drive workspace.
+  root_dir: experiments/EXP-0001/logs/tracking
   flush_every_n_steps: 20
   nonfatal_sink_errors: true

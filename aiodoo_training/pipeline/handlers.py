@@ -43,6 +43,14 @@ def _skip(name: StageName, stage: PipelineStage, message: str) -> StageResult:
     return StageResult(name=name, stage=stage, status=StageStatus.SKIPPED, message=message)
 
 
+def _export_bind_extra(raw: dict) -> dict[str, object]:
+    extra: dict[str, object] = {}
+    dataset_version = raw.get("dataset_version")
+    if isinstance(dataset_version, str) and dataset_version.strip():
+        extra["dataset_version"] = dataset_version
+    return extra
+
+
 class ValidateConfigStage(PipelineStageHandler):
     def __init__(self) -> None:
         self._name = StageName(value="validate_config")
@@ -965,7 +973,6 @@ class ExportStage(PipelineStageHandler):
 
         output_dir = export_fragment.output_dir or config.export.output_dir
         output_dir = Path(output_dir)
-        output_dir.mkdir(parents=True, exist_ok=True)
 
         backend_key = export_fragment.backend
         exporter = context.get("exporter") or ExporterFactory().create(backend_key)
@@ -998,6 +1005,10 @@ class ExportStage(PipelineStageHandler):
             .with_piece("require_evaluation", export_fragment.require_evaluation)
             .with_piece("require_pass_for_export", export_fragment.require_pass_for_export)
             .with_piece("tracker", context.get("tracker"))
+            .with_piece(
+                "bind_extra",
+                _export_bind_extra(raw if isinstance(raw, dict) else {}),
+            )
             .build()
         )
         updated, bundle = ExportManager().export(export_ctx)
@@ -1035,9 +1046,11 @@ class FinalizeStage(PipelineStageHandler):
         path = context.get("metrics_history_path")
         if history is not None and path is not None and hasattr(history, "flush"):
             history.flush(Path(path))
+        from aiodoo_training.pipeline.artifact_hooks import maybe_publish_artifacts
         from aiodoo_training.pipeline.tracking_hooks import maybe_finalize_tracking
 
         maybe_finalize_tracking(context)
+        maybe_publish_artifacts(context)
         tracker = context.get("tracker")
         # Coordinator.close already closes the tracker when present.
         if (

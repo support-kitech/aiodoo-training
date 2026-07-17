@@ -131,6 +131,8 @@ python3 tests/run_tests.py
 - [Phase 3 Training Engine Architecture](docs/phase3-training-engine-architecture.md) — **permanently frozen**
 - [Phase 4 Evaluation & Export Architecture](docs/phase4-evaluation-export-architecture.md) — **permanently frozen**
 - [Artifact Contract](docs/artifact_contract.md) — official Training → Models handoff specification
+- [Artifact Output Pipeline](docs/artifact_output_pipeline.md) — canonical Drive workspace layout
+- [Production Smoke Test](docs/SMOKE.md) — end-to-end smoke procedure (EXP-0001)
 - [Phase 5 Packing & Curriculum Architecture](docs/phase5-packing-curriculum-architecture.md) — **permanently frozen**
 - [Phase 6 Tracking & CLI Architecture](docs/phase6-tracking-cli-architecture.md) — **permanently frozen**
 - [Phase 7 Distributed Readiness Architecture](docs/phase7-distributed-readiness-architecture.md) — **permanently frozen**

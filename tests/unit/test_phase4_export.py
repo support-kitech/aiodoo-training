@@ -115,3 +115,32 @@ def test_manifest_checksums_match_disk(tmp_path: Path) -> None:
         if descriptor.relative_path in {"export_manifest.json", "checksums.sha256"}:
             continue
         assert sha256_file(str(file_path)) == descriptor.checksum
+
+
+def test_export_manifest_serializes_dataset_version(tmp_path: Path) -> None:
+    from aiodoo_training.builders.export_builders import ExportContextBuilder
+
+    ctx = build_stub_export_context(output_dir=tmp_path)
+    export_ctx = (
+        ExportContextBuilder()
+        .with_config(ctx.config)
+        .with_piece("execution", ctx.execution)
+        .with_piece("model", ctx.model)
+        .with_piece("exporter", ctx.exporter)
+        .with_piece("export_session", ctx.export_session)
+        .with_piece("output_dir", ctx.output_dir)
+        .with_piece("exporter_backend_key", ctx.exporter_backend_key)
+        .with_piece("model_fingerprint", ctx.model_fingerprint)
+        .with_piece("adapter_fingerprint", ctx.adapter_fingerprint)
+        .with_piece("config_fingerprint", ctx.config_fingerprint)
+        .with_piece("export_types", ctx.export_types)
+        .with_piece("bind_extra", {"dataset_version": "v1.0.0"})
+        .build()
+    )
+    _, bundle = ExportManager().export(export_ctx)
+    manifest_path = bundle.root / "export_manifest.json"
+    data = json.loads(manifest_path.read_text(encoding="utf-8"))
+    assert data.get("dataset_version") == "v1.0.0"
+    roundtrip = ExportManifest.from_dict(data)
+    assert roundtrip.dataset_version == "v1.0.0"
+    assert bundle.manifest.dataset_version == "v1.0.0"

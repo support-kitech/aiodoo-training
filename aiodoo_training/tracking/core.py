@@ -369,23 +369,12 @@ class TrackingStore:
 
     def __init__(self, root: Path) -> None:
         self.root = root
-        self.root.mkdir(parents=True, exist_ok=True)
-        (self.root / "indexes").mkdir(parents=True, exist_ok=True)
-        (self.root / "logs").mkdir(parents=True, exist_ok=True)
-        (self.root / "experiments").mkdir(parents=True, exist_ok=True)
 
     def experiment_dir(self, experiment_id: ExperimentId) -> Path:
-        path = self.root / "experiments" / experiment_id.value
-        path.mkdir(parents=True, exist_ok=True)
-        return path
+        return self.root / "experiments" / experiment_id.value
 
     def run_dir(self, experiment_id: ExperimentId, run_id: RunId) -> Path:
-        path = self.experiment_dir(experiment_id) / "runs" / run_id.value
-        path.mkdir(parents=True, exist_ok=True)
-        (path / "reports").mkdir(parents=True, exist_ok=True)
-        (path / "history" / "metrics").mkdir(parents=True, exist_ok=True)
-        (path / "history" / "artifacts").mkdir(parents=True, exist_ok=True)
-        return path
+        return self.experiment_dir(experiment_id) / "runs" / run_id.value
 
 
 class ExperimentRegistry:

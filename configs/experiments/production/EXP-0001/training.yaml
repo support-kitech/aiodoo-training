@@ -144,8 +144,9 @@ sampling:
 
 # --- Checkpoints / resume -----------------------------------------------
 checkpointing:
-  # Relative artifact tree; Colab overlays adapter/checkpoint dirs
-  output_dir: artifacts/checkpoints/EXP-0001
+  # Fallback when AIODOO_WORKSPACE_ROOT is unset (local/tests only).
+  # Production: training/cache/EXP-0001/checkpoints/ under Drive workspace.
+  output_dir: training/cache/EXP-0001/checkpoints
   # Every 200 steps: ~12–15 min cadence on T4 without thrashing Drive I/O
   save_steps: 200
   # Keep last 3: enough to resume after Colab preempt without filling Drive
@@ -166,8 +167,8 @@ resume:
 
 # --- Metrics / callbacks / flash-attn note ------------------------------
 metrics:
-  # Written under checkpoint tree (Colab may remap via AIODOO_COLAB_METRICS_OUTPUT)
-  history_path: artifacts/checkpoints/EXP-0001/metrics/history.jsonl
+  # Production: experiments/EXP-0001/metrics/history.jsonl under Drive workspace.
+  history_path: experiments/EXP-0001/metrics/history.jsonl
 
 callbacks:
   names:

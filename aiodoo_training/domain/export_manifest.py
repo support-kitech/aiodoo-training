@@ -90,6 +90,7 @@ class ExportManifest:
     export_fingerprint: str = ""
     evaluation_fingerprint: str | None = None
     training_protocol_version: str = TRAINING_PROTOCOL_VERSION
+    dataset_version: str | None = None
     software: Mapping[str, str] = field(default_factory=lambda: MappingProxyType({}))
     created_at: datetime | None = None
 
@@ -129,6 +130,7 @@ class ExportManifest:
             "required_artifacts": list(self.required_artifacts),
             "artifact_paths": list(self.artifact_paths),
             "training_protocol_version": self.training_protocol_version,
+            "dataset_version": self.dataset_version,
             "software": dict(self.software),
             "export_fingerprint": self.export_fingerprint,
             "created_at": self.created_at.isoformat() if self.created_at else None,
@@ -170,6 +172,9 @@ class ExportManifest:
             artifact_paths=tuple(str(x) for x in (data.get("artifact_paths") or ())),
             training_protocol_version=str(
                 data.get("training_protocol_version", TRAINING_PROTOCOL_VERSION)
+            ),
+            dataset_version=(
+                str(data["dataset_version"]) if data.get("dataset_version") is not None else None
             ),
             software=dict(data.get("software") or {}),
             export_fingerprint=str(data.get("export_fingerprint", "")),

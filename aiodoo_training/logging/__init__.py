@@ -38,9 +38,14 @@ class ConsoleLogSink(LogSink):
 class JsonlLogSink(LogSink):
     def __init__(self, path: Path) -> None:
         self._path = path
-        self._path.parent.mkdir(parents=True, exist_ok=True)
+        self._initialized = False
 
     def emit(self, record: LogRecord) -> None:
+        if not self._initialized:
+            from aiodoo_training.artifacts.io_utils import ensure_parent_dir
+
+            ensure_parent_dir(self._path)
+            self._initialized = True
         payload = {
             "level": record.level,
             "message": record.message,

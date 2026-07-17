@@ -460,7 +460,6 @@ class HFTrainerBackend(TrainerBackend):
         hf_tokenizer = _resolve_hf_tokenizer(tokenizer_port)
         dataset = _token_batches_to_dataset(token_batches)
         output_dir = config.checkpointing.output_dir
-        output_dir.mkdir(parents=True, exist_ok=True)
 
         training_args = _build_training_arguments(
             config=config,

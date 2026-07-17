@@ -48,9 +48,7 @@ class ExecutionResult:
 
 
 def _env_path(name: str) -> Path | None:
-    logger.info("name: %s", name)
     raw = os.environ.get(name)
-    logger.info("raw: %s", raw)
     if raw is None or not str(raw).strip():
         return None
     return Path(raw)
@@ -64,47 +62,26 @@ def apply_colab_path_overrides(resolved: dict[str, Any]) -> dict[str, Any]:
     """
     Apply optional aiodoo-colab environment hints onto a resolved config mapping.
 
-    Only overrides paths that are present in the environment. Does not invent
-    training semantics.
+    Colab provides ``AIODOO_WORKSPACE_ROOT``, model path, and dataset path.
+    All artifact destinations are derived from the canonical Drive layout —
+    individual ``AIODOO_COLAB_*_OUTPUT`` path hints are not consumed.
     """
+    from aiodoo_training.artifacts.output_manager import ArtifactOutputManager
+
     data = dict(resolved)
     model_path = _env_path("AIODOO_COLAB_MODEL_PATH")
-    logger.info("model_path: %s", model_path)
     if model_path is not None:
         model = _as_dict(data.get("model"))
         model["local_path"] = str(model_path)
         data["model"] = model
 
     dataset_root = _env_path("AIODOO_COLAB_DATASET_PATH")
-    logger.info("dataset_root: %s", dataset_root)
     if dataset_root is not None:
         data["datasets"] = _rewrite_dataset_entries(data.get("datasets"), dataset_root)
 
-    checkpoint_out = _env_path("AIODOO_COLAB_CHECKPOINTS_OUTPUT") or _env_path(
-        "AIODOO_COLAB_ADAPTER_OUTPUT"
-    )
-    if checkpoint_out is not None:
-        ckpt = _as_dict(data.get("checkpointing"))
-        ckpt["output_dir"] = str(checkpoint_out)
-        data["checkpointing"] = ckpt
-
-    export_out = _env_path("AIODOO_COLAB_EXPORT_OUTPUT")
-    if export_out is not None:
-        export = _as_dict(data.get("export"))
-        export["output_dir"] = str(export_out)
-        data["export"] = export
-
-    metrics_out = _env_path("AIODOO_COLAB_METRICS_OUTPUT")
-    if metrics_out is not None:
-        metrics = _as_dict(data.get("metrics"))
-        metrics["history_path"] = str(metrics_out / "history.jsonl")
-        data["metrics"] = metrics
-
-    logs_out = _env_path("AIODOO_COLAB_LOGS_OUTPUT")
-    if logs_out is not None:
-        tracking = _as_dict(data.get("tracking"))
-        tracking["root_dir"] = str(logs_out / "tracking")
-        data["tracking"] = tracking
+    manager = ArtifactOutputManager.from_resolved(data)
+    if manager is not None:
+        data = manager.apply_to_resolved(data)
 
     return data
 
@@ -167,6 +144,15 @@ def _artifact_paths(
     *,
     pipeline_result: PipelineResult | None,
 ) -> dict[str, Path | None]:
+    from aiodoo_training.artifacts.output_manager import (
+        ArtifactOutputManager,
+        artifact_paths_from_layout,
+    )
+
+    manager = ArtifactOutputManager.from_resolved(resolved)
+    if manager is not None:
+        return artifact_paths_from_layout(manager.layout)
+
     ckpt_raw = _as_dict(resolved.get("checkpointing"))
     export_raw = _as_dict(resolved.get("export"))
     metrics_raw = _as_dict(resolved.get("metrics"))
@@ -211,15 +197,12 @@ def _artifact_paths(
 
 def _validate_workspace(config_path: Path, resolved: dict[str, Any]) -> None:
     """Fail early when required filesystem assumptions are violated."""
+    from aiodoo_training.artifacts.output_manager import validate_drive_workspace_contract
+
     if not config_path.is_file():
         raise ConfigError(f"Config file not found: {config_path}")
-    ckpt = _as_dict(resolved.get("checkpointing"))
-    output_dir = ckpt.get("output_dir")
-    if output_dir:
-        Path(str(output_dir)).mkdir(parents=True, exist_ok=True)
-    export = _as_dict(resolved.get("export"))
-    if export.get("output_dir"):
-        Path(str(export["output_dir"])).mkdir(parents=True, exist_ok=True)
+    validate_drive_workspace_contract(resolved)
+    # Directories are created only when files are written — never preemptively.
 
 
 def run_train_from_config(config_path: Path, *, run_id: RunId | None = None) -> ExecutionResult:
@@ -259,10 +242,6 @@ def run_train_from_config(config_path: Path, *, run_id: RunId | None = None) -> 
             composed=composed,
         )
 
-        # Ensure checkpoint / export directories exist before pipeline I/O.
-        config.checkpointing.output_dir.mkdir(parents=True, exist_ok=True)
-        config.export.output_dir.mkdir(parents=True, exist_ok=True)
-
         hasher = system.hasher
         config_fingerprint = hasher.hash(composed)
 
@@ -273,6 +252,7 @@ def run_train_from_config(config_path: Path, *, run_id: RunId | None = None) -> 
         ).with_values(
             raw_config=resolved,
             config_fingerprint=config_fingerprint,
+            config_path=config_path,
             metrics_history_path=(
                 Path(str(resolved["metrics"]["history_path"]))
                 if isinstance(resolved.get("metrics"), dict)
