@@ -123,6 +123,23 @@ def test_publish_error_is_logged_not_raised(
     assert summary["success"] is True
 
 
+def test_warns_when_no_checkpoint_to_publish(
+    workspace: Path, resolved_config: dict, caplog: pytest.LogCaptureFixture
+) -> None:
+    context = PipelineContext(run_id=RunId(value="run-1")).with_values(
+        raw_config=resolved_config,
+        training_progress=_completed_progress(),
+    )
+    with caplog.at_level("WARNING"):
+        maybe_publish_artifacts(context)
+
+    assert any("No checkpoint" in record.message for record in caplog.records)
+    summary = json.loads(
+        (workspace / "experiments" / "EXP-0001" / "summary.json").read_text(encoding="utf-8")
+    )
+    assert summary["paths"]["adapter"] is None
+
+
 def test_smoke_md_validation_command_uses_odoo_versions_flag() -> None:
     smoke_doc = Path(__file__).resolve().parents[2] / "docs" / "SMOKE.md"
     text = smoke_doc.read_text(encoding="utf-8")

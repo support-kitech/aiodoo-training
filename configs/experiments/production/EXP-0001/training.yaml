@@ -147,7 +147,9 @@ checkpointing:
   # Fallback when AIODOO_WORKSPACE_ROOT is unset (local/tests only).
   # Production: training/cache/EXP-0001/checkpoints/ under Drive workspace.
   output_dir: training/cache/EXP-0001/checkpoints
-  # Every 200 steps: ~12–15 min cadence on T4 without thrashing Drive I/O
+  # Every 200 steps during training; a final checkpoint is always written at
+  # train end (covers smoke runs < 200 steps and trailing steps after the last
+  # save boundary).
   save_steps: 200
   # Keep last 3: enough to resume after Colab preempt without filling Drive
   save_total_limit: 3

@@ -276,6 +276,17 @@ class StubTrainerBackend(TrainerBackend):
             message=message,
         )
         if status == TrainingStatus.COMPLETED:
+            # Final checkpoint when the last step was not already a save boundary.
+            final_step = session.global_step
+            already_saved = save_steps > 0 and final_step > 0 and final_step % save_steps == 0
+            if final_step > 0 and not already_saved:
+                self._request_checkpoint(
+                    model=model,
+                    progress=progress,
+                    session=session,
+                    dataset_session=dataset_session,
+                    metrics=tuple(metrics),
+                )
             self._emit(
                 TrainingEventKind.TRAINING_COMPLETED,
                 session=session,

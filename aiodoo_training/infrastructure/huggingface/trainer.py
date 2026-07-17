@@ -298,7 +298,37 @@ def _aiodoo_trainer_callback_class() -> type[Any]:
                 )
 
         def on_train_end(self, args: Any, state: Any, control: Any, **kwargs: Any) -> None:
-            _ = (args, state, control, kwargs)
+            # Always persist a final checkpoint when training completes.
+            # Periodic saves alone (save_steps) miss short smoke runs and the
+            # trailing steps after the last save boundary (e.g. 201–335).
+            _ = (args, control, kwargs)
+            backend = self._backend
+            ctx = backend._require_context()
+            session = ctx.training_session
+            step = int(getattr(state, "global_step", 0) or 0)
+            epoch = float(getattr(state, "epoch", None) or session.epoch)
+            delta = max(0, step - session.global_step)
+            if delta:
+                session = session.advance_step(steps=delta, epoch=epoch)
+                backend._sync_session(session)
+            if step <= 0:
+                return
+            save_steps = ctx.checkpoint_policy.save_steps
+            already_saved_at_step = save_steps > 0 and step % save_steps == 0
+            if already_saved_at_step:
+                return
+            progress = TrainingProgress(
+                status=TrainingStatus.COMPLETED,
+                global_step=step,
+                epoch=epoch,
+                metrics=tuple(self._metrics),
+            )
+            backend._request_checkpoint(
+                model=ctx.model,
+                progress=progress,
+                session=session,
+                metrics=tuple(self._metrics),
+            )
 
     _AiodooTrainerCallbackCls = AiodooTrainerCallback
     return _AiodooTrainerCallbackCls

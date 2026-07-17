@@ -49,7 +49,7 @@ def maybe_publish_artifacts(context: PipelineContext) -> None:
         except _PUBLISH_IO_ERRORS as exc:
             logger.warning("Base model artifact publish failed: %s", exc)
 
-    # Publish adapter from latest checkpoint.
+    # Publish adapter from latest checkpoint (including final train-end save).
     ckpt_dir = layout.adapter_checkpoints_dir
     latest = manager.find_latest_checkpoint(ckpt_dir)
     adapter_dest: Path | None = None
@@ -59,6 +59,12 @@ def maybe_publish_artifacts(context: PipelineContext) -> None:
             logger.info("Published adapter to %s", adapter_dest)
         except _PUBLISH_IO_ERRORS as exc:
             logger.warning("Adapter publish failed: %s", exc)
+    else:
+        logger.warning(
+            "No checkpoint under %s — adapter was not published. "
+            "Training must save a final checkpoint before finalize.",
+            ckpt_dir,
+        )
 
     # Publish merged weights from export bundle if present.
     bundle = context.get("artifact_bundle")

@@ -128,8 +128,8 @@ def _training_context(tmp_path: Path, *, bind_extra: dict | None = None) -> Trai
     )
 
 
-def _mock_transformers_module() -> SimpleNamespace:
-    state = SimpleNamespace(global_step=2, epoch=1.0)
+def _mock_transformers_module(*, global_step: int = 2, epoch: float = 1.0) -> SimpleNamespace:
+    state = SimpleNamespace(global_step=global_step, epoch=epoch)
 
     class _FakeTrainer:
         def __init__(self, **kwargs: object) -> None:
@@ -289,3 +289,93 @@ def test_checkpoint_save_propagates_persistence_errors(tmp_path: Path) -> None:
             session=ctx.training_session,
             metrics=(),
         )
+
+
+def test_final_checkpoint_saved_when_step_not_on_save_boundary(tmp_path: Path) -> None:
+    """Smoke-sized runs (e.g. 6 steps with save_steps=200) must still publish."""
+    import aiodoo_training.infrastructure.huggingface.trainer as hf_mod
+
+    hf_mod._AiodooTrainerCallbackCls = None
+
+    cfg = make_stub_experiment_config(output_dir=tmp_path, max_steps=6, save_steps=200)
+    cfg = replace(
+        cfg,
+        optimization=replace(cfg.optimization, max_steps=6, per_device_batch_size=1),
+        checkpointing=replace(cfg.checkpointing, save_steps=200),
+    )
+    ctx = _training_context(tmp_path)
+    ctx = replace(
+        ctx,
+        config=cfg,
+        checkpoint_policy=CheckpointPolicy(save_steps=200, save_total_limit=3),
+        training_session=replace(ctx.training_session, max_steps=6),
+    )
+    manager = MagicMock()
+    manager.save.return_value = CheckpointHandle(
+        path=tmp_path / "checkpoint-6",
+        experiment_id=ctx.training_session.experiment_id,
+        run_id=ctx.training_session.run_id,
+        checkpoint_type=__import__(
+            "aiodoo_training.domain.enums", fromlist=["CheckpointType"]
+        ).CheckpointType.FULL_STATE,
+        global_step=6,
+    )
+    ctx = replace(ctx, checkpoint_manager=manager)
+    backend = HFTrainerBackend(context=ctx)
+
+    fake_transformers = _mock_transformers_module(global_step=6, epoch=1.0)
+    with patch(
+        "aiodoo_training.infrastructure.huggingface.trainer._require_transformers",
+        return_value=fake_transformers,
+    ):
+        progress = backend.train(ctx.config, ctx.model, ctx.execution)
+
+    assert progress.status is TrainingStatus.COMPLETED
+    assert progress.global_step == 6
+    # on_step_end does not save (6 % 200 != 0); on_train_end must.
+    assert manager.save.call_count == 1
+
+
+def test_final_checkpoint_not_duplicated_when_already_on_boundary(tmp_path: Path) -> None:
+    """When the last step hits save_steps, do not write a second identical checkpoint."""
+    import aiodoo_training.infrastructure.huggingface.trainer as hf_mod
+
+    hf_mod._AiodooTrainerCallbackCls = None
+
+    cfg = make_stub_experiment_config(output_dir=tmp_path, max_steps=2, save_steps=2)
+    cfg = replace(
+        cfg,
+        optimization=replace(cfg.optimization, max_steps=2, per_device_batch_size=1),
+        checkpointing=replace(cfg.checkpointing, save_steps=2),
+    )
+    ctx = _training_context(tmp_path)
+    ctx = replace(
+        ctx,
+        config=cfg,
+        checkpoint_policy=CheckpointPolicy(save_steps=2, save_total_limit=3),
+        training_session=replace(ctx.training_session, max_steps=2),
+    )
+    manager = MagicMock()
+    manager.save.return_value = CheckpointHandle(
+        path=tmp_path / "checkpoint-2",
+        experiment_id=ctx.training_session.experiment_id,
+        run_id=ctx.training_session.run_id,
+        checkpoint_type=__import__(
+            "aiodoo_training.domain.enums", fromlist=["CheckpointType"]
+        ).CheckpointType.FULL_STATE,
+        global_step=2,
+    )
+    ctx = replace(ctx, checkpoint_manager=manager)
+    backend = HFTrainerBackend(context=ctx)
+
+    fake_transformers = _mock_transformers_module(global_step=2, epoch=1.0)
+    with patch(
+        "aiodoo_training.infrastructure.huggingface.trainer._require_transformers",
+        return_value=fake_transformers,
+    ):
+        progress = backend.train(ctx.config, ctx.model, ctx.execution)
+
+    assert progress.status is TrainingStatus.COMPLETED
+    # Only on_step_end (2 % 2 == 0); on_train_end skips duplicate.
+    assert manager.save.call_count == 1
+
