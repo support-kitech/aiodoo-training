@@ -2,8 +2,8 @@
 
 **Training ID:** `repair`  
 **Published adapter:** `aiodoo-repair`  
-**Progressive stage:** 4 / 8  
-**Input adapter:** `aiodoo-execution`  
+**Catalog stage:** 4 / 8 (label only — not a weight chain)  
+**Input adapter:** none (fresh from base model)  
 **Dataset:** `datasets/v1.0.0/repair_v1_0.jsonl` (481 records)
 
 ## Invoke
@@ -21,9 +21,10 @@ experiment = ExperimentStore(workspace=workspace).load(TRAINING_ID)
 
 ## Prerequisites
 
-1. Prior product adapter published at `models/adapters/aiodoo-execution/`
-2. Dataset release `v1.0.0` present under workspace `datasets/v1.0.0/`
-3. Base model `Qwen/Qwen3-8B` available via ModelStore / `AIODOO_COLAB_MODEL_PATH`
+1. Dataset release `v1.0.0` present under workspace `datasets/v1.0.0/`
+2. Base model `Qwen/Qwen3-8B` available via ModelStore / `AIODOO_COLAB_MODEL_PATH`
+3. After a Colab interrupt only: set `checkpointing.resume_from` to the last
+   same-run checkpoint under `training/cache/repair/checkpoints/`
 
 ## Drive outputs
 

@@ -2,8 +2,8 @@
 
 **Training ID:** `execution`  
 **Published adapter:** `aiodoo-execution`  
-**Progressive stage:** 3 / 8  
-**Input adapter:** `aiodoo-planner`  
+**Catalog stage:** 3 / 8 (label only — not a weight chain)  
+**Input adapter:** none (fresh from base model)  
 **Dataset:** `datasets/v1.0.0/execution_dataset.jsonl` (5459 records)
 
 ## Invoke
@@ -21,9 +21,10 @@ experiment = ExperimentStore(workspace=workspace).load(TRAINING_ID)
 
 ## Prerequisites
 
-1. Prior product adapter published at `models/adapters/aiodoo-planner/`
-2. Dataset release `v1.0.0` present under workspace `datasets/v1.0.0/`
-3. Base model `Qwen/Qwen3-8B` available via ModelStore / `AIODOO_COLAB_MODEL_PATH`
+1. Dataset release `v1.0.0` present under workspace `datasets/v1.0.0/`
+2. Base model `Qwen/Qwen3-8B` available via ModelStore / `AIODOO_COLAB_MODEL_PATH`
+3. After a Colab interrupt only: set `checkpointing.resume_from` to the last
+   same-run checkpoint under `training/cache/execution/checkpoints/`
 
 ## Drive outputs
 

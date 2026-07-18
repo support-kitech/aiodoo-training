@@ -6,27 +6,27 @@
 #   e.g. AIODOO/datasets/v1.0.0/approval_dataset.jsonl
 #
 # aiodoo-colab sets AIODOO_COLAB_DATASET_PATH to the version root.
-# Progressive curriculum stage 7/8:
-#   input_adapter=aiodoo-conversation → output_adapter=aiodoo-approval
+# Independent skill adapter: train from base model, publish aiodoo-approval.
+# Product composition (Development / Reasoning) lives in aiodoo-model.
 # ============================================================
 
 # NOTE: v1.0.0 currently ships 1 approval record — expand in a future dataset release.
 dataset_version: "v1.0.0"
 dataset_root: "v1.0.0"
 
-progressive_training:
+# Catalog only — does not imply weight chaining across products.
+skill_training:
   enabled: true
   description: >
-    Product adapter training for stage 7 (approval).
-    Resume from prior product adapter aiodoo-conversation, train on
-    approval_dataset.jsonl, publish aiodoo-approval.
+    Independent product adapter for approval. Trains from the configured base
+    model (fresh LoRA). resume_from is for same-run checkpoint recovery only.
   adapter_naming: "aiodoo-{stage_name}"
   stages:
     - stage: 7
       name: approval
       file: approval_dataset.jsonl
       dataset_type: approval
-      input_adapter: aiodoo-conversation
+      input_adapter: null
       output_adapter: aiodoo-approval
 
 shuffle: true

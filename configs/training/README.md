@@ -2,20 +2,26 @@
 
 Public training IDs under `configs/training/<id>/`.
 
-## Progressive curriculum (v1.0.0)
+## Independent skill adapters
 
-Train **one product at a time**. Each stage resumes from the prior published adapter.
+Each pack trains **one** product adapter from the **base model** (fresh QLoRA).
+There is **no** cross-product `resume_from` chain.
 
-| Stage | Training ID | Dataset file | Records | Input adapter | Output adapter |
-|------:|-------------|--------------|--------:|---------------|----------------|
-| 1 | `coding` | `coding_v1_0.jsonl` | 5459 | — | `aiodoo-coding` |
-| 2 | `planner` | `planner_v1_0.jsonl` | 5695 | `aiodoo-coding` | `aiodoo-planner` |
-| 3 | `execution` | `execution_dataset.jsonl` | 5459 | `aiodoo-planner` | `aiodoo-execution` |
-| 4 | `repair` | `repair_v1_0.jsonl` | 481 | `aiodoo-execution` | `aiodoo-repair` |
-| 5 | `context` | `context_v1_0.jsonl` | 50161 | `aiodoo-repair` | `aiodoo-context` |
-| 6 | `conversation` | `conversation_dataset.jsonl` | 1 | `aiodoo-context` | `aiodoo-conversation` |
-| 7 | `approval` | `approval_dataset.jsonl` | 1 | `aiodoo-conversation` | `aiodoo-approval` |
-| 8 | `evaluation` | `evaluation_dataset.jsonl` | 1 | `aiodoo-approval` | `aiodoo-evaluation` |
+`checkpointing.resume_from` is only for **same-run** recovery after an interrupt
+(e.g. `training/cache/repair/checkpoints/checkpoint-200`).
+
+Product packaging (Development / Reasoning) belongs in **aiodoo-model**, not here.
+
+| Catalog # | Training ID | Dataset file | Records | Output adapter |
+|----------:|-------------|----------------|--------:|----------------|
+| 1 | `coding` | `coding_v1_0.jsonl` | 5459 | `aiodoo-coding` |
+| 2 | `planner` | `planner_v1_0.jsonl` | 5695 | `aiodoo-planner` |
+| 3 | `execution` | `execution_dataset.jsonl` | 5459 | `aiodoo-execution` |
+| 4 | `repair` | `repair_v1_0.jsonl` | 481 | `aiodoo-repair` |
+| 5 | `context` | `context_v1_0.jsonl` | 50161 | `aiodoo-context` |
+| 6 | `conversation` | `conversation_dataset.jsonl` | 1 | `aiodoo-conversation` |
+| 7 | `approval` | `approval_dataset.jsonl` | 1 | `aiodoo-approval` |
+| 8 | `evaluation` | `evaluation_dataset.jsonl` | 1 | `aiodoo-evaluation` |
 
 Dataset root (Drive / local workspace):
 

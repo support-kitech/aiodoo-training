@@ -6,7 +6,7 @@
 #
 # Public training id: execution
 # Published adapter:  aiodoo-execution
-# Progressive stage:  3/8 (after aiodoo-planner)
+# Independent skill adapter (catalog stage 3/8)
 # Dataset file:       datasets/v1.0.0/execution_dataset.jsonl (5459 records)
 # ============================================================
 
@@ -28,7 +28,7 @@ experiment:
   owner: aiodoo
   stage: execution
   progressive_stage: 3
-  input_adapter: aiodoo-planner
+  input_adapter: null
   output_adapter: aiodoo-execution
 
 determinism:

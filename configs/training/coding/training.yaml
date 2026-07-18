@@ -152,13 +152,14 @@ checkpointing:
   # Fingerprint/strict checks before resume
   validate_on_load: true
   retention: keep_last
-  # Stage 1 starts fresh. Later stages set resume_from to prior adapter/ckpt
-  # (see README progressive procedure). Example after Stage 1:
-  # resume_from: training/cache/coding/stage01-coding/final
+  # Fresh skill train from base model. After a Colab interrupt, point at the
+  # last same-run checkpoint, e.g.:
+  #   resume_from: training/cache/coding/checkpoints/checkpoint-200
+  # Do NOT chain other product adapters here (composition belongs in aiodoo-model).
   resume_from: null
 
 resume:
-  # strict: refuse mismatched fingerprints — required for progressive trust
+  # strict: refuse mismatched fingerprints on same-run checkpoint resume
   policy: strict
 
 # --- Metrics / callbacks / flash-attn note ------------------------------

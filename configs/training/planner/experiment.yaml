@@ -6,7 +6,7 @@
 #
 # Public training id: planner
 # Published adapter:  aiodoo-planner
-# Progressive stage:  2/8 (after aiodoo-coding)
+# Independent skill adapter (catalog stage 2/8)
 # Dataset file:       datasets/v1.0.0/planner_v1_0.jsonl (5695 records)
 # ============================================================
 
@@ -28,7 +28,7 @@ experiment:
   owner: aiodoo
   stage: planner
   progressive_stage: 2
-  input_adapter: aiodoo-coding
+  input_adapter: null
   output_adapter: aiodoo-planner
 
 determinism:

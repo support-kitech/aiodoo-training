@@ -124,7 +124,7 @@ def infer_adapter_artifact_type(resolved: dict[str, Any] | None) -> str:
                 dtype = entry.get("dataset_type")
                 if isinstance(dtype, str) and dtype in _DATASET_TYPE_TO_ARTIFACT_TYPE:
                     return _DATASET_TYPE_TO_ARTIFACT_TYPE[dtype]
-    progressive = resolved.get("progressive_training")
+    progressive = resolved.get("progressive_training") or resolved.get("skill_training")
     if isinstance(progressive, dict):
         stages = progressive.get("stages")
         if isinstance(stages, list) and stages:

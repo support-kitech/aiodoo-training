@@ -2,8 +2,8 @@
 
 **Training ID:** `coding`  
 **Published adapter:** `aiodoo-coding`  
-**Progressive stage:** 1 / 8  
-**Input adapter:** none (base model)  
+**Catalog stage:** 1 / 8 (label only — not a weight chain)  
+**Input adapter:** none (fresh from base model)  
 **Dataset:** `datasets/v1.0.0/coding_v1_0.jsonl` (5459 records)  
 **Internal id (bookkeeping only):** `EXP-0001`
 
@@ -32,7 +32,10 @@ configs/training/coding/
   export.yaml
 ```
 
-See [`../README.md`](../README.md) for the full progressive curriculum.
+See [`../README.md`](../README.md) for all independent skill packs.
+
+After a Colab interrupt only: set `checkpointing.resume_from` to the last
+same-run checkpoint under `training/cache/coding/checkpoints/`.
 
 ## Drive outputs (canonical)
 

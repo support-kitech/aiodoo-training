@@ -6,26 +6,26 @@
 #   e.g. AIODOO/datasets/v1.0.0/planner_v1_0.jsonl
 #
 # aiodoo-colab sets AIODOO_COLAB_DATASET_PATH to the version root.
-# Progressive curriculum stage 2/8:
-#   input_adapter=aiodoo-coding → output_adapter=aiodoo-planner
+# Independent skill adapter: train from base model, publish aiodoo-planner.
+# Product composition (Development / Reasoning) lives in aiodoo-model.
 # ============================================================
 
 dataset_version: "v1.0.0"
 dataset_root: "v1.0.0"
 
-progressive_training:
+# Catalog only — does not imply weight chaining across products.
+skill_training:
   enabled: true
   description: >
-    Product adapter training for stage 2 (planner).
-    Resume from prior product adapter aiodoo-coding, train on
-    planner_v1_0.jsonl, publish aiodoo-planner.
+    Independent product adapter for planner. Trains from the configured base
+    model (fresh LoRA). resume_from is for same-run checkpoint recovery only.
   adapter_naming: "aiodoo-{stage_name}"
   stages:
     - stage: 2
       name: planner
       file: planner_v1_0.jsonl
       dataset_type: planner
-      input_adapter: aiodoo-coding
+      input_adapter: null
       output_adapter: aiodoo-planner
 
 shuffle: true

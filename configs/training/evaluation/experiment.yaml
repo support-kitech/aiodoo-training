@@ -6,7 +6,7 @@
 #
 # Public training id: evaluation
 # Published adapter:  aiodoo-evaluation
-# Progressive stage:  8/8 (after aiodoo-approval)
+# Independent skill adapter (catalog stage 8/8)
 # Dataset file:       datasets/v1.0.0/evaluation_dataset.jsonl (1 records)
 # ============================================================
 
@@ -28,7 +28,7 @@ experiment:
   owner: aiodoo
   stage: evaluation
   progressive_stage: 8
-  input_adapter: aiodoo-approval
+  input_adapter: null
   output_adapter: aiodoo-evaluation
 
 determinism:

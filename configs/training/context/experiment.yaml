@@ -6,7 +6,7 @@
 #
 # Public training id: context
 # Published adapter:  aiodoo-context
-# Progressive stage:  5/8 (after aiodoo-repair)
+# Independent skill adapter (catalog stage 5/8)
 # Dataset file:       datasets/v1.0.0/context_v1_0.jsonl (50161 records)
 # ============================================================
 
@@ -28,7 +28,7 @@ experiment:
   owner: aiodoo
   stage: context
   progressive_stage: 5
-  input_adapter: aiodoo-repair
+  input_adapter: null
   output_adapter: aiodoo-context
 
 determinism:

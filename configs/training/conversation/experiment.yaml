@@ -6,7 +6,7 @@
 #
 # Public training id: conversation
 # Published adapter:  aiodoo-conversation
-# Progressive stage:  6/8 (after aiodoo-context)
+# Independent skill adapter (catalog stage 6/8)
 # Dataset file:       datasets/v1.0.0/conversation_dataset.jsonl (1 records)
 # ============================================================
 
@@ -28,7 +28,7 @@ experiment:
   owner: aiodoo
   stage: conversation
   progressive_stage: 6
-  input_adapter: aiodoo-context
+  input_adapter: null
   output_adapter: aiodoo-conversation
 
 determinism:

@@ -6,7 +6,7 @@
 #
 # Public training id: repair
 # Published adapter:  aiodoo-repair
-# Progressive stage:  4/8 (after aiodoo-execution)
+# Independent skill adapter (catalog stage 4/8)
 # Dataset file:       datasets/v1.0.0/repair_v1_0.jsonl (481 records)
 # ============================================================
 
@@ -28,7 +28,7 @@ experiment:
   owner: aiodoo
   stage: repair
   progressive_stage: 4
-  input_adapter: aiodoo-execution
+  input_adapter: null
   output_adapter: aiodoo-repair
 
 determinism:

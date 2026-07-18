@@ -8,19 +8,19 @@
 # aiodoo-colab sets AIODOO_COLAB_DATASET_PATH to the version root.
 # Paths below are relative to that version root (not host Linux paths).
 #
-# Progressive training order (REQUIRED):
-#   Stage N adapter OUT → Stage N+1 adapter IN (resume_from)
+# Independent skill adapter: train from base model, publish aiodoo-coding.
+# Product composition (Development / Reasoning) lives in aiodoo-model.
 # ============================================================
 
 dataset_version: "v1.0.0"
 dataset_root: "v1.0.0"
 
-# Progressive curriculum: sequential stages match curriculum.stages in training.yaml
-progressive_training:
+# Catalog only — does not imply weight chaining across products.
+skill_training:
   enabled: true
   description: >
-    Train one stage at a time. After each stage completes, the exported
-    PEFT adapter becomes the resume/base adapter for the next stage.
+    Independent product adapter for coding. Trains from the configured base
+    model (fresh LoRA). resume_from is for same-run checkpoint recovery only.
   adapter_naming: "aiodoo-{stage_name}"
   stages:
     - stage: 1
@@ -29,52 +29,7 @@ progressive_training:
       dataset_type: coding
       input_adapter: null
       output_adapter: aiodoo-coding
-    - stage: 2
-      name: planner
-      file: planner_v1_0.jsonl
-      dataset_type: planner
-      input_adapter: aiodoo-coding
-      output_adapter: aiodoo-planner
-    - stage: 3
-      name: execution
-      file: execution_dataset.jsonl
-      dataset_type: execution
-      input_adapter: aiodoo-planner
-      output_adapter: aiodoo-execution
-    - stage: 4
-      name: repair
-      file: repair_v1_0.jsonl
-      dataset_type: repair
-      input_adapter: aiodoo-execution
-      output_adapter: aiodoo-repair
-    - stage: 5
-      name: context
-      file: context_v1_0.jsonl
-      dataset_type: context
-      input_adapter: aiodoo-repair
-      output_adapter: aiodoo-context
-    - stage: 6
-      name: conversation
-      file: conversation_dataset.jsonl
-      dataset_type: conversation
-      input_adapter: aiodoo-context
-      output_adapter: aiodoo-conversation
-    - stage: 7
-      name: approval
-      file: approval_dataset.jsonl
-      dataset_type: approval
-      input_adapter: aiodoo-conversation
-      output_adapter: aiodoo-approval
-    - stage: 8
-      name: evaluation
-      file: evaluation_dataset.jsonl
-      dataset_type: evaluation
-      input_adapter: aiodoo-approval
-      output_adapter: aiodoo-evaluation
 
-# Dataset mix consumed by AssembleDatasets (paths relative to dataset version root).
-# Active stage for this run: Stage 1 (coding). Advance stages via README procedure
-# (swap active entry + resume_from), do not train all stages in one process.
 shuffle: true
 seed: 42
 
@@ -86,7 +41,7 @@ datasets:
     protocol_version: "1.0"
     weight: 1.0
 
-# Registered for curriculum validation / documentation (not all loaded at once)
+# Sibling dataset files in the same release (each has its own training pack).
 stage_catalog:
   - file: coding_v1_0.jsonl
     dataset_type: coding

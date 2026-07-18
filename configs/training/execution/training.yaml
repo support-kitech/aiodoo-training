@@ -101,11 +101,14 @@ checkpointing:
   save_on_failure: true
   validate_on_load: true
   retention: keep_last
-  # Progressive resume: prior product adapter published under models/adapters/
-  resume_from: models/adapters/aiodoo-planner
+  # Fresh skill train from base model. After a Colab interrupt, point at the
+  # last same-run checkpoint, e.g.:
+  #   resume_from: training/cache/execution/checkpoints/checkpoint-200
+  # Do NOT chain other product adapters here (composition belongs in aiodoo-model).
+  resume_from: null
 
 resume:
-  policy: strict
+  policy: strict  # same-run checkpoint compatibility
 
 metrics:
   history_path: experiments/execution/metrics/history.jsonl
