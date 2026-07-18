@@ -1,0 +1,48 @@
+# ============================================================
+# context — Canonical production training (root)
+# ============================================================
+# Invoke:
+#   python train.py --config configs/training/context/experiment.yaml
+#
+# Public training id: context
+# Published adapter:  aiodoo-context
+# Progressive stage:  5/8 (after aiodoo-repair)
+# Dataset file:       datasets/v1.0.0/context_v1_0.jsonl (50161 records)
+# ============================================================
+
+schema_version: "1.0"
+name: context
+seed: 42
+
+include:
+  - dataset.yaml
+  - model.yaml
+  - training.yaml
+  - evaluation.yaml
+  - export.yaml
+
+experiment:
+  id: context
+  title: "AIODOO Production — Context / Repository Understanding Adapter"
+  version: "1.0.0"
+  owner: aiodoo
+  stage: context
+  progressive_stage: 5
+  input_adapter: aiodoo-repair
+  output_adapter: aiodoo-context
+
+determinism:
+  seed: 42
+  cudnn_deterministic: true
+  cudnn_benchmark: false
+
+workspace:
+  layout: drive_v1
+
+tracking:
+  tracker_type: local_jsonl
+  enabled: true
+  experiment_name: context
+  root_dir: experiments/context/logs/tracking
+  flush_every_n_steps: 20
+  nonfatal_sink_errors: true

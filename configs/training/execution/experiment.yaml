@@ -1,0 +1,48 @@
+# ============================================================
+# execution — Canonical production training (root)
+# ============================================================
+# Invoke:
+#   python train.py --config configs/training/execution/experiment.yaml
+#
+# Public training id: execution
+# Published adapter:  aiodoo-execution
+# Progressive stage:  3/8 (after aiodoo-planner)
+# Dataset file:       datasets/v1.0.0/execution_dataset.jsonl (5459 records)
+# ============================================================
+
+schema_version: "1.0"
+name: execution
+seed: 42
+
+include:
+  - dataset.yaml
+  - model.yaml
+  - training.yaml
+  - evaluation.yaml
+  - export.yaml
+
+experiment:
+  id: execution
+  title: "AIODOO Production — Execution / Workflow Adapter"
+  version: "1.0.0"
+  owner: aiodoo
+  stage: execution
+  progressive_stage: 3
+  input_adapter: aiodoo-planner
+  output_adapter: aiodoo-execution
+
+determinism:
+  seed: 42
+  cudnn_deterministic: true
+  cudnn_benchmark: false
+
+workspace:
+  layout: drive_v1
+
+tracking:
+  tracker_type: local_jsonl
+  enabled: true
+  experiment_name: execution
+  root_dir: experiments/execution/logs/tracking
+  flush_every_n_steps: 20
+  nonfatal_sink_errors: true

@@ -1,0 +1,45 @@
+# ============================================================
+# conversation — Dataset (workspace-relative, no Drive absolute paths)
+# ============================================================
+# Resolution contract (aiodoo-colab):
+#   workspace.datasets / <dataset_version> / <file>
+#   e.g. AIODOO/datasets/v1.0.0/conversation_dataset.jsonl
+#
+# aiodoo-colab sets AIODOO_COLAB_DATASET_PATH to the version root.
+# Progressive curriculum stage 6/8:
+#   input_adapter=aiodoo-context → output_adapter=aiodoo-conversation
+# ============================================================
+
+# NOTE: v1.0.0 currently ships 1 conversation record — expand in a future dataset release.
+dataset_version: "v1.0.0"
+dataset_root: "v1.0.0"
+
+progressive_training:
+  enabled: true
+  description: >
+    Product adapter training for stage 6 (conversation).
+    Resume from prior product adapter aiodoo-context, train on
+    conversation_dataset.jsonl, publish aiodoo-conversation.
+  adapter_naming: "aiodoo-{stage_name}"
+  stages:
+    - stage: 6
+      name: conversation
+      file: conversation_dataset.jsonl
+      dataset_type: conversation
+      input_adapter: aiodoo-context
+      output_adapter: aiodoo-conversation
+
+shuffle: true
+seed: 42
+
+datasets:
+  - name: stage06_conversation
+    path: conversation_dataset.jsonl
+    dataset_type: conversation
+    protocol_version: "1.0"
+    weight: 1.0
+
+stage_catalog:
+  - file: conversation_dataset.jsonl
+    dataset_type: conversation
+    record_count: 1

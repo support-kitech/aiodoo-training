@@ -1,0 +1,48 @@
+# ============================================================
+# planner — Canonical production training (root)
+# ============================================================
+# Invoke:
+#   python train.py --config configs/training/planner/experiment.yaml
+#
+# Public training id: planner
+# Published adapter:  aiodoo-planner
+# Progressive stage:  2/8 (after aiodoo-coding)
+# Dataset file:       datasets/v1.0.0/planner_v1_0.jsonl (5695 records)
+# ============================================================
+
+schema_version: "1.0"
+name: planner
+seed: 42
+
+include:
+  - dataset.yaml
+  - model.yaml
+  - training.yaml
+  - evaluation.yaml
+  - export.yaml
+
+experiment:
+  id: planner
+  title: "AIODOO Production — Planner / Reasoning Adapter"
+  version: "1.0.0"
+  owner: aiodoo
+  stage: planner
+  progressive_stage: 2
+  input_adapter: aiodoo-coding
+  output_adapter: aiodoo-planner
+
+determinism:
+  seed: 42
+  cudnn_deterministic: true
+  cudnn_benchmark: false
+
+workspace:
+  layout: drive_v1
+
+tracking:
+  tracker_type: local_jsonl
+  enabled: true
+  experiment_name: planner
+  root_dir: experiments/planner/logs/tracking
+  flush_every_n_steps: 20
+  nonfatal_sink_errors: true

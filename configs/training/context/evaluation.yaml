@@ -1,0 +1,56 @@
+# ============================================================
+# context — Evaluation
+# ============================================================
+
+evaluation:
+  enabled: false
+  backend: stub
+  profile: default
+  metrics:
+    - loss
+    - perplexity
+    - token_accuracy
+  max_examples: 128
+  seed: 42
+  split: validation
+  acceptance:
+    combine: all
+    require_pass_for_export: false
+    thresholds:
+      - metric_key: loss
+        op: le
+        value: 2.5
+        severity: error
+      - metric_key: token_accuracy
+        op: ge
+        value: 0.35
+        severity: warn
+
+schedule:
+  smoke:
+    when: after_stage
+    max_examples: 32
+    purpose: Fast Colab sanity — catch broken adapters before next stage
+  production:
+    when: after_export
+    max_examples: 512
+    purpose: Quality gate before publishing aiodoo-context
+
+sample_prompts:
+  - id: context_smoke_01
+    prompt: >
+      Given a repository query about where partner VAT validation is implemented, return the relevant artifacts and dependency graph.
+    expect: Artifacts + graph identifying models/views/security files.
+
+expected_metrics:
+  smoke:
+    loss_max: 3.5
+    token_accuracy_min: 0.25
+  production:
+    loss_max: 2.5
+    token_accuracy_min: 0.35
+    perplexity_max: 15.0
+
+pass_criteria:
+  smoke: "Smoke prompt produces coherent context answers; loss ≤ 3.5"
+  production: "Acceptance thresholds pass; eval report recorded under logs/context"

@@ -1,0 +1,51 @@
+# ============================================================
+# conversation — Export / artifacts
+# ============================================================
+# Colab overlays output via AIODOO_COLAB_*_OUTPUT env vars.
+# Paths remain workspace-relative (no Drive absolute paths).
+# ============================================================
+
+export:
+  enabled: true
+  backend: hf_peft
+  profile: peft_default
+  output_dir: models/exports/aiodoo-conversation
+  export_types:
+    - peft_adapter
+    - tokenizer
+    - manifest
+    - model_card
+    - bundle
+  require_evaluation: false
+  require_pass_for_export: false
+  validation_policy: strict
+  required_roles:
+    - peft_adapter
+    - manifest
+  optional_roles:
+    - tokenizer
+    - model_card
+    - evaluation_report
+
+directory_naming:
+  adapters: "models/adapters/aiodoo-conversation/<adapter_name>/"
+  checkpoints: "models/adapters/aiodoo-conversation/checkpoints/"
+  merged: "models/merged/aiodoo-conversation/"
+  exports: "models/exports/aiodoo-conversation/"
+  logs: "logs/conversation/"
+  metrics: "logs/conversation/metrics/"
+  fingerprints: "models/exports/aiodoo-conversation/fingerprints/"
+
+artifacts:
+  adapter:
+    description: PEFT / QLoRA adapter weights + adapter_config.json
+    required: true
+  merged_model:
+    description: Base + adapter merge under models/merged/aiodoo-conversation/
+    required: false
+  metadata:
+    description: Experiment manifest, training hyperparameters, stage chain
+    required: true
+  fingerprints:
+    description: Config / model / adapter / dataset digests for provenance
+    required: true

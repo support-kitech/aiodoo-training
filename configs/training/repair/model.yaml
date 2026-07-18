@@ -1,0 +1,26 @@
+# ============================================================
+# repair — Base model
+# ============================================================
+# Provider: Hugging Face Hub
+# Workspace cache (aiodoo-colab ModelStore):
+#   <workspace>/models/base/Qwen__Qwen3-8B/
+# Colab overlays absolute path via AIODOO_COLAB_MODEL_PATH.
+# Do NOT hardcode Google Drive or Linux host paths here.
+# ============================================================
+
+model:
+  identifier: Qwen/Qwen3-8B
+  family: qwen
+  # fp16: Tesla T4 (sm_75) has no production bf16; fp16 is the stable AMP dtype
+  precision: fp16
+  backend: hf_causal
+  tokenizer_binding: qwen
+
+# Progressive curriculum base (same family across product adapters)
+future_models:
+  planner_successor:
+    identifier: deepseek-ai/DeepSeek-R1-0528-Qwen3-8B
+    family: qwen
+    notes: >
+      Optional successor base after the coding curriculum completes.
+      Same workspace cache layout: models/base/deepseek-ai__DeepSeek-R1-0528-Qwen3-8B/

@@ -1,0 +1,44 @@
+# ============================================================
+# execution — Dataset (workspace-relative, no Drive absolute paths)
+# ============================================================
+# Resolution contract (aiodoo-colab):
+#   workspace.datasets / <dataset_version> / <file>
+#   e.g. AIODOO/datasets/v1.0.0/execution_dataset.jsonl
+#
+# aiodoo-colab sets AIODOO_COLAB_DATASET_PATH to the version root.
+# Progressive curriculum stage 3/8:
+#   input_adapter=aiodoo-planner → output_adapter=aiodoo-execution
+# ============================================================
+
+dataset_version: "v1.0.0"
+dataset_root: "v1.0.0"
+
+progressive_training:
+  enabled: true
+  description: >
+    Product adapter training for stage 3 (execution).
+    Resume from prior product adapter aiodoo-planner, train on
+    execution_dataset.jsonl, publish aiodoo-execution.
+  adapter_naming: "aiodoo-{stage_name}"
+  stages:
+    - stage: 3
+      name: execution
+      file: execution_dataset.jsonl
+      dataset_type: execution
+      input_adapter: aiodoo-planner
+      output_adapter: aiodoo-execution
+
+shuffle: true
+seed: 42
+
+datasets:
+  - name: stage03_execution
+    path: execution_dataset.jsonl
+    dataset_type: execution
+    protocol_version: "1.0"
+    weight: 1.0
+
+stage_catalog:
+  - file: execution_dataset.jsonl
+    dataset_type: execution
+    record_count: 5459

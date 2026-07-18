@@ -2,12 +2,22 @@
 
 **Training ID:** `coding`  
 **Published adapter:** `aiodoo-coding`  
+**Progressive stage:** 1 / 8  
+**Input adapter:** none (base model)  
+**Dataset:** `datasets/v1.0.0/coding_v1_0.jsonl` (5459 records)  
 **Internal id (bookkeeping only):** `EXP-0001`
 
 ## Invoke
 
 ```bash
 python train.py --config configs/training/coding/experiment.yaml
+```
+
+Colab:
+
+```python
+TRAINING_ID = "coding"
+experiment = ExperimentStore(workspace=workspace).load(TRAINING_ID)
 ```
 
 ## Layout
@@ -21,6 +31,8 @@ configs/training/coding/
   evaluation.yaml
   export.yaml
 ```
+
+See [`../README.md`](../README.md) for the full progressive curriculum.
 
 ## Drive outputs (canonical)
 

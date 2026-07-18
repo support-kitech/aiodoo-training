@@ -1,0 +1,48 @@
+# ============================================================
+# repair — Canonical production training (root)
+# ============================================================
+# Invoke:
+#   python train.py --config configs/training/repair/experiment.yaml
+#
+# Public training id: repair
+# Published adapter:  aiodoo-repair
+# Progressive stage:  4/8 (after aiodoo-execution)
+# Dataset file:       datasets/v1.0.0/repair_v1_0.jsonl (481 records)
+# ============================================================
+
+schema_version: "1.0"
+name: repair
+seed: 42
+
+include:
+  - dataset.yaml
+  - model.yaml
+  - training.yaml
+  - evaluation.yaml
+  - export.yaml
+
+experiment:
+  id: repair
+  title: "AIODOO Production — Repair / Bugfix Adapter"
+  version: "1.0.0"
+  owner: aiodoo
+  stage: repair
+  progressive_stage: 4
+  input_adapter: aiodoo-execution
+  output_adapter: aiodoo-repair
+
+determinism:
+  seed: 42
+  cudnn_deterministic: true
+  cudnn_benchmark: false
+
+workspace:
+  layout: drive_v1
+
+tracking:
+  tracker_type: local_jsonl
+  enabled: true
+  experiment_name: repair
+  root_dir: experiments/repair/logs/tracking
+  flush_every_n_steps: 20
+  nonfatal_sink_errors: true

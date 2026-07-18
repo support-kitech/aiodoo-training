@@ -1,0 +1,45 @@
+# ============================================================
+# evaluation — Dataset (workspace-relative, no Drive absolute paths)
+# ============================================================
+# Resolution contract (aiodoo-colab):
+#   workspace.datasets / <dataset_version> / <file>
+#   e.g. AIODOO/datasets/v1.0.0/evaluation_dataset.jsonl
+#
+# aiodoo-colab sets AIODOO_COLAB_DATASET_PATH to the version root.
+# Progressive curriculum stage 8/8:
+#   input_adapter=aiodoo-approval → output_adapter=aiodoo-evaluation
+# ============================================================
+
+# NOTE: v1.0.0 currently ships 1 evaluation record — expand in a future dataset release.
+dataset_version: "v1.0.0"
+dataset_root: "v1.0.0"
+
+progressive_training:
+  enabled: true
+  description: >
+    Product adapter training for stage 8 (evaluation).
+    Resume from prior product adapter aiodoo-approval, train on
+    evaluation_dataset.jsonl, publish aiodoo-evaluation.
+  adapter_naming: "aiodoo-{stage_name}"
+  stages:
+    - stage: 8
+      name: evaluation
+      file: evaluation_dataset.jsonl
+      dataset_type: evaluation
+      input_adapter: aiodoo-approval
+      output_adapter: aiodoo-evaluation
+
+shuffle: true
+seed: 42
+
+datasets:
+  - name: stage08_evaluation
+    path: evaluation_dataset.jsonl
+    dataset_type: evaluation
+    protocol_version: "1.0"
+    weight: 1.0
+
+stage_catalog:
+  - file: evaluation_dataset.jsonl
+    dataset_type: evaluation
+    record_count: 1

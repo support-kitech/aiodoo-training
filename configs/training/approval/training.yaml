@@ -1,0 +1,126 @@
+# ============================================================
+# approval — Training (Tesla T4 / Colab production profile)
+# ============================================================
+# Hardware envelope: Google Colab Tesla T4 (16 GB).
+# Progressive stage 7/8 — resume from prior product adapter.
+# Dataset: datasets/v1.0.0/approval_dataset.jsonl (1 records)
+# ============================================================
+
+training:
+  backend: hf_trainer
+  num_epochs: 1.0
+  logging_steps: 10
+  learning_rate: 0.0001
+  weight_decay: 0.01
+  warmup_ratio: 0.03
+  per_device_batch_size: 1
+  gradient_accumulation_steps: 16
+
+adaptation:
+  adapter_type: qlora
+  strategy: qlora
+  rank: 16
+  alpha: 32
+  dropout: 0.05
+  target_modules:
+    - q_proj
+    - k_proj
+    - v_proj
+    - o_proj
+    - gate_proj
+    - up_proj
+    - down_proj
+
+optimizer:
+  name: adamw
+  learning_rate: 0.0001
+  weight_decay: 0.01
+  beta1: 0.9
+  beta2: 0.999
+  eps: 1.0e-8
+
+scheduler:
+  name: cosine
+  warmup_ratio: 0.03
+
+gradient:
+  max_norm: 1.0
+  accumulation_steps: 16
+
+execution:
+  device:
+    preferred: auto
+    allow_cpu_fallback: false
+  precision:
+    compute: fp16
+    load_in_4bit: true
+    load_in_8bit: false
+  memory:
+    activation_checkpointing: true
+    allow_cpu_offload: false
+  accelerator: none
+  resource_planner: torch
+
+precision:
+  precision: fp16
+  gradient_checkpointing: true
+
+packing:
+  backend: concat
+  mode: concat
+  max_sequence_length: 2048
+  max_examples_per_sequence: 8
+  overflow: defer
+  drop_last: false
+  seed: 42
+  pad_to_multiple_of: 8
+
+memory_packing:
+  target_tokens_per_batch: 2048
+  max_padding_ratio: 0.35
+  prefer_length_buckets: true
+  enable_packed_attention_hints: true
+
+curriculum:
+  backend: sequential
+  mode: sequential
+  stages:
+    - approval
+  seed: 42
+
+sampling:
+  backend: identity
+  seed: 42
+  temperature: 1.0
+
+checkpointing:
+  # Production: training/cache/approval/checkpoints/ under Drive workspace.
+  output_dir: training/cache/approval/checkpoints
+  save_steps: 200
+  save_total_limit: 3
+  save_on_failure: true
+  validate_on_load: true
+  retention: keep_last
+  # Progressive resume: prior product adapter published under models/adapters/
+  resume_from: models/adapters/aiodoo-conversation
+
+resume:
+  policy: strict
+
+metrics:
+  history_path: experiments/approval/metrics/history.jsonl
+
+callbacks:
+  names:
+    - logging
+
+attn:
+  preferred: sdpa
+  allow_flash_attention_2: true
+
+distributed:
+  enabled: false
+  world_size: 1
+  num_nodes: 1
+  global_rank: 0
+  local_rank: 0

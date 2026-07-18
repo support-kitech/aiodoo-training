@@ -1,0 +1,44 @@
+# ============================================================
+# context — Dataset (workspace-relative, no Drive absolute paths)
+# ============================================================
+# Resolution contract (aiodoo-colab):
+#   workspace.datasets / <dataset_version> / <file>
+#   e.g. AIODOO/datasets/v1.0.0/context_v1_0.jsonl
+#
+# aiodoo-colab sets AIODOO_COLAB_DATASET_PATH to the version root.
+# Progressive curriculum stage 5/8:
+#   input_adapter=aiodoo-repair → output_adapter=aiodoo-context
+# ============================================================
+
+dataset_version: "v1.0.0"
+dataset_root: "v1.0.0"
+
+progressive_training:
+  enabled: true
+  description: >
+    Product adapter training for stage 5 (context).
+    Resume from prior product adapter aiodoo-repair, train on
+    context_v1_0.jsonl, publish aiodoo-context.
+  adapter_naming: "aiodoo-{stage_name}"
+  stages:
+    - stage: 5
+      name: context
+      file: context_v1_0.jsonl
+      dataset_type: context
+      input_adapter: aiodoo-repair
+      output_adapter: aiodoo-context
+
+shuffle: true
+seed: 42
+
+datasets:
+  - name: stage05_context
+    path: context_v1_0.jsonl
+    dataset_type: context
+    protocol_version: "1.0"
+    weight: 1.0
+
+stage_catalog:
+  - file: context_v1_0.jsonl
+    dataset_type: context
+    record_count: 50161

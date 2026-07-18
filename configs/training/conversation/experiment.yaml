@@ -1,0 +1,48 @@
+# ============================================================
+# conversation — Canonical production training (root)
+# ============================================================
+# Invoke:
+#   python train.py --config configs/training/conversation/experiment.yaml
+#
+# Public training id: conversation
+# Published adapter:  aiodoo-conversation
+# Progressive stage:  6/8 (after aiodoo-context)
+# Dataset file:       datasets/v1.0.0/conversation_dataset.jsonl (1 records)
+# ============================================================
+
+schema_version: "1.0"
+name: conversation
+seed: 42
+
+include:
+  - dataset.yaml
+  - model.yaml
+  - training.yaml
+  - evaluation.yaml
+  - export.yaml
+
+experiment:
+  id: conversation
+  title: "AIODOO Production — Conversation Adapter"
+  version: "1.0.0"
+  owner: aiodoo
+  stage: conversation
+  progressive_stage: 6
+  input_adapter: aiodoo-context
+  output_adapter: aiodoo-conversation
+
+determinism:
+  seed: 42
+  cudnn_deterministic: true
+  cudnn_benchmark: false
+
+workspace:
+  layout: drive_v1
+
+tracking:
+  tracker_type: local_jsonl
+  enabled: true
+  experiment_name: conversation
+  root_dir: experiments/conversation/logs/tracking
+  flush_every_n_steps: 20
+  nonfatal_sink_errors: true

@@ -1,0 +1,56 @@
+# ============================================================
+# approval — Evaluation
+# ============================================================
+
+evaluation:
+  enabled: false
+  backend: stub
+  profile: default
+  metrics:
+    - loss
+    - perplexity
+    - token_accuracy
+  max_examples: 128
+  seed: 42
+  split: validation
+  acceptance:
+    combine: all
+    require_pass_for_export: false
+    thresholds:
+      - metric_key: loss
+        op: le
+        value: 2.5
+        severity: error
+      - metric_key: token_accuracy
+        op: ge
+        value: 0.35
+        severity: warn
+
+schedule:
+  smoke:
+    when: after_stage
+    max_examples: 32
+    purpose: Fast Colab sanity — catch broken adapters before next stage
+  production:
+    when: after_export
+    max_examples: 512
+    purpose: Quality gate before publishing aiodoo-approval
+
+sample_prompts:
+  - id: approval_smoke_01
+    prompt: >
+      Review findings and evidence for a proposed module change and return an approve/reject decision with recommendations.
+    expect: Decision + recommendations grounded in findings/evidence.
+
+expected_metrics:
+  smoke:
+    loss_max: 3.5
+    token_accuracy_min: 0.25
+  production:
+    loss_max: 2.5
+    token_accuracy_min: 0.35
+    perplexity_max: 15.0
+
+pass_criteria:
+  smoke: "Smoke prompt produces coherent approval answers; loss ≤ 3.5"
+  production: "Acceptance thresholds pass; eval report recorded under logs/approval"

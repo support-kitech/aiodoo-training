@@ -122,18 +122,12 @@ memory_packing:
   enable_packed_attention_hints: true
 
 curriculum:
-  # sequential: Stage 1→8 progressive skill chain (see dataset.yaml)
+  # Active product only. Full 1→8 chain is documented in dataset.yaml /
+  # configs/training/README.md — each training id runs its own stage.
   backend: sequential
   mode: sequential
   stages:
     - coding
-    - planner
-    - execution
-    - repair
-    - context
-    - conversation
-    - approval
-    - evaluation
   seed: 42
 
 sampling:

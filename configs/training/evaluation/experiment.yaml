@@ -1,0 +1,48 @@
+# ============================================================
+# evaluation — Canonical production training (root)
+# ============================================================
+# Invoke:
+#   python train.py --config configs/training/evaluation/experiment.yaml
+#
+# Public training id: evaluation
+# Published adapter:  aiodoo-evaluation
+# Progressive stage:  8/8 (after aiodoo-approval)
+# Dataset file:       datasets/v1.0.0/evaluation_dataset.jsonl (1 records)
+# ============================================================
+
+schema_version: "1.0"
+name: evaluation
+seed: 42
+
+include:
+  - dataset.yaml
+  - model.yaml
+  - training.yaml
+  - evaluation.yaml
+  - export.yaml
+
+experiment:
+  id: evaluation
+  title: "AIODOO Production — Evaluation Adapter"
+  version: "1.0.0"
+  owner: aiodoo
+  stage: evaluation
+  progressive_stage: 8
+  input_adapter: aiodoo-approval
+  output_adapter: aiodoo-evaluation
+
+determinism:
+  seed: 42
+  cudnn_deterministic: true
+  cudnn_benchmark: false
+
+workspace:
+  layout: drive_v1
+
+tracking:
+  tracker_type: local_jsonl
+  enabled: true
+  experiment_name: evaluation
+  root_dir: experiments/evaluation/logs/tracking
+  flush_every_n_steps: 20
+  nonfatal_sink_errors: true

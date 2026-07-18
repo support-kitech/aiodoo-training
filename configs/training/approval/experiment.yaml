@@ -1,0 +1,48 @@
+# ============================================================
+# approval — Canonical production training (root)
+# ============================================================
+# Invoke:
+#   python train.py --config configs/training/approval/experiment.yaml
+#
+# Public training id: approval
+# Published adapter:  aiodoo-approval
+# Progressive stage:  7/8 (after aiodoo-conversation)
+# Dataset file:       datasets/v1.0.0/approval_dataset.jsonl (1 records)
+# ============================================================
+
+schema_version: "1.0"
+name: approval
+seed: 42
+
+include:
+  - dataset.yaml
+  - model.yaml
+  - training.yaml
+  - evaluation.yaml
+  - export.yaml
+
+experiment:
+  id: approval
+  title: "AIODOO Production — Approval / Review Adapter"
+  version: "1.0.0"
+  owner: aiodoo
+  stage: approval
+  progressive_stage: 7
+  input_adapter: aiodoo-conversation
+  output_adapter: aiodoo-approval
+
+determinism:
+  seed: 42
+  cudnn_deterministic: true
+  cudnn_benchmark: false
+
+workspace:
+  layout: drive_v1
+
+tracking:
+  tracker_type: local_jsonl
+  enabled: true
+  experiment_name: approval
+  root_dir: experiments/approval/logs/tracking
+  flush_every_n_steps: 20
+  nonfatal_sink_errors: true

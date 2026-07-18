@@ -1,0 +1,44 @@
+# ============================================================
+# planner — Dataset (workspace-relative, no Drive absolute paths)
+# ============================================================
+# Resolution contract (aiodoo-colab):
+#   workspace.datasets / <dataset_version> / <file>
+#   e.g. AIODOO/datasets/v1.0.0/planner_v1_0.jsonl
+#
+# aiodoo-colab sets AIODOO_COLAB_DATASET_PATH to the version root.
+# Progressive curriculum stage 2/8:
+#   input_adapter=aiodoo-coding → output_adapter=aiodoo-planner
+# ============================================================
+
+dataset_version: "v1.0.0"
+dataset_root: "v1.0.0"
+
+progressive_training:
+  enabled: true
+  description: >
+    Product adapter training for stage 2 (planner).
+    Resume from prior product adapter aiodoo-coding, train on
+    planner_v1_0.jsonl, publish aiodoo-planner.
+  adapter_naming: "aiodoo-{stage_name}"
+  stages:
+    - stage: 2
+      name: planner
+      file: planner_v1_0.jsonl
+      dataset_type: planner
+      input_adapter: aiodoo-coding
+      output_adapter: aiodoo-planner
+
+shuffle: true
+seed: 42
+
+datasets:
+  - name: stage02_planner
+    path: planner_v1_0.jsonl
+    dataset_type: planner
+    protocol_version: "1.0"
+    weight: 1.0
+
+stage_catalog:
+  - file: planner_v1_0.jsonl
+    dataset_type: planner
+    record_count: 5695

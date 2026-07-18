@@ -1,0 +1,44 @@
+# ============================================================
+# repair — Dataset (workspace-relative, no Drive absolute paths)
+# ============================================================
+# Resolution contract (aiodoo-colab):
+#   workspace.datasets / <dataset_version> / <file>
+#   e.g. AIODOO/datasets/v1.0.0/repair_v1_0.jsonl
+#
+# aiodoo-colab sets AIODOO_COLAB_DATASET_PATH to the version root.
+# Progressive curriculum stage 4/8:
+#   input_adapter=aiodoo-execution → output_adapter=aiodoo-repair
+# ============================================================
+
+dataset_version: "v1.0.0"
+dataset_root: "v1.0.0"
+
+progressive_training:
+  enabled: true
+  description: >
+    Product adapter training for stage 4 (repair).
+    Resume from prior product adapter aiodoo-execution, train on
+    repair_v1_0.jsonl, publish aiodoo-repair.
+  adapter_naming: "aiodoo-{stage_name}"
+  stages:
+    - stage: 4
+      name: repair
+      file: repair_v1_0.jsonl
+      dataset_type: repair
+      input_adapter: aiodoo-execution
+      output_adapter: aiodoo-repair
+
+shuffle: true
+seed: 42
+
+datasets:
+  - name: stage04_repair
+    path: repair_v1_0.jsonl
+    dataset_type: repair
+    protocol_version: "1.0"
+    weight: 1.0
+
+stage_catalog:
+  - file: repair_v1_0.jsonl
+    dataset_type: repair
+    record_count: 481

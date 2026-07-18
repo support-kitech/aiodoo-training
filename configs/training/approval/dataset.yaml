@@ -1,0 +1,45 @@
+# ============================================================
+# approval — Dataset (workspace-relative, no Drive absolute paths)
+# ============================================================
+# Resolution contract (aiodoo-colab):
+#   workspace.datasets / <dataset_version> / <file>
+#   e.g. AIODOO/datasets/v1.0.0/approval_dataset.jsonl
+#
+# aiodoo-colab sets AIODOO_COLAB_DATASET_PATH to the version root.
+# Progressive curriculum stage 7/8:
+#   input_adapter=aiodoo-conversation → output_adapter=aiodoo-approval
+# ============================================================
+
+# NOTE: v1.0.0 currently ships 1 approval record — expand in a future dataset release.
+dataset_version: "v1.0.0"
+dataset_root: "v1.0.0"
+
+progressive_training:
+  enabled: true
+  description: >
+    Product adapter training for stage 7 (approval).
+    Resume from prior product adapter aiodoo-conversation, train on
+    approval_dataset.jsonl, publish aiodoo-approval.
+  adapter_naming: "aiodoo-{stage_name}"
+  stages:
+    - stage: 7
+      name: approval
+      file: approval_dataset.jsonl
+      dataset_type: approval
+      input_adapter: aiodoo-conversation
+      output_adapter: aiodoo-approval
+
+shuffle: true
+seed: 42
+
+datasets:
+  - name: stage07_approval
+    path: approval_dataset.jsonl
+    dataset_type: approval
+    protocol_version: "1.0"
+    weight: 1.0
+
+stage_catalog:
+  - file: approval_dataset.jsonl
+    dataset_type: approval
+    record_count: 1
