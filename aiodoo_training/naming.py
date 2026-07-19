@@ -7,7 +7,7 @@ in Drive paths, adapter product names, notebook UI, or public CLI strings.
 
 from __future__ import annotations
 
-from typing import Final
+from typing import Any, Final
 
 # Permanent public training identifiers (configuration + cache keys).
 TRAINING_IDS: Final[tuple[str, ...]] = (
@@ -69,12 +69,9 @@ def normalize_training_id(value: str) -> str:
         return LEGACY_INTERNAL_ID_TO_TRAINING_ID[raw]
     # Allow future EXP-NNNN → unknown mapping to fail clearly.
     if raw.startswith("EXP-"):
-        raise ValueError(
-            f"Unknown legacy internal id {raw!r}; known: {sorted(LEGACY_INTERNAL_ID_TO_TRAINING_ID)}"
-        )
-    raise ValueError(
-        f"Unknown training id {raw!r}; expected one of {list(TRAINING_IDS)}"
-    )
+        known = sorted(LEGACY_INTERNAL_ID_TO_TRAINING_ID)
+        raise ValueError(f"Unknown legacy internal id {raw!r}; known: {known}")
+    raise ValueError(f"Unknown training id {raw!r}; expected one of {list(TRAINING_IDS)}")
 
 
 def adapter_product_id(training_id: str) -> str:
@@ -95,7 +92,7 @@ def stage_display_name(training_id: str) -> str:
     return tid.replace("_", " ").title()
 
 
-def resolve_public_training_id(resolved: dict) -> str:
+def resolve_public_training_id(resolved: dict[str, Any]) -> str:
     """
     Extract the public training id from a resolved experiment config mapping.
 
@@ -141,10 +138,7 @@ def resolve_public_training_id(resolved: dict) -> str:
     if isinstance(name, str) and name.strip():
         return normalize_training_id(name)
 
-    raise ValueError(
-        "Resolved config is missing a public training id "
-        "(expected experiment.id)."
-    )
+    raise ValueError("Resolved config is missing a public training id (expected experiment.id).")
 
 
 __all__ = [

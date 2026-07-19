@@ -4,6 +4,9 @@ Production-grade AI model training framework for the AIODOO ecosystem.
 
 ## Status
 
+**v1.0.0 — Production frozen** ([repository freeze](docs/repository_freeze.md) ·
+[ADR-0023](docs/adr/0023-repository-freeze-v1.md))
+
 **Phase 0 — Permanently frozen** (foundation)  
 **Phase 1 — Permanently frozen** (dataset loading, tokenization, resource layer)  
 **Phase 2 — Permanently frozen** (model loading + adaptation)  
@@ -13,7 +16,8 @@ Production-grade AI model training framework for the AIODOO ecosystem.
 **Phase 6 — Permanently frozen** (tracking, experiment management, CLI polish)  
 **Phase 7 — Permanently frozen** (distributed readiness; ADR-0019 / ADR-0021)
 
-**AIODOO Training v1 architecture complete.**
+**AIODOO Training v1 architecture complete.** Capability Package lifecycle
+alignment (ADR-0022 / B0–B2) is included in the v1.0.0 freeze.
 
 Phases 0–7 are **permanently frozen** public contracts. Later work **extends**
 them; it does not redesign them. See [Frozen Public Contracts](docs/frozen_public_contracts.md),
@@ -126,14 +130,25 @@ python3 tests/run_tests.py
 
 ## Documentation
 
-- [Architecture](docs/architecture.md)
-- [Terminology](docs/terminology.md) — authoritative vocabulary
-- [Ownership](docs/ownership.md)
-- [Capability Model](docs/capability_model.md) / [Product Model](docs/product_model.md)
-- [Lifecycle](docs/lifecycle.md)
-- [Metadata Ownership](docs/metadata_ownership.md)
+**Start here (new contributors):**
+
+1. [Terminology](docs/terminology.md)
+2. [Ownership](docs/ownership.md)
+3. [Lifecycle](docs/lifecycle.md)
+4. [Capability Model](docs/capability_model.md) / [Product Model](docs/product_model.md)
+5. [Repository Freeze](docs/repository_freeze.md) · [CONTRIBUTING](CONTRIBUTING.md)
+
+**Governance:**
+
+- [Frozen Public Contracts](docs/frozen_public_contracts.md)
 - [Freeze Readiness](docs/freeze_readiness.md)
-- [Frozen Public Contracts](docs/frozen_public_contracts.md) — binding engineering governance
+- [MAINTENANCE](docs/MAINTENANCE.md) · [Release Checklist](docs/release_checklist.md)
+- [CHANGELOG](CHANGELOG.md)
+
+**Architecture & contracts:**
+
+- [Architecture](docs/architecture.md)
+- [Metadata Ownership](docs/metadata_ownership.md)
 - [Architecture Invariants](docs/architecture_invariants.md)
 - [Phase Completion Matrix](docs/phase_completion_matrix.md)
 - [Phase 3 Training Engine Architecture](docs/phase3-training-engine-architecture.md) — **permanently frozen**
@@ -145,4 +160,5 @@ python3 tests/run_tests.py
 - [Phase 6 Tracking & CLI Architecture](docs/phase6-tracking-cli-architecture.md) — **permanently frozen**
 - [Phase 7 Distributed Readiness Architecture](docs/phase7-distributed-readiness-architecture.md) — **permanently frozen**
 - [Trainer Backend Contract](docs/trainer_backend_contract.md)
-- [ADRs](docs/adr/) — including [0022 Package Surfaces & Lifecycle Alignment](docs/adr/0022-package-surfaces-lifecycle-alignment.md)
+- [ADRs](docs/adr/) — including [0022](docs/adr/0022-package-surfaces-lifecycle-alignment.md) and
+  [0023 Repository Freeze](docs/adr/0023-repository-freeze-v1.md)

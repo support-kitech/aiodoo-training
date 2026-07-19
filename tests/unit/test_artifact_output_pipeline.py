@@ -256,9 +256,7 @@ def test_apply_colab_overrides_with_workspace(
     assert out["model"]["local_path"] == "/content/model"
 
 
-def test_colab_legacy_output_env_ignored(
-    monkeypatch: pytest.MonkeyPatch, workspace: Path
-) -> None:
+def test_colab_legacy_output_env_ignored(monkeypatch: pytest.MonkeyPatch, workspace: Path) -> None:
     monkeypatch.setenv("AIODOO_WORKSPACE_ROOT", str(workspace))
     legacy_ckpt = workspace / "legacy" / "ckpt"
     monkeypatch.setenv("AIODOO_COLAB_CHECKPOINTS_OUTPUT", str(legacy_ckpt))

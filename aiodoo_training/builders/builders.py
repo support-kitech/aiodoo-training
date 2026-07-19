@@ -184,7 +184,7 @@ class CurriculumBuilder:
 
 
 class ManifestBuilder:
-    """Builds an :class:`ExperimentManifest` for aiodoo-models handoff."""
+    """Builds an :class:`ExperimentManifest` for export / handoff provenance."""
 
     def build(self) -> ExperimentManifest:
         raise BuilderError("ManifestBuilder.build() is not implemented in Phase 0.")

@@ -23,7 +23,7 @@ class EvaluationReport:
 
 @dataclass(frozen=True, slots=True)
 class ExportArtifact:
-    """A single exported artifact produced for aiodoo-models consumption."""
+    """A single exported artifact role inside an ArtifactBundle."""
 
     export_type: ExportType
     path: Path
@@ -36,7 +36,7 @@ class ExperimentManifest:
     """
     Manifest describing a completed (or exportable) training experiment.
 
-    Handed off to aiodoo-models as the consumable contract.
+    Provenance for export / Capability Package handoff (not a registry document).
     """
 
     experiment_id: ExperimentId

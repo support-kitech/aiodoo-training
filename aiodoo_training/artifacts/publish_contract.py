@@ -175,9 +175,7 @@ def infer_adapter_artifact_type(resolved: dict[str, Any] | None) -> str:
     ``capability_id``, not a distinct artifact_type string.
     """
     capability_id = resolve_capability_id(resolved)
-    return _CAPABILITY_TO_PROTOCOL_ARTIFACT_TYPE.get(
-        capability_id, ADAPTER_PROTOCOL_ARTIFACT_TYPE
-    )
+    return _CAPABILITY_TO_PROTOCOL_ARTIFACT_TYPE.get(capability_id, ADAPTER_PROTOCOL_ARTIFACT_TYPE)
 
 
 def build_adapter_artifact_json(
@@ -189,7 +187,9 @@ def build_adapter_artifact_json(
 ) -> dict[str, Any]:
     """Build Capability Package ``artifact.json`` for adapter Drive publish."""
     capability_id = resolve_capability_id(resolved)
-    identifier = experiment_id.strip() if experiment_id.strip() else adapter_product_id(capability_id)
+    identifier = (
+        experiment_id.strip() if experiment_id.strip() else adapter_product_id(capability_id)
+    )
     family, architecture = _resolve_family_architecture(resolved)
     payload: dict[str, Any] = {
         "artifact_type": ADAPTER_PROTOCOL_ARTIFACT_TYPE,
@@ -226,7 +226,9 @@ def build_merged_artifact_json(
 ) -> dict[str, Any]:
     """Build Capability Package ``artifact.json`` for merged Drive publish."""
     capability_id = resolve_capability_id(resolved)
-    identifier = experiment_id.strip() if experiment_id.strip() else adapter_product_id(capability_id)
+    identifier = (
+        experiment_id.strip() if experiment_id.strip() else adapter_product_id(capability_id)
+    )
     family, architecture = _resolve_family_architecture(resolved)
     payload: dict[str, Any] = {
         "artifact_type": MERGED_PROTOCOL_ARTIFACT_TYPE,

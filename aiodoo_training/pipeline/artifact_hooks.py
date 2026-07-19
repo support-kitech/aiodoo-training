@@ -5,6 +5,7 @@ from __future__ import annotations
 import logging
 import os
 from pathlib import Path
+from typing import Any
 
 from aiodoo_training.artifacts.output_manager import ArtifactOutputManager
 from aiodoo_training.artifacts.publish_contract import PublishError
@@ -139,7 +140,7 @@ def _experiment_success(context: PipelineContext) -> bool:
     return True
 
 
-def _resolve_model_path(raw: dict) -> Path | None:
+def _resolve_model_path(raw: dict[str, Any]) -> Path | None:
     model = raw.get("model")
     if isinstance(model, dict):
         local_path = model.get("local_path")

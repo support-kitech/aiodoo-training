@@ -29,9 +29,7 @@ def test_internal_id_for_bookkeeping() -> None:
 
 def test_resolve_public_training_id_from_config() -> None:
     assert (
-        resolve_public_training_id(
-            {"experiment": {"id": "coding", "internal_id": "EXP-0001"}}
-        )
+        resolve_public_training_id({"experiment": {"id": "coding", "internal_id": "EXP-0001"}})
         == "coding"
     )
     assert resolve_public_training_id({"name": "EXP-0001"}) == "coding"

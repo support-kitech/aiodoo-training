@@ -31,11 +31,7 @@ from aiodoo_training.artifacts.publish_contract import (
 from aiodoo_training.naming import TRAINING_IDS
 
 FIXTURES = (
-    Path(__file__).resolve().parents[1]
-    / "fixtures"
-    / "capability_packages"
-    / "protocol"
-    / "v1"
+    Path(__file__).resolve().parents[1] / "fixtures" / "capability_packages" / "protocol" / "v1"
 )
 ECOSYSTEM_ROOT = Path(__file__).resolve().parents[3]
 VALIDATION_ROOT = ECOSYSTEM_ROOT / "aiodoo-validation"
@@ -45,9 +41,7 @@ MODEL_ROOT = ECOSYSTEM_ROOT / "aiodoo-model"
 _GOLDEN_STRIP = frozenset({"training_version", "producer", "source_checkpoint", "source_bundle"})
 
 # Frozen protocol kinds accepted by aiodoo-validation ArtifactType enum.
-_VALIDATION_ARTIFACT_TYPES = frozenset(
-    {"base_model", "coding_adapter", "merged_model"}
-)
+_VALIDATION_ARTIFACT_TYPES = frozenset({"base_model", "coding_adapter", "merged_model"})
 
 # Required adapter fields for self-describing model normalize (without request overlays).
 _ADAPTER_REQUIRED_FOR_MODEL = frozenset(
@@ -221,14 +215,7 @@ def test_published_layout_consistent(capability: str, tmp_path: Path) -> None:
         layout=ArtifactOutputLayout.for_training(workspace, capability),
         resolved=resolved,
     )
-    ckpt = (
-        workspace
-        / "training"
-        / "cache"
-        / capability
-        / "checkpoints"
-        / "checkpoint-1"
-    )
+    ckpt = workspace / "training" / "cache" / capability / "checkpoints" / "checkpoint-1"
     ckpt.mkdir(parents=True)
     (ckpt / "adapter_config.json").write_text("{}", encoding="utf-8")
     (ckpt / "adapter_model.safetensors").write_text("w", encoding="utf-8")

@@ -2,7 +2,7 @@
 
 **Status:** Binding engineering governance document  
 **Applies to:** All contributors (human and AI)  
-**Effective:** Phases 0–7 permanently frozen — **AIODOO Training v1 architecture complete**
+**Effective:** Phases 0–7 permanently frozen — **v1.0.0 production freeze** ([repository_freeze.md](repository_freeze.md))
 
 This is **not** end-user documentation. It is the constitutional contract of the
 `aiodoo-training` repository. Future work **extends** these contracts. It does
@@ -24,7 +24,9 @@ Related documents:
 - [Trainer Backend Contract](trainer_backend_contract.md) — Phase 3+ trainer checklist
 - [Artifact Contract](artifact_contract.md) — Phase 4 ArtifactBundle export inventory (clarified by ADR-0022)
 - [Artifact Output Pipeline](artifact_output_pipeline.md) — Capability Package Drive layout
-- [ADRs](adr/) — decision history (0001–0022)
+- [ADRs](adr/) — decision history (0001–0023)
+- [Repository Freeze](repository_freeze.md) — v1.0.0 freeze statement
+- [MAINTENANCE](MAINTENANCE.md) · [Release Checklist](release_checklist.md)
 - [Phase 7 Distributed Readiness Architecture](phase7-distributed-readiness-architecture.md) — **permanently frozen** ([ADR-0019](adr/0019-phase7-distributed-readiness.md) · [ADR-0021](adr/0021-phase7-freeze.md))
 - **Ecosystem ADR-0001 — AIODOO Model Lifecycle** — cross-repo lifecycle (not this repo’s ADR-0001)
 ---

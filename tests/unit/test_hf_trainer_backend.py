@@ -15,7 +15,7 @@ from aiodoo_training.domain.examples import IGNORE_INDEX, TokenBatch
 from aiodoo_training.domain.identifiers import ExperimentId, RunId
 from aiodoo_training.domain.resources import ExecutionEnvironment
 from aiodoo_training.domain.session import DatasetSession
-from aiodoo_training.domain.training import CheckpointHandle, MetricSnapshot, TrainingProgress
+from aiodoo_training.domain.training import CheckpointHandle, TrainingProgress
 from aiodoo_training.domain.training_policies import (
     CheckpointPolicy,
     GradientAccumulationPolicy,
@@ -183,7 +183,7 @@ def test_token_batches_to_dataset_preserves_ids() -> None:
         "aiodoo_training.infrastructure.huggingface.trainer._require_datasets",
         return_value=datasets,
     ):
-        rows = _token_batches_to_dataset((batch,))
+        _token_batches_to_dataset((batch,))
     datasets.Dataset.from_list.assert_called_once()
     payload = datasets.Dataset.from_list.call_args[0][0]
     assert payload[0]["input_ids"] == [11, 22, 33, 0]
@@ -378,4 +378,3 @@ def test_final_checkpoint_not_duplicated_when_already_on_boundary(tmp_path: Path
     assert progress.status is TrainingStatus.COMPLETED
     # Only on_step_end (2 % 2 == 0); on_train_end skips duplicate.
     assert manager.save.call_count == 1
-

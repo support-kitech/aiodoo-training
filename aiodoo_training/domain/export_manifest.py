@@ -184,7 +184,7 @@ class ExportManifest:
 
 @dataclass(frozen=True, slots=True)
 class ArtifactBundle:
-    """Top-level on-disk package handed to aiodoo-models."""
+    """Top-level on-disk ArtifactBundle export package (export inventory)."""
 
     root: Path
     manifest: ExportManifest

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import Any
 from uuid import uuid4
 
 from aiodoo_training.config.training_config import (
@@ -43,7 +44,7 @@ def _skip(name: StageName, stage: PipelineStage, message: str) -> StageResult:
     return StageResult(name=name, stage=stage, status=StageStatus.SKIPPED, message=message)
 
 
-def _export_bind_extra(raw: dict) -> dict[str, object]:
+def _export_bind_extra(raw: dict[str, Any]) -> dict[str, object]:
     extra: dict[str, object] = {}
     dataset_version = raw.get("dataset_version")
     if isinstance(dataset_version, str) and dataset_version.strip():

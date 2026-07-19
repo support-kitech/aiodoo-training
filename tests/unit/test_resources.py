@@ -78,9 +78,7 @@ def test_torch_planner_auto_selects_cuda_when_available() -> None:
     fake_torch.cuda.is_available.return_value = True
     fake_torch.cuda.device_count.return_value = 1
     fake_torch.cuda.get_device_name.return_value = "Tesla T4"
-    fake_torch.cuda.get_device_properties.return_value = SimpleNamespace(
-        total_memory=15 * 1024**3
-    )
+    fake_torch.cuda.get_device_properties.return_value = SimpleNamespace(total_memory=15 * 1024**3)
     fake_torch.cuda.get_device_capability.return_value = (7, 5)
     fake_torch.cuda.is_bf16_supported.return_value = False
 

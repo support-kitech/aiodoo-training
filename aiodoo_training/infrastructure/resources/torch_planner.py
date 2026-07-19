@@ -86,7 +86,9 @@ class TorchResourcePlanner(ResourcePlanner):
             "cuda_available": "true",
             "gpu_name": gpu_name,
             "total_memory_bytes": str(total_memory_bytes),
-            "total_memory_gb": f"{total_memory_bytes / (1024**3):.2f}" if total_memory_bytes else "0",
+            "total_memory_gb": (
+                f"{total_memory_bytes / (1024**3):.2f}" if total_memory_bytes else "0"
+            ),
         }
 
         return HardwareCapabilities(

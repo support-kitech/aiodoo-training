@@ -86,9 +86,7 @@ def validate_drive_workspace_contract(resolved: dict[str, Any]) -> None:
             "The repository clone must never be used as runtime storage."
         )
     if not root.is_dir():
-        raise ConfigError(
-            f"Production workspace root does not exist or is not a directory: {root}"
-        )
+        raise ConfigError(f"Production workspace root does not exist or is not a directory: {root}")
 
 
 def should_use_canonical_layout(resolved: dict[str, Any] | None = None) -> bool:
@@ -294,10 +292,9 @@ class ArtifactOutputManager:
         summary_paths = dict(paths)
         summary_paths.setdefault("capability_package", summary_paths.get("adapter"))
         summary_paths.setdefault("artifact_json", None)
-        if summary_paths.get("adapter"):
-            summary_paths["artifact_json"] = str(
-                Path(summary_paths["adapter"]) / ARTIFACT_METADATA_FILENAME
-            )
+        adapter_dir = summary_paths.get("adapter")
+        if adapter_dir:
+            summary_paths["artifact_json"] = str(Path(adapter_dir) / ARTIFACT_METADATA_FILENAME)
         payload: dict[str, Any] = {
             "training_id": self.layout.training_id,
             "adapter_id": self.layout.adapter_id,

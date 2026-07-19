@@ -10,15 +10,15 @@ from aiodoo_training.bootstrap import bootstrap_phase1, bootstrap_phase5
 from aiodoo_training.domain.enums import PackingMode, StageStatus
 from aiodoo_training.domain.examples import TokenizationConfig
 from aiodoo_training.domain.identifiers import RunId
-from aiodoo_training.infrastructure.huggingface.tokenizer import DeterministicStubTokenizer
+from aiodoo_training.exceptions import DomainError
 from aiodoo_training.infrastructure.huggingface.templates import QwenChatTemplate
+from aiodoo_training.infrastructure.huggingface.tokenizer import DeterministicStubTokenizer
 from aiodoo_training.packing.planner import SchedulePlanner
 from aiodoo_training.packing.token_rows import (
     TokenRow,
     build_stub_token_row,
     token_batch_to_rows,
 )
-from aiodoo_training.exceptions import DomainError
 from aiodoo_training.pipeline import PipelineContext
 from aiodoo_training.pipeline.handlers import CreateTrainerStage, PlanPackingStage, TokenizeStage
 from aiodoo_training.training.engine import build_stub_training_context, make_stub_experiment_config
@@ -32,7 +32,9 @@ def _bootstrap() -> None:
 
 
 def test_tokenize_stage_sets_token_rows() -> None:
-    cfg = make_stub_experiment_config(output_dir=Path("/tmp/token-pipe"), max_steps=1, save_steps=100)
+    cfg = make_stub_experiment_config(
+        output_dir=Path("/tmp/token-pipe"), max_steps=1, save_steps=100
+    )
     examples = make_examples(2)
     ctx = PipelineContext(
         experiment_id=cfg.experiment_id,
@@ -51,7 +53,9 @@ def test_tokenize_stage_sets_token_rows() -> None:
 
 
 def test_plan_packing_uses_token_rows_from_context() -> None:
-    cfg = make_stub_experiment_config(output_dir=Path("/tmp/token-pipe-b"), max_steps=1, save_steps=100)
+    cfg = make_stub_experiment_config(
+        output_dir=Path("/tmp/token-pipe-b"), max_steps=1, save_steps=100
+    )
     examples = make_examples(2)
     config = TokenizationConfig(max_length=128, padding="max_length")
     tokenizer = DeterministicStubTokenizer(template=QwenChatTemplate(), config=config)
@@ -139,7 +143,9 @@ def test_stub_path_without_token_rows_unchanged() -> None:
 
 
 def _plan_packing_context(*, token_rows: dict[str, TokenRow] | None = None) -> PipelineContext:
-    cfg = make_stub_experiment_config(output_dir=Path("/tmp/token-guard"), max_steps=1, save_steps=100)
+    cfg = make_stub_experiment_config(
+        output_dir=Path("/tmp/token-guard"), max_steps=1, save_steps=100
+    )
     examples = make_examples(2)
     values: dict[str, object] = {
         "training_examples": examples,
@@ -180,7 +186,9 @@ def test_plan_packing_hf_trainer_accepts_token_rows() -> None:
 
 
 def test_plan_packing_stub_backend_without_token_rows_unchanged() -> None:
-    cfg = make_stub_experiment_config(output_dir=Path("/tmp/token-guard-stub"), max_steps=1, save_steps=100)
+    cfg = make_stub_experiment_config(
+        output_dir=Path("/tmp/token-guard-stub"), max_steps=1, save_steps=100
+    )
     examples = make_examples(2)
     ctx = PipelineContext(
         experiment_id=cfg.experiment_id,
@@ -203,7 +211,9 @@ def test_plan_packing_stub_backend_without_token_rows_unchanged() -> None:
 
 
 def _create_trainer_context(**extra: object) -> PipelineContext:
-    cfg = make_stub_experiment_config(output_dir=Path("/tmp/bind-extra"), max_steps=1, save_steps=100)
+    cfg = make_stub_experiment_config(
+        output_dir=Path("/tmp/bind-extra"), max_steps=1, save_steps=100
+    )
     stub_ctx = build_stub_training_context(config=cfg)
     values: dict[str, object] = {
         "trainable_model": stub_ctx.model,
@@ -228,9 +238,12 @@ def test_create_trainer_stage_binds_production_objects() -> None:
     examples = make_examples(2)
     config = TokenizationConfig(max_length=64, padding="max_length")
     tokenizer = DeterministicStubTokenizer(template=QwenChatTemplate(), config=config)
-    tokenizer.load(make_stub_experiment_config(output_dir=Path("/tmp/x"), max_steps=1, save_steps=1).model)
-    batch = tokenizer.encode_examples(examples)
-    schedule_plan = plan_once(examples=examples, packing_backend="none", packing_mode=PackingMode.NONE)
+    tokenizer.load(
+        make_stub_experiment_config(output_dir=Path("/tmp/x"), max_steps=1, save_steps=1).model
+    )
+    schedule_plan = plan_once(
+        examples=examples, packing_backend="none", packing_mode=PackingMode.NONE
+    )
 
     ctx, result = CreateTrainerStage().run(
         _create_trainer_context(
@@ -249,9 +262,7 @@ def test_create_trainer_stage_binds_production_objects() -> None:
 
 
 def test_create_trainer_stage_preserves_existing_bind_extra() -> None:
-    ctx, result = CreateTrainerStage().run(
-        _create_trainer_context(bind_extra={"stop_at_step": 3})
-    )
+    ctx, result = CreateTrainerStage().run(_create_trainer_context(bind_extra={"stop_at_step": 3}))
     assert result.status is StageStatus.SUCCEEDED
     training_context = ctx.get("training_context")
     assert training_context is not None
@@ -263,7 +274,9 @@ def test_create_trainer_stage_exposes_bind_extra_to_hf_trainer() -> None:
     from aiodoo_training.infrastructure.huggingface.trainer import HFTrainerBackend
 
     examples = make_examples(1)
-    schedule_plan = plan_once(examples=examples, packing_backend="none", packing_mode=PackingMode.NONE)
+    schedule_plan = plan_once(
+        examples=examples, packing_backend="none", packing_mode=PackingMode.NONE
+    )
     ctx, _ = CreateTrainerStage().run(
         _create_trainer_context(
             token_batches=schedule_plan.token_batches,

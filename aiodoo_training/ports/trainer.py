@@ -80,7 +80,7 @@ class Evaluator(ABC):
 
 
 class Exporter(ABC):
-    """Exports trained artifacts for aiodoo-models consumption."""
+    """Exports trained artifacts for Capability Package / ArtifactBundle consumers."""
 
     @abstractmethod
     def export(
