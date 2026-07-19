@@ -1,46 +1,45 @@
 # aiodoo-training — Implementation Report (v2.0.0)
 
-## Repository Summary
+## Summary
 
-Training plane: consumes protocol JSONL, produces Capability Packages for
-validation/model. Phases 0–7 frozen. Ecosystem tooling tag **v2.0.0**.
+Batch A bumped release identity to 2.0.0 and documented deferred CLI wrappers.
+Batch B adds RELEASE_REPORT, residual freeze-doc honesty, and re-verified gates.
 
-## Audit Resolution
+## Batch A (prior) — already shipped
 
-See `AUDIT_RESOLUTION.md`. Version/docs honesty only; no merge/HFExporter work.
+Version 2.0.0, CHANGELOG, README deferred scripts, repository_freeze / MAINTENANCE,
+AUDIT_RESOLUTION initial table, rooted `/adapters/` from post-v1.0.1.
 
-## Modified Files
+## Batch B — modified files
 
-- `aiodoo_training/__init__.py`, `aiodoo_training/cli/commands.py`
-- `README.md`, `CHANGELOG.md`, `docs/repository_freeze.md`, `docs/freeze_readiness.md`,
-  `docs/MAINTENANCE.md`
-- `tests/unit/test_docs_consistency.py`
+| File | Why |
+| --- | --- |
+| `AUDIT_RESOLUTION.md` | Batch A DONE + Batch B residuals |
+| `docs/freeze_readiness.md` | Current identity v2.0.0; checklist |
+| `docs/frozen_public_contracts.md` | Effective freeze identity v2.0.0 |
 
-## New Files
+## Batch B — new files
 
-- `AUDIT_RESOLUTION.md`, `IMPLEMENTATION_REPORT.md`
+| File | Why |
+| --- | --- |
+| `RELEASE_REPORT.md` | Release hygiene + verdict |
 
-## Deleted Files
+## Deleted files
 
 None.
 
-## Architecture Impact
+## Architecture / training / Capability Package impact
 
-None.
+None. Option A and Phases 0–7 unchanged.
 
 ## Test / CI
 
-ruff, mypy, pytest (≥465), coverage fail-under 80 — run at commit time.
+465 passed; coverage 81%; ruff + mypy green. Fixtures still tracked.
 
-## Remaining Future Work
+## Future work left untouched
 
-Merge CLI; real HFExporter PEFT path; evaluate/export root wrapper wiring.
+Merge; real HFExporter; evaluate/export wrapper wiring; composition/runtime.
 
-## Production Readiness
+## Production readiness
 
-**YES** as Capability Package producer within boundary. **NO** as claim of full
-ecosystem dual-model runtime or sparse-corpus training quality.
-
-## Release Recommendation
-
-Annotated tag **`v2.0.0`**. Preserve `v1.0.0` / `v1.0.1`.
+**YES** as Capability Package producer. **NO** for merge / dual-model E2E.
