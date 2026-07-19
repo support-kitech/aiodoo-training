@@ -5,6 +5,34 @@ All notable changes to `aiodoo-training` are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 Versioning follows [SemVer](https://semver.org/).
 
+## [2.0.0] — 2026-07-19
+
+### Overview
+
+AIODOO ecosystem **tooling freeze v2.0.0**. Architecture (Phases 0–7) and
+Capability Package Option A remain frozen. This major aligns release identity
+with sibling repositories (`aiodoo-datasets`, `aiodoo-validation`) and corrects
+documentation honesty for deferred CLI wrappers.
+
+### Changed
+
+- Package version **2.0.0**
+- README entry-script honesty (`evaluate` / `export` / `merge` deferred)
+- Includes post-v1.0.1 `.gitignore` fixture fix (`/adapters/` rooted ignore)
+
+### Frozen (unchanged)
+
+- Phases 0–7 architecture
+- Capability Package protocol (Option A)
+- ArtifactBundle protocol `"1"`
+- Repository boundaries (no PyPI packaging)
+
+### Not in this release
+
+- Merge implementation (`cmd_merge` remains deferred)
+- Real `HFExporter` PEFT write path (stub layout export remains)
+- Dataset richness / validation `context` profile (other repositories)
+
 ## [1.0.1] — 2026-07-19
 
 ### Added

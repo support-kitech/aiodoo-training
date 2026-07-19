@@ -1,11 +1,11 @@
-# Repository Freeze (v1.0.1)
+# Repository Freeze (v2.0.0)
 
 **Status:** Phases 0–7 and Capability Package lifecycle alignment are **COMPLETE**.  
-Repository is **FROZEN**; production freeze release identity is **v1.0.1**.
+Repository is **FROZEN**; ecosystem tooling release identity is **v2.0.0**.
 
-Published historical tag **v1.0.0** (2026-07-15) is preserved and is **not**
-moved. That tag predates Capability Package lifecycle alignment (ADR-0022) and
-ADR-0023 governance.
+Published historical tags **v1.0.0** and **v1.0.1** are preserved and are **not**
+moved. **v1.0.0** predates Capability Package lifecycle alignment (ADR-0022).
+**v1.0.1** is the first Capability Package production freeze identity.
 
 Binding references:
 
@@ -15,6 +15,7 @@ Binding references:
 - [release_checklist.md](release_checklist.md)
 - [ADR-0022](adr/0022-package-surfaces-lifecycle-alignment.md)
 - [ADR-0023](adr/0023-repository-freeze-v1.md)
+- [AUDIT_RESOLUTION.md](../AUDIT_RESOLUTION.md)
 - [CHANGELOG.md](../CHANGELOG.md)
 
 ## What is frozen
@@ -37,32 +38,13 @@ Follows [SemVer 2.0.0](https://semver.org/).
 | Backward-compatible additive feature within frozen architecture | **MINOR** |
 | Bug fix, docs, tests, hardening with identical public behavior | **PATCH** |
 
-Prefer **PATCH** after the v1.0 line unless an ADR justifies MINOR/MAJOR.
+**v2.0.0** is an ecosystem tooling alignment major (release identity + honesty).
+Protocol Option A and Phases 0–7 public contracts are unchanged from v1.0.1.
 
-## Quality gates (v1.0)
+## Explicit non-claims
 
-```bash
-python3 -m ruff check .
-python3 -m ruff format --check .
-python3 -m mypy aiodoo_training
-python3 -m coverage run -m pytest
-python3 -m coverage report -m --fail-under=80
-```
-
-Infrastructure under `aiodoo_training/infrastructure/` remains omitted from coverage
-(quarantined adapters). Measured non-infrastructure coverage at freeze ≈81%.
-
-## Explicitly not in the v1.0 production freeze
-
-- PyPI packaging / wheels
-- Product composition (Development / Reasoning)
-- Validation certification engine
-- Model registry / promotion
-- Inference / serving
-- Raising coverage to sibling 95% bars (deferred; floor is 80%)
-
-## See also
-
-- [Ownership](ownership.md)
-- [Lifecycle](lifecycle.md)
-- [Capability Model](capability_model.md)
+- Merge CLI / full PEFT merge path: deferred
+- `evaluate.py` / `export.py` root wrappers: deferred (pipeline APIs exist)
+- Ecosystem E2E (core / vscode dual-model runtime): out of this repository
+- Training-scale approval/conversation/evaluation corpora: owned by datasets
+- `context` validation profile: owned by validation

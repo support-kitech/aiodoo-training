@@ -1,6 +1,6 @@
 # Freeze Readiness Documentation
 
-**Status:** Lifecycle alignment freeze criteria **met** for **v1.0.1**  
+**Status:** Lifecycle alignment freeze criteria **met** for **v2.0.0**  
 **Binding freeze statement:** [repository_freeze.md](repository_freeze.md) · [ADR-0023](adr/0023-repository-freeze-v1.md)  
 **Related:** [Frozen Public Contracts](frozen_public_contracts.md), [Ownership](ownership.md), [ADR-0022](adr/0022-package-surfaces-lifecycle-alignment.md)
 
@@ -19,7 +19,7 @@ tag **v1.0.0** (2026-07-15) is preserved and not rewritten.
 | 3 | Contract / golden tests (B2) | **COMPLETE** |
 | 4 | No sibling imports in production code | **COMPLETE** |
 | 5 | Product composition out of scope | **COMPLETE** |
-| 6 | Coverage / version policy recorded | **COMPLETE** (`fail_under=80`, `__version__=1.0.1`) |
+| 6 | Coverage / version policy recorded | **COMPLETE** (`fail_under=80`, `__version__=2.0.0`) |
 | 7 | Section 9 / ADR-0022 / ADR-0023 | **COMPLETE** |
 
 ### Known consumer gaps (not training defects)

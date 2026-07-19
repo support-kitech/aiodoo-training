@@ -159,7 +159,7 @@ def cmd_doctor() -> int:
     print(f"python: {sys.version.split()[0]}")
     print(f"platform: {platform.platform()}")
     print("execution: repository-root scripts (not packaged)")
-    print(f"status: v{__version__} production frozen")
+    print(f"status: v{__version__} ecosystem tooling freeze")
     for key in ("null", "local_jsonl", "mlflow"):
         cap = capability_for(key)
         tracker = TrackerFactory().create(key)
