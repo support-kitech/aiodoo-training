@@ -36,5 +36,6 @@ def test_freeze_docs_exist() -> None:
         "CONTRIBUTING.md",
         "AUDIT_RESOLUTION.md",
         "IMPLEMENTATION_REPORT.md",
+        "RELEASE_REPORT.md",
     ):
         assert (ROOT / rel).is_file(), rel
