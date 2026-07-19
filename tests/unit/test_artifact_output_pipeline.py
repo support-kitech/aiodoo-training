@@ -48,6 +48,8 @@ def resolved_config(workspace: Path) -> dict:
         "tracking": {"root_dir": "artifacts/tracking/coding"},
         "datasets": [{"path": "coding.jsonl", "dataset_type": "coding"}],
         "dataset_version": "v1.0.0",
+        "model": {"base_model": "Qwen/Qwen3-8B", "family": "qwen"},
+        "adaptation": {"adapter_type": "qlora", "strategy": "qlora"},
     }
 
 
@@ -139,11 +141,19 @@ def test_publish_adapter_from_checkpoint(workspace: Path, resolved_config: dict)
     assert artifact["artifact_type"] == "coding_adapter"
     assert artifact["protocol_major"] == 1
     assert artifact["identifier"] == "aiodoo-coding"
+    assert artifact["capability_id"] == "coding"
+    assert artifact["adapter_type"] == "coding"
+    assert artifact["peft_type"] == "qlora"
+    assert artifact["model_family"] == "qwen"
+    assert artifact["supported_odoo_versions"]
+    assert artifact["created_at"]
+    assert artifact["producer"] == "aiodoo-training"
 
     manifest = json.loads((dest / "manifest.json").read_text(encoding="utf-8"))
     assert manifest["training_id"] == "coding"
     assert manifest["adapter_id"] == "aiodoo-coding"
     assert manifest["experiment_id"] == "coding"
+    assert manifest["capability_id"] == "coding"
 
 
 def test_publish_rejects_invalid_checkpoint(workspace: Path, resolved_config: dict) -> None:
@@ -194,6 +204,9 @@ def test_publish_base_model_artifact(workspace: Path, resolved_config: dict) -> 
     payload = json.loads(path.read_text(encoding="utf-8"))
     assert payload["artifact_type"] == "base_model"
     assert payload["protocol_major"] == 1
+    assert payload["architecture"]
+    assert payload["created_at"]
+    assert payload["producer"] == "aiodoo-training"
 
 
 def test_cleanup_protected_paths(workspace: Path) -> None:

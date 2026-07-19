@@ -100,7 +100,9 @@ def maybe_publish_artifacts(context: PipelineContext) -> None:
     if bundle_root is not None:
         paths["export_bundle"] = str(bundle_root)
 
-    extra: dict[str, object] = {}
+    extra: dict[str, object] = {
+        "capability_id": layout.training_id,
+    }
     dataset_version = raw.get("dataset_version")
     if isinstance(dataset_version, str) and dataset_version.strip():
         extra["dataset_version"] = dataset_version
@@ -113,7 +115,7 @@ def maybe_publish_artifacts(context: PipelineContext) -> None:
             success=experiment_success,
             duration_seconds=duration,
             paths=paths,
-            extra=extra or None,
+            extra=extra,
         )
     except OSError as exc:
         logger.warning("Experiment summary write failed: %s", exc)

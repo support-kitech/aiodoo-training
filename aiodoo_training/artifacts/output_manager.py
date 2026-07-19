@@ -18,8 +18,10 @@ from aiodoo_training.artifacts.publish_contract import (
     PublishError,
     build_adapter_artifact_json,
     build_base_model_artifact_json,
+    build_merged_artifact_json,
     iter_inference_files,
     publish_inference_tree,
+    resolve_capability_id,
     validate_checkpoint_for_publish,
     write_json,
 )
@@ -203,9 +205,11 @@ class ArtifactOutputManager:
             raise PublishError(f"No inference artifacts found in checkpoint: {checkpoint_dir}")
 
         published_at = datetime.now(UTC).isoformat()
+        capability_id = resolve_capability_id(self.resolved)
         manifest = {
             "training_id": self.layout.training_id,
             "adapter_id": self.layout.adapter_id,
+            "capability_id": capability_id,
             # Legacy key retained for older readers; value is the public training id.
             "experiment_id": self.layout.training_id,
             "source_checkpoint": str(checkpoint_dir),
@@ -235,7 +239,12 @@ class ArtifactOutputManager:
             return None
         model_id = _resolve_model_id(self.resolved, model_dir)
         model_family = _resolve_model_family(self.resolved)
-        payload = build_base_model_artifact_json(model_id=model_id, model_family=model_family)
+        architecture = _resolve_model_architecture(self.resolved, model_family)
+        payload = build_base_model_artifact_json(
+            model_id=model_id,
+            model_family=model_family,
+            architecture=architecture,
+        )
         write_json(model_dir / ARTIFACT_METADATA_FILENAME, payload)
         return model_dir / ARTIFACT_METADATA_FILENAME
 
@@ -249,20 +258,23 @@ class ArtifactOutputManager:
         if tmp_dir.exists():
             shutil.rmtree(tmp_dir, ignore_errors=True)
         shutil.copytree(merged_src, tmp_dir)
+        published_at = datetime.now(UTC).isoformat()
+        capability_id = resolve_capability_id(self.resolved)
         manifest = {
             "training_id": self.layout.training_id,
             "adapter_id": self.layout.adapter_id,
+            "capability_id": capability_id,
             "experiment_id": self.layout.training_id,
             "source_bundle": str(bundle_root),
-            "published_at": datetime.now(UTC).isoformat(),
+            "published_at": published_at,
             "artifact_type": "merged_model",
         }
         write_json(tmp_dir / PUBLISH_MANIFEST_FILENAME, manifest)
-        merged_artifact = {
-            "artifact_type": "merged_model",
-            "protocol_major": 1,
-            "identifier": self.layout.adapter_id,
-        }
+        merged_artifact = build_merged_artifact_json(
+            experiment_id=self.layout.adapter_id,
+            resolved=self.resolved,
+            source_bundle=str(bundle_root),
+        )
         write_json(tmp_dir / ARTIFACT_METADATA_FILENAME, merged_artifact)
         from aiodoo_training.artifacts.publish_contract import atomic_replace_directory
 
@@ -278,15 +290,24 @@ class ArtifactOutputManager:
         paths: dict[str, str | None],
         extra: dict[str, Any] | None = None,
     ) -> Path:
+        capability_id = resolve_capability_id(self.resolved)
+        summary_paths = dict(paths)
+        summary_paths.setdefault("capability_package", summary_paths.get("adapter"))
+        summary_paths.setdefault("artifact_json", None)
+        if summary_paths.get("adapter"):
+            summary_paths["artifact_json"] = str(
+                Path(summary_paths["adapter"]) / ARTIFACT_METADATA_FILENAME
+            )
         payload: dict[str, Any] = {
             "training_id": self.layout.training_id,
             "adapter_id": self.layout.adapter_id,
+            "capability_id": capability_id,
             # Legacy key: public training id (semantic), not EXP-NNNN.
             "experiment_id": self.layout.training_id,
             "run_id": run_id,
             "success": success,
             "duration_seconds": duration_seconds,
-            "paths": paths,
+            "paths": summary_paths,
             "published_at": datetime.now(UTC).isoformat(),
         }
         internal = internal_id_for(self.layout.training_id)
@@ -325,7 +346,7 @@ def _resolve_model_id(resolved: dict[str, Any] | None, model_dir: Path) -> str:
     if isinstance(resolved, dict):
         model = resolved.get("model")
         if isinstance(model, dict):
-            for key in ("model_id", "base_model", "name", "id"):
+            for key in ("model_id", "base_model", "identifier", "name", "id"):
                 value = model.get(key)
                 if isinstance(value, str) and value.strip():
                     return value
@@ -340,6 +361,19 @@ def _resolve_model_family(resolved: dict[str, Any] | None) -> str | None:
             if isinstance(family, str) and family.strip():
                 return family
     return None
+
+
+def _resolve_model_architecture(
+    resolved: dict[str, Any] | None,
+    model_family: str | None,
+) -> str | None:
+    if isinstance(resolved, dict):
+        model = resolved.get("model")
+        if isinstance(model, dict):
+            architecture = model.get("architecture")
+            if isinstance(architecture, str) and architecture.strip():
+                return architecture.strip()
+    return model_family
 
 
 def _parse_checkpoint_step(name: str) -> int | None:

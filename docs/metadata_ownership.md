@@ -56,10 +56,18 @@ protocol major, family/architecture, and supported Odoo versions (from the
 package and/or `PublishingRequest`). Enrichment of producer fields is an
 **implementation** phase (B1+), not a B0 behavior change.
 
-Until B1 lands, callers may supply missing fields via model
-`PublishingRequest`. The architectural target remains **self-describing
-Capability Packages**.
+### Capability Package `artifact.json` field roles (B1 / Option A)
 
+| Field | Role |
+|-------|------|
+| `artifact_type` | Frozen protocol kind (`coding_adapter` / `base_model` / `merged_model`) |
+| `capability_id` | Business skill identity |
+| `adapter_type` | Skill label required by frozen `aiodoo-validation` profiles (equals capability id). **Retained — do not remove.** |
+| `peft_type` | PEFT implementation (`lora` / `qlora`) for model normalize |
+
+Until packages are fully self-describing, callers may still supply missing fields via
+model `PublishingRequest`. The architectural target remains **self-describing
+Capability Packages**.
 ---
 
 ## Non-goals
