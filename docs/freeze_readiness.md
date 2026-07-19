@@ -19,14 +19,25 @@ are true:
 2. **Capability Package metadata complete** for the accepted capability catalog
    (implementation B1).
 3. **Contract tests** prove Capability Package shape is ingestible by frozen
-   model expectations / fixtures (B2).
+   model expectations / fixtures (B2) — see
+   `tests/contract/test_ecosystem_capability_packages.py` and representative
+   goldens under `tests/fixtures/capability_packages/protocol/v1/` (see that
+   directory’s README for representative vs exhaustive policy).
 4. **No Python imports** of `aiodoo_model` / `aiodoo_validation` / sibling
-   runtimes.
+   runtimes in production code (tests may optionally import siblings for
+   live verification).
 5. **Product composition** remains out of scope (documented + tested).
 6. **Version / coverage governance** decided and recorded.
 7. **Section 9** process followed for any frozen-contract wording amendments
    (Artifact Contract clarification via ADR-0022).
 
+### Known consumer gaps (not training defects)
+
+| Gap | Owner | Notes |
+|-----|-------|-------|
+| No frozen validation profile for `context` | `aiodoo-validation` | Packages resolve; certification pack deferred |
+| Merged registry deps (`base_artifact_id`, `adapter_artifact_ids`) | Caller / `aiodoo-model` `PublishingRequest` | Training cannot know registry ids before publish |
+| Default `supported_odoo_versions` when config omits them | Training config | Override via config; defaults are `(17, 18, 19)` |
 ---
 
 ## Public contracts (stable)

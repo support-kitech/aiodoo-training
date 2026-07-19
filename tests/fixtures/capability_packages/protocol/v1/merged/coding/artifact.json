@@ -1,0 +1,17 @@
+{
+  "adapter_type": "coding",
+  "architecture": "qwen",
+  "artifact_type": "merged_model",
+  "capability_id": "coding",
+  "created_at": "2026-07-19T12:00:00Z",
+  "dataset_version": "v1.0.0",
+  "identifier": "aiodoo-coding",
+  "model_family": "qwen",
+  "protocol_major": 1,
+  "supported_odoo_versions": [
+    17,
+    18,
+    19
+  ],
+  "training_source": "coding"
+}
