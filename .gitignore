@@ -82,7 +82,6 @@ configs/**/artifacts/
 /runs/
 /logs/
 checkpoints/
-adapters/
 *.pt
 *.bin
 *.safetensors
