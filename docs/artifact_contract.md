@@ -1,42 +1,62 @@
 # AIODOO Artifact Contract
 
-**Status:** Official Training → Models handoff specification (**Phase 4 permanently frozen**)  
+**Status:** Official **ArtifactBundle** export contract (**Phase 4 permanently frozen**)  
+**Clarified by:** [ADR-0022](adr/0022-package-surfaces-lifecycle-alignment.md) (2026-07-19)  
 **Binding to:** Phase 4 Evaluation & Export (ADR-0015)  
 **Protocol:** `artifact_protocol_version = "1"`  
-**Related:** [Phase 4 Architecture](phase4-evaluation-export-architecture.md), [ADR-0015](adr/0015-phase4-evaluation-export.md), [Frozen Public Contracts](frozen_public_contracts.md)
+**Related:** [Lifecycle](lifecycle.md), [Artifact Output Pipeline](artifact_output_pipeline.md), [Phase 4 Architecture](phase4-evaluation-export-architecture.md), [ADR-0015](adr/0015-phase4-evaluation-export.md), [Frozen Public Contracts](frozen_public_contracts.md), [Terminology](terminology.md)
 
-This document is the **authoritative on-disk contract** between
-`aiodoo-training` and `aiodoo-models`. It describes portable files and JSON only.
-It does **not** redesign Phase 0–3 frozen surfaces and does **not** introduce
-runtime Python coupling between repositories.
+This document is the **authoritative on-disk contract for `ArtifactBundle`**
+(export inventory). It describes portable files and JSON only. It does **not**
+redesign Phase 0–3 frozen surfaces and does **not** introduce runtime Python
+coupling between repositories.
+
+---
+
+## Clarification (ADR-0022) — dual package surfaces
+
+Phase 4 historically described `ArtifactBundle` as the sole Training → models
+interface. Production and frozen `aiodoo-model` registry publish instead ingest
+**Capability Packages** (directories with root `artifact.json`).
+
+| Surface | Document | Authority |
+|---------|----------|-----------|
+| **Capability Package** | [Lifecycle](lifecycle.md), [Artifact Output Pipeline](artifact_output_pipeline.md) | **Authoritative external handoff** to `aiodoo-validation` and `aiodoo-model` registry publish |
+| **ArtifactBundle** | **This document** | **Authoritative export inventory** (roles, fingerprints, optional merged tree) |
+
+Both surfaces remain. Neither replaces the other. See [ADR-0022](adr/0022-package-surfaces-lifecycle-alignment.md).
+
+```text
+aiodoo-datasets → aiodoo-training → Capability Package → aiodoo-validation / aiodoo-model
+                                 ↘ ArtifactBundle (export inventory; optional merged source)
+```
 
 ---
 
 ## Purpose
 
-`ArtifactBundle` is the **only** supported interface between AIODOO Training and
-AIODOO Models.
-
-```text
-aiodoo-datasets  →  aiodoo-training  →  ArtifactBundle  →  aiodoo-models
-```
+`ArtifactBundle` is the supported **portable export package** produced by
+`ExportManager`. Frozen `aiodoo-model` **registry publish** consumes Capability
+Packages (`artifact.json` layout), not this bundle root, unless a future
+consumer explicitly loads Bundle roles.
 
 | Repository | Responsibility |
 |------------|----------------|
-| **AIODOO Training** | Trains, evaluates (offline), and **exports** an on-disk `ArtifactBundle` |
-| **AIODOO Models** | **Consumes** that bundle for load, adaptation merge, inference, and serving |
+| **AIODOO Training** | Trains, evaluates (offline), **exports** `ArtifactBundle`, and **Drive-publishes** Capability Packages |
+| **aiodoo-model** | **Registry-publishes** Capability Packages; resolves/loads for consumers |
+| **aiodoo-validation** | Certifies Capability Packages |
 
 Neither repository imports runtime objects from the other:
 
-- Models **must not** import `aiodoo_training` (domain, ports, or infrastructure).
-- Training **must not** import `aiodoo_models`.
+- `aiodoo-model` **must not** import `aiodoo_training` (domain, ports, or infrastructure).
+- Training **must not** import `aiodoo_model`.
 - Live objects such as `TrainerBackend`, `CheckpointManager`, `TrainingSession`,
   `EvaluationSession`, `ExportSession`, PEFT/Torch training types, or framework
   carriers **never** cross the boundary.
 - Sidecar evaluation / quality documents are **optional portable JSON**, not live
   Training class instances.
 
-The contract is validated by **files + checksums + `artifact_protocol_version`**,
+The Bundle contract is validated by **files + checksums + `artifact_protocol_version`**,
 not by shared Python packages.
 
 ---
@@ -44,11 +64,11 @@ not by shared Python packages.
 ## Artifact Bundle Layout
 
 An `ArtifactBundle` is a single directory published atomically by Training’s
-`ExportManager`. Models open an explicit bundle path and read the layout below.
+`ExportManager`. Bundle consumers open an explicit bundle path and read the layout below.
 
 ```text
 ArtifactBundle/
-  export_manifest.json      # ExportManifest — Models-facing contract surface
+  export_manifest.json      # ExportManifest — Bundle inventory contract surface
   checksums.sha256          # sha256 digests of content files
   artifacts/
     adapter/                # PEFT adapter files (when peft_adapter exported)
@@ -65,7 +85,7 @@ ArtifactBundle/
 **Layout rules**
 
 1. Paths inside the manifest are **posix relative** to the bundle root.
-   Absolute host paths must never appear in the Models-facing contract.
+   Absolute host paths must never appear in the Bundle-facing contract.
 2. `export_manifest.json` is always present for a valid published bundle.
 3. Content files under `artifacts/` are materialised by an `Exporter` adapter;
    Training’s `ExportManager` owns inventory, checksums, fingerprint, index
@@ -80,10 +100,10 @@ any prior published bundle remains intact.
 
 ## ExportManifest
 
-`export_manifest.json` is the **authoritative per-bundle inventory**. Models
+`export_manifest.json` is the **authoritative per-bundle inventory**. Bundle consumers
 parse it first. Field names and semantics for protocol `"1"`:
 
-| Field | Required for Models load | Meaning |
+| Field | Required for Bundle load | Meaning |
 |-------|--------------------------|---------|
 | `schema_version` | Yes (to parse) | Manifest JSON shape version (currently `"1"`) |
 | `artifact_protocol_version` | **Yes** | Sole semantic version for package layout and required roles |
@@ -106,27 +126,27 @@ parse it first. Field names and semantics for protocol `"1"`:
 ### `artifact_protocol_version`
 
 - Current produce value: **`"1"`**.
-- This is the **only** semantic version Models uses as a load gate for layout and
+- This is the **only** semantic version Bundle consumers use as a load gate for layout and
   required roles.
 - Bump when layout or required roles change in a breaking way.
-- Do **not** use `training_protocol_version` as a Models load gate.
+- Do **not** use `training_protocol_version` as a Bundle load gate.
 
 ### Versioning
 
 | Version field | Owner | Purpose |
 |---------------|-------|---------|
-| `artifact_protocol_version` | Training produces; Models consumes | Package layout + role contract |
+| `artifact_protocol_version` | Training produces; Bundle consumer consumes | Package layout + role contract |
 | `schema_version` | Manifest JSON | Parseability of the manifest document |
 | `training_protocol_version` | Training echo | Provenance only |
 
-**Migration rule:** Models may support N and N−1 protocols via its own
+**Migration rule:** Bundle consumers may support N and N−1 protocols via its own
 `ArtifactCompatibilityPolicy`. Training always writes the current produce
-version. Adapters for older bundles live in **Models**, not by rewriting
+version. Adapters for older bundles live in the consumer, not by rewriting
 Training’s frozen contracts.
 
 ### Required fields (load vs diagnostics)
 
-**Must be present and valid for a defensive Models load**
+**Must be present and valid for a defensive Bundle load**
 
 - `schema_version`
 - `artifact_protocol_version`
@@ -190,12 +210,12 @@ Each `ArtifactIndexEntry` records:
 **Purpose:** answer “which bundles exist under this export root?” without
 opening every tree. Update happens **after** atomic publish.
 
-**Models do not consume ArtifactIndex directly.**
+**Bundle consumers do not require ArtifactIndex.**
 
-- Models open an **explicit bundle directory**.
+- Consumers open an **explicit bundle directory**.
 - Load requires only that bundle’s `ExportManifest` + files.
 - Index is a Training / operator / CI convenience. Absence of Index at a remote
-  Models deployment is not a load failure.
+  Bundle deployment is not a load failure.
 
 **Invariant:** every published bundle appears in the Index when Training updates
 it; every role inside a bundle appears in that bundle’s `ExportManifest.artifacts`.
@@ -206,7 +226,7 @@ it; every role inside a bundle appears in that bundle’s `ExportManifest.artifa
 
 `ArtifactValidationPolicy` answers: **Is this single bundle internally sound?**
 
-It is a **producer-side integrity** policy (and a semantic mirror for Models’
+It is a **producer-side integrity** policy (and a semantic mirror for consumers’
 own integrity checks). It is **not** the consumer protocol matrix.
 
 | Policy | Behaviour |
@@ -226,7 +246,7 @@ Typical Training STRICT expectations:
 | Quality gates when `require_pass_for_export` | reject |
 | Software package versions | ignore |
 
-Models **must still validate defensively** on consume, even when Training
+Consumers **must still validate defensively** on consume, even when Training
 published under STRICT. Integrity code is **not** shared as a Python dependency.
 
 ---
@@ -234,7 +254,7 @@ published under STRICT. Integrity code is **not** shared as a Python dependency.
 ## Artifact Compatibility
 
 `ArtifactCompatibilityPolicy` answers: **May this protocol and role set be
-consumed by a given Models runtime profile?**
+consumed by a given consumer runtime profile?**
 
 | Concern | Policy |
 |---------|--------|
@@ -255,9 +275,9 @@ ArtifactCompatibilityPolicy
 
 1. Training writes `artifact_protocol_version` and declared roles.
 2. Training may optionally **preflight** against a configured target profile
-   (warn if it would emit a protocol a named Models profile cannot read).
-   Training never imports Models code.
-3. Models owns the **authoritative** consumer matrix and rejects unsupported
+   (warn if it would emit a protocol a named consumer profile cannot read).
+   Training never imports consumer code.
+3. The consumer owns the **authoritative** consumer matrix and rejects unsupported
    protocols/roles without consulting Training.
 
 ### Protocol evolution
@@ -265,10 +285,10 @@ ArtifactCompatibilityPolicy
 - Additive optional roles (new export types) may stay on the same protocol when
   older consumers can ignore unknown roles (`reject_unknown_roles=false`).
 - Breaking layout or newly required roles → bump `artifact_protocol_version`.
-- Older-bundle adapters live in Models; Training continues writing the current
+- Older-bundle adapters live in the consumer; Training continues writing the current
   produce version.
 
-Integrity alone cannot express multi-year independent Models releases — hence
+Integrity alone cannot express multi-year independent consumer releases — hence
 the separate compatibility abstraction.
 
 ---
@@ -314,26 +334,28 @@ CPU golden tests in Training lock this invariant for stub backends.
 ## Repository Boundary
 
 ```text
-Training exports  →  ArtifactBundle (on disk)  →  Models imports
+Training exports     →  ArtifactBundle (export inventory)
+Training Drive publish →  Capability Package → validation / aiodoo-model registry publish
 ```
 
-| Concern | Training | Models |
-|---------|----------|--------|
+| Concern | Training | aiodoo-model |
+|---------|----------|--------------|
 | Train / resume / checkpoint | ✓ | ✗ |
 | Offline evaluation for quality gates | ✓ | optional smoke only |
-| Build / publish `ArtifactBundle` | ✓ | ✗ (consumes) |
+| Build ArtifactBundle | ✓ | ✗ (does not require Bundle for registry publish) |
+| Drive-publish Capability Package | ✓ | ✗ (consumes via registry publish) |
 | Validate package integrity at produce | ✓ | ✓ (defensive consume) |
 | Compatibility matrix for runtimes | optional preflight | **authoritative** |
-| Inference / serving / batch generate | ✗ | ✓ |
-| vLLM / SGLang / serving stacks | ✗ | ✓ |
-| Runtime-only quantization for serving | ✗ | ✓ |
+| Inference / serving / batch generate | ✗ | load plans; serving elsewhere |
+| vLLM / SGLang / serving stacks | ✗ | ✗ (runtime) |
+| Runtime-only quantization for serving | ✗ | ✗ (runtime) |
 
 **Nothing else crosses the boundary:**
 
 - No shared live sessions or managers.
 - No framework types (Torch / Transformers / PEFT / etc.) in the handoff.
-- No requirement that Models understand Training resume protocol.
-- No requirement that Models read `ArtifactIndex`.
+- No requirement that `aiodoo-model` understand Training resume protocol.
+- No requirement that `aiodoo-model` read `ArtifactIndex`.
 
 ---
 
@@ -346,27 +368,35 @@ roles — they do not invent a parallel handoff.
 |-----------|-----|
 | **GGUF** | Additive `ExportType` / exporter registry key; new `artifacts/` role tree + descriptors; same `ExportManifest` |
 | **ONNX** | Same pattern: role + files + checksums under protocol `"1"` or a bumped protocol if required roles change |
-| **TensorRT** | Engine artefacts as optional roles; Models engine loaders consume roles they understand |
-| **vLLM** | **Models** runtime profile: selects which roles to load from an existing `ArtifactBundle`; no Training redesign |
-| **SGLang** | Same as vLLM — consumer-side runtime over the on-disk contract |
+| **TensorRT** | Engine artefacts as optional roles; Consumer engine loaders consume roles they understand |
+| **vLLM** | **Runtime** profile: may select roles from a Bundle or load registry-resolved artifacts; no Training redesign |
+| **SGLang** | Same as vLLM — consumer-side runtime over on-disk contracts |
 
 Rules for extensions:
 
 1. Prefer additive optional roles with forward-compatible consumers.
 2. Breaking required-role or layout changes bump `artifact_protocol_version`.
-3. Serving / inference engines belong to **Models**; Training only packages
-   portable artefacts Models can open.
+3. Serving / inference engines belong to **runtime**; Training only packages
+   portable artefacts consumers can open.
 4. Never widen frozen Training port signatures solely to support a new runtime.
+5. Registry publish extensions must preserve Capability Package `artifact.json`
+   compatibility with frozen `aiodoo-model` normalize rules.
 
 ---
 
-## Validation checklist (Models consume path)
+## Validation checklist (ArtifactBundle consume path)
+
+For consumers that open an **ArtifactBundle** (not registry publish):
 
 1. Parse `export_manifest.json` (`schema_version`).
 2. Accept `artifact_protocol_version` via `ArtifactCompatibilityPolicy`.
 3. Verify required roles / files and content checksums (integrity).
 4. Verify fingerprints needed for the load mode.
 5. Optionally read `evaluation/*` JSON for tags — without importing Training.
+
+For **registry publish**, see Capability Package layout in
+[artifact_output_pipeline.md](artifact_output_pipeline.md) and frozen
+`aiodoo-model` publishing docs — start from root `artifact.json`.
 
 ---
 

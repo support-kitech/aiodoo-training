@@ -33,3 +33,11 @@ Phase 4 is **permanently frozen**. Future phases may extend evaluation/export
 only through additive registrations, configuration, or new ADRs. Frozen
 Evaluator/Exporter signatures and the Artifact Contract must not be redesigned
 without the Section 9 change process.
+
+## Clarification (ADR-0022)
+
+[ADR-0022](0022-package-surfaces-lifecycle-alignment.md) clarifies that
+`ArtifactBundle` remains the Phase 4 **export inventory** contract, while
+**Capability Packages** (`artifact.json` Drive trees) are the authoritative
+external handoff to `aiodoo-validation` and `aiodoo-model` registry publish.
+That clarification does **not** redesign frozen Evaluator/Exporter ports.

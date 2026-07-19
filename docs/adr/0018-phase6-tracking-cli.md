@@ -80,7 +80,8 @@ including the post-review hardening amendments below.
 - Clear registration path for MLflow / W&B / TensorBoard / OTEL with explicit
   capability negotiation.
 - Doctor can report tracker health without coupling to train status.
-- No coupling leak into aiodoo-models (Artifact Contract unchanged).
+- No coupling leak into `aiodoo-model` (Artifact Contract / Capability Package
+  handoff unchanged; see [ADR-0022](0022-package-surfaces-lifecycle-alignment.md)).
 
 ### Negative
 

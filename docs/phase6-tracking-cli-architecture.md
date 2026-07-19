@@ -3,7 +3,8 @@
 **Status:** **Permanently frozen** (implementation complete; [ADR-0018](adr/0018-phase6-tracking-cli.md) Accepted; [ADR-0020](adr/0020-phase6-freeze.md) freeze)  
 **Date:** 2026-07-14  
 **Binding inputs:** [Frozen Public Contracts](frozen_public_contracts.md), ADRs 0001–0017, [Artifact Contract](artifact_contract.md), [Architecture Invariants](architecture_invariants.md)  
-**Related ADR:** [0018 (Accepted)](adr/0018-phase6-tracking-cli.md) · [0020 Phase 6 Freeze (Accepted)](adr/0020-phase6-freeze.md)
+**Related ADR:** [0018 (Accepted)](adr/0018-phase6-tracking-cli.md) · [0020 Phase 6 Freeze (Accepted)](adr/0020-phase6-freeze.md)  
+**Lifecycle clarification:** [ADR-0022](adr/0022-package-surfaces-lifecycle-alignment.md) · [Terminology](terminology.md)
 
 > Phases **0–5** were already **permanently frozen** when this architecture was
 > designed. Phase 6 is now itself permanently frozen under ADR-0020.
@@ -17,6 +18,9 @@
 > `TrackingHealth` for backend compatibility & diagnostics; additive
 > `CLIProfile` for UX presets. No redesign of ExperimentTracker, Command
 > Registry, or Phase 0–5 authorities.
+>
+> **Naming:** Historical `aiodoo-models` means frozen `aiodoo-model`.
+> `TrackingCapability` is **not** a skill Capability (see terminology).
 
 ---
 

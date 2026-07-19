@@ -55,7 +55,7 @@ ExportManager, Artifact Contract, or TrackingHealth.
 - Cloud-native job schedulers inside this repository
 - Bit-exact cross-SKU GPU numerics
 - Mandatory new pipeline stage `INIT_DISTRIBUTED` (Section 9 only if required)
-- Other AIODOO repositories (`aiodoo-models`, `aiodoo-cli`, `aiodoo-vscode`,
+- Other AIODOO repositories (`aiodoo-model`, `aiodoo-cli`, `aiodoo-vscode`,
   master repository)
 
 ## Responsibilities introduced

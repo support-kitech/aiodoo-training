@@ -1,10 +1,17 @@
 # Artifact Output Pipeline
 
-**Status:** Production artifact routing (Drive workspace `drive_v1`)
+**Status:** Production artifact routing (Drive workspace `drive_v1`)  
+**Clarified by:** [ADR-0022](adr/0022-package-surfaces-lifecycle-alignment.md)  
+**Related:** [Lifecycle](lifecycle.md), [Terminology](terminology.md), [Artifact Contract](artifact_contract.md) (ArtifactBundle)
 
 This document describes where every generated artifact lives in the canonical
 AIODOO Drive workspace. The repository contains **source code only** — all
 training outputs are routed through `ArtifactOutputManager`.
+
+**Authority:** directories under `models/adapters/` and `models/merged/` with root
+`artifact.json` are **Capability Packages** — the authoritative external handoff
+to `aiodoo-validation` and `aiodoo-model` registry publish. Trees under
+`models/exports/` are **ArtifactBundles** (export inventory).
 
 ## Workspace root (required for production)
 
@@ -95,10 +102,10 @@ Base Hugging Face models are cached on Colab local SSD
 
 | File | Owner | Consumer |
 |------|-------|----------|
-| `artifact.json` | Training publish | `aiodoo-validation` artifact resolution |
-| `manifest.json` (adapter dir) | Training publish | Training diagnostics |
-| `export_manifest.json` | Export bundle | `aiodoo-models` (future) |
-| `checksums.txt` | Export bundle | `aiodoo-models` integrity |
+| `artifact.json` | Training Drive publish | `aiodoo-validation` resolution; `aiodoo-model` registry publish normalize |
+| `manifest.json` (adapter dir) | Training Drive publish | Training diagnostics only |
+| `export_manifest.json` | Export ArtifactBundle | Bundle inventory / integrity |
+| `checksums.txt` / `checksums.sha256` | Export ArtifactBundle (optional on Capability Packages) | Integrity verify |
 
 ## Cleanup utility
 
@@ -128,5 +135,6 @@ Point validation at:
 
 No changes to `aiodoo-validation` are required.
 
-See also: [SMOKE.md](SMOKE.md) for the end-to-end smoke procedure and
-[Artifact Contract](artifact_contract.md) for the Training → Models handoff.
+See also: [SMOKE.md](SMOKE.md) for the end-to-end smoke procedure,
+[Lifecycle](lifecycle.md) for package authority, and
+[Artifact Contract](artifact_contract.md) for the ArtifactBundle export inventory.

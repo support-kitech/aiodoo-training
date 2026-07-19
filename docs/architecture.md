@@ -39,9 +39,21 @@ later work extends this structure. See also:
 ## Responsibility
 
 `aiodoo-training` consumes protocol datasets from `aiodoo-datasets` and produces
-trained adapters/models for `aiodoo-models`.
+**Capability Packages** (and ArtifactBundles) for handoff to `aiodoo-validation`
+and `aiodoo-model`. It does **not** compose Development / Reasoning products.
 
 It does **not** generate datasets and does **not** perform inference.
+
+Lifecycle documentation (authoritative for package/capability/product language):
+
+- [Terminology](terminology.md)
+- [Ownership](ownership.md)
+- [Capability Model](capability_model.md)
+- [Product Model](product_model.md)
+- [Lifecycle](lifecycle.md)
+- [Metadata Ownership](metadata_ownership.md)
+- [Freeze Readiness](freeze_readiness.md)
+- [ADR-0022](adr/0022-package-surfaces-lifecycle-alignment.md)
 
 ## Execution model
 

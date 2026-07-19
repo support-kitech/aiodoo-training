@@ -1,8 +1,10 @@
 # Production Smoke Test — coding
 
-End-to-end smoke procedure for the **coding** production training product.
+End-to-end smoke procedure for the **coding** capability training pack.
 All paths follow `aiodoo-training` `ArtifactOutputLayout` — the single layout
 authority for Drive outputs.
+
+See [Lifecycle](lifecycle.md) and [Terminology](terminology.md).
 
 ## Drive layout
 
@@ -14,12 +16,12 @@ AIODOO/
 │           └── checkpoints/
 ├── models/
 │   ├── adapters/
-│   │   └── aiodoo-coding/                   # published adapter + artifact.json
+│   │   └── aiodoo-coding/                   # Capability Package + artifact.json
 │   ├── merged/
-│   │   └── aiodoo-coding/                   # optional (when export merges)
+│   │   └── aiodoo-coding/                   # optional Merged Capability Package
 │   └── exports/
 │       └── aiodoo-coding/
-│           └── bundle-coding-*/             # export bundle
+│           └── bundle-coding-*/             # ArtifactBundle
 ├── experiments/
 │   └── coding/
 │       ├── summary.json
@@ -37,7 +39,7 @@ experiment = ExperimentStore(workspace=ws).load(TRAINING_ID)
 ```
 
 Legacy `EXP-0001` is accepted by loaders and normalizes to `coding`, but must
-never appear in Drive folders, adapter product names, or notebook UI labels.
+never appear in Drive folders, Capability Package names, or notebook UI labels.
 
 ## CLI
 

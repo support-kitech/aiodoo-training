@@ -13,13 +13,20 @@ Related documents:
 - [Architecture](architecture.md) — layer map and phase status
 - [Architecture Invariants](architecture_invariants.md) — permanent engineering rules
 - [Phase Completion Matrix](phase_completion_matrix.md) — phase freeze ledger
+- [Terminology](terminology.md) — authoritative vocabulary
+- [Ownership](ownership.md) — cross-repository ownership
+- [Capability Model](capability_model.md) / [Product Model](product_model.md)
+- [Lifecycle](lifecycle.md) — training and package lifecycle
+- [Metadata Ownership](metadata_ownership.md)
+- [Freeze Readiness](freeze_readiness.md) — lifecycle freeze checklist
 - [Coordinator conventions](coordinator_conventions.md) — Planner / Coordinator / Manager / Runtime / Authority vocabulary
 - [Engineering Principles](engineering_principles.md) — engineering philosophy (informational)
 - [Trainer Backend Contract](trainer_backend_contract.md) — Phase 3+ trainer checklist
-- [Artifact Contract](artifact_contract.md) — Phase 4 Training → Models handoff
-- [ADRs](adr/) — decision history (0001–0021)
+- [Artifact Contract](artifact_contract.md) — Phase 4 ArtifactBundle export inventory (clarified by ADR-0022)
+- [Artifact Output Pipeline](artifact_output_pipeline.md) — Capability Package Drive layout
+- [ADRs](adr/) — decision history (0001–0022)
 - [Phase 7 Distributed Readiness Architecture](phase7-distributed-readiness-architecture.md) — **permanently frozen** ([ADR-0019](adr/0019-phase7-distributed-readiness.md) · [ADR-0021](adr/0021-phase7-freeze.md))
-
+- **Ecosystem ADR-0001 — AIODOO Model Lifecycle** — cross-repo lifecycle (not this repo’s ADR-0001)
 ---
 
 ## 1. Purpose
@@ -359,7 +366,8 @@ surface. **AIODOO Training v1 architecture is complete.**
 - Orchestrate through the pipeline.
 - Resolve hardware through the resource layer.
 - Checkpoint and resume through CheckpointManager + ResumePolicy.
-- Evaluate and export through frozen Evaluator/Exporter + Artifact Contract.
+- Evaluate and export through frozen Evaluator/Exporter + ArtifactBundle contract;
+  Drive-publish Capability Packages for external handoff (ADR-0022).
 - Plan packing/curriculum/sampling through SchedulePlanner.
 - Record observations through TrackingCoordinator / ExperimentTracker (never as run control).
 - Coordinate distribution through DistributedRuntime / coordinators (never as a second training engine).

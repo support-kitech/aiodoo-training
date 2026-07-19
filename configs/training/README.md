@@ -1,19 +1,24 @@
 # Production Training Configurations
 
-Public training IDs under `configs/training/<id>/`.
+Public **capability** training IDs under `configs/training/<id>/`.
 
-## Independent skill adapters
+See [Capability Model](../../docs/capability_model.md),
+[Product Model](../../docs/product_model.md), and
+[Terminology](../../docs/terminology.md).
 
-Each pack trains **one** product adapter from the **base model** (fresh QLoRA).
-There is **no** cross-product `resume_from` chain.
+## Independent capability adapters
+
+Each pack trains **one** capability adapter from the **base model** (fresh QLoRA).
+There is **no** cross-capability `resume_from` chain.
 
 `checkpointing.resume_from` is only for **same-run** recovery after an interrupt
 (e.g. `training/cache/repair/checkpoints/checkpoint-200`).
 
-Product packaging (Development / Reasoning) belongs in **aiodoo-model**, not here.
+**Product** packaging (Development / Reasoning) belongs in **`aiodoo-model`**,
+not here. Training creates capabilities only.
 
-| Catalog # | Training ID | Dataset file | Records | Output adapter |
-|----------:|-------------|----------------|--------:|----------------|
+| Catalog # | Capability ID | Dataset file | Records | Capability Package dir |
+|----------:|---------------|----------------|--------:|------------------------|
 | 1 | `coding` | `coding_v1_0.jsonl` | 5459 | `aiodoo-coding` |
 | 2 | `planner` | `planner_v1_0.jsonl` | 5695 | `aiodoo-planner` |
 | 3 | `execution` | `execution_dataset.jsonl` | 5459 | `aiodoo-execution` |
@@ -32,11 +37,11 @@ AIODOO/datasets/v1.0.0/
 ## Colab
 
 ```python
-TRAINING_ID = "repair"  # or planner / execution / ...
+TRAINING_ID = "repair"  # capability id
 experiment = ExperimentStore(workspace=workspace).load(TRAINING_ID)
 ```
 
-Adapter product path:
+Capability Package path:
 
 ```python
 adapter_id = f"aiodoo-{TRAINING_ID}"  # e.g. aiodoo-repair

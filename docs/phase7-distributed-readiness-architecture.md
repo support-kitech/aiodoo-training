@@ -6,7 +6,8 @@
 **Binding inputs:** [Frozen Public Contracts](frozen_public_contracts.md), ADRs 0001–0021,
 [Architecture Invariants](architecture_invariants.md), [Trainer Backend Contract](trainer_backend_contract.md),
 [Artifact Contract](artifact_contract.md)  
-**Related ADRs:** [0019 (Accepted)](adr/0019-phase7-distributed-readiness.md) · [0021 (Accepted)](adr/0021-phase7-freeze.md)
+**Related ADRs:** [0019 (Accepted)](adr/0019-phase7-distributed-readiness.md) · [0021 (Accepted)](adr/0021-phase7-freeze.md)  
+**Lifecycle clarification:** [ADR-0022](adr/0022-package-surfaces-lifecycle-alignment.md) · [Terminology](terminology.md)
 
 > Phases **0–7** are **permanently frozen** public contracts
 > ([ADR-0021](adr/0021-phase7-freeze.md) for Phase 7).
@@ -15,6 +16,9 @@
 > If any change appears to require altering a frozen contract, **STOP**. The
 > frozen contract wins unless the Section 9 change process in
 > `frozen_public_contracts.md` is completed.
+>
+> **Naming:** Historical `aiodoo-models` means frozen `aiodoo-model`.
+> Distributed readiness must not leak into sibling repositories.
 >
 > **Axiom:** Distributed readiness is a **placement / synchronization /
 > recovery façade**. It never becomes authoritative over TrainingSession,

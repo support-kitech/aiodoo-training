@@ -4,6 +4,15 @@
 
 Accepted (Phase 0)
 
+## Citation note
+
+This is the **training-repository** ADR-0001 (immutable domain types).
+
+The cross-repository Model Lifecycle decision is cited as **Ecosystem ADR-0001 —
+AIODOO Model Lifecycle**. Do not conflate the two. See
+[terminology.md](../terminology.md) and
+[ADR-0022](0022-package-surfaces-lifecycle-alignment.md).
+
 ## Context
 
 Training pipelines share configuration, progress, and artifact metadata across
@@ -18,5 +27,6 @@ be modified in place.
 
 ## Consequences
 
-- Positive: safe sharing, clearer invariants, better testability.
-- Negative: updates require `dataclasses.replace()` or new instances.
+- Positive: safe sharing across pipeline stages and future workers; clearer
+  invariants; better testability.
+- Negative: updates require `dataclasses.replace()` or new instances (copy-on-write).

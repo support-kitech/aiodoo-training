@@ -3,12 +3,20 @@
 **Status:** **Permanently frozen** (ADR-0015 Accepted; implementation complete)  
 **Date:** 2026-07-14  
 **Binding inputs:** [Frozen Public Contracts](frozen_public_contracts.md), ADRs 0001–0017  
-**Related ADR:** [0015 (Accepted)](adr/0015-phase4-evaluation-export.md)
+**Related ADR:** [0015 (Accepted)](adr/0015-phase4-evaluation-export.md)  
+**Lifecycle clarification:** [ADR-0022](adr/0022-package-surfaces-lifecycle-alignment.md) · [Lifecycle](lifecycle.md) · [Terminology](terminology.md)
 
 > Phases **0–5** are **permanently frozen**. This document is the canonical Phase 4
 > evaluation/export architecture. Do not redesign frozen surfaces for convenience.
 > If any proposed change conflicts with a frozen contract, the frozen contract wins unless
 > the Section 9 change process in `frozen_public_contracts.md` is completed.
+>
+> **ADR-0022 note:** Historical text below that says `ArtifactBundle` is the
+> “only” handoff into `aiodoo-models` is superseded for **external** handoff
+> authority. Capability Packages (`artifact.json` Drive trees) are authoritative
+> for `aiodoo-validation` and `aiodoo-model` registry publish. `ArtifactBundle`
+> remains the Phase 4 **export inventory** contract. Prefer the name
+> `aiodoo-model` (singular).
 
 ---
 

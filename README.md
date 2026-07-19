@@ -38,7 +38,8 @@ behind frozen ports, with CheckpointManager, ResumePolicy, TrainingSession,
 deterministic CPU stub training, and resume-equivalence golden tests.
 
 Phase 4 implements evaluation and export behind frozen `Evaluator` / `Exporter`
-ports, quality gates, and the Artifact Contract handoff to `aiodoo-models`.
+ports, quality gates, ArtifactBundle export, and Capability Package Drive
+publish for handoff to `aiodoo-validation` / `aiodoo-model`.
 
 Phase 5 implements packing, curriculum, and sampling behind frozen
 `PackingStrategy` / `CurriculumStrategy` ports (additive `SamplingStrategy`),
@@ -81,7 +82,8 @@ Frozen abstractions include:
 | Owns | Does not own |
 |------|----------------|
 | Consume datasets from `aiodoo-datasets` | Dataset generation |
-| Train and export adapters/models | Inference (`aiodoo-models`) |
+| Train capability adapters; Drive-publish Capability Packages; export ArtifactBundles | Product composition; registry publish (`aiodoo-model`) |
+| Training-local evaluation / quality gates | Certification (`aiodoo-validation`) |
 | Deterministic experiments | Agent runtime (`aiodoo-core`) |
 
 ## Execution model
@@ -125,20 +127,22 @@ python3 tests/run_tests.py
 ## Documentation
 
 - [Architecture](docs/architecture.md)
+- [Terminology](docs/terminology.md) — authoritative vocabulary
+- [Ownership](docs/ownership.md)
+- [Capability Model](docs/capability_model.md) / [Product Model](docs/product_model.md)
+- [Lifecycle](docs/lifecycle.md)
+- [Metadata Ownership](docs/metadata_ownership.md)
+- [Freeze Readiness](docs/freeze_readiness.md)
 - [Frozen Public Contracts](docs/frozen_public_contracts.md) — binding engineering governance
 - [Architecture Invariants](docs/architecture_invariants.md)
 - [Phase Completion Matrix](docs/phase_completion_matrix.md)
 - [Phase 3 Training Engine Architecture](docs/phase3-training-engine-architecture.md) — **permanently frozen**
 - [Phase 4 Evaluation & Export Architecture](docs/phase4-evaluation-export-architecture.md) — **permanently frozen**
-- [Artifact Contract](docs/artifact_contract.md) — official Training → Models handoff specification
-- [Artifact Output Pipeline](docs/artifact_output_pipeline.md) — canonical Drive workspace layout
+- [Artifact Contract](docs/artifact_contract.md) — ArtifactBundle export inventory (ADR-0022 clarification)
+- [Artifact Output Pipeline](docs/artifact_output_pipeline.md) — Capability Package Drive layout
 - [Production Smoke Test](docs/SMOKE.md) — end-to-end smoke procedure (`coding`)
 - [Phase 5 Packing & Curriculum Architecture](docs/phase5-packing-curriculum-architecture.md) — **permanently frozen**
 - [Phase 6 Tracking & CLI Architecture](docs/phase6-tracking-cli-architecture.md) — **permanently frozen**
 - [Phase 7 Distributed Readiness Architecture](docs/phase7-distributed-readiness-architecture.md) — **permanently frozen**
 - [Trainer Backend Contract](docs/trainer_backend_contract.md)
-- [ADRs](docs/adr/) — including [0017 Phase 5 freeze](docs/adr/0017-phase5-freeze.md),
-  [0018 Phase 6 architecture](docs/adr/0018-phase6-tracking-cli.md),
-  [0019 Phase 7 architecture](docs/adr/0019-phase7-distributed-readiness.md),
-  [0020 Phase 6 freeze](docs/adr/0020-phase6-freeze.md), and
-  [0021 Phase 7 freeze](docs/adr/0021-phase7-freeze.md)
+- [ADRs](docs/adr/) — including [0022 Package Surfaces & Lifecycle Alignment](docs/adr/0022-package-surfaces-lifecycle-alignment.md)
