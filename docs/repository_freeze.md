@@ -1,7 +1,11 @@
-# Repository Freeze (v1.0.0)
+# Repository Freeze (v1.0.1)
 
 **Status:** Phases 0–7 and Capability Package lifecycle alignment are **COMPLETE**.  
-Repository is **FROZEN for v1.0.0**.
+Repository is **FROZEN**; production freeze release identity is **v1.0.1**.
+
+Published historical tag **v1.0.0** (2026-07-15) is preserved and is **not**
+moved. That tag predates Capability Package lifecycle alignment (ADR-0022) and
+ADR-0023 governance.
 
 Binding references:
 
@@ -11,6 +15,7 @@ Binding references:
 - [release_checklist.md](release_checklist.md)
 - [ADR-0022](adr/0022-package-surfaces-lifecycle-alignment.md)
 - [ADR-0023](adr/0023-repository-freeze-v1.md)
+- [CHANGELOG.md](../CHANGELOG.md)
 
 ## What is frozen
 
@@ -32,7 +37,7 @@ Follows [SemVer 2.0.0](https://semver.org/).
 | Backward-compatible additive feature within frozen architecture | **MINOR** |
 | Bug fix, docs, tests, hardening with identical public behavior | **PATCH** |
 
-Prefer **PATCH** after v1.0.0 unless an ADR justifies MINOR/MAJOR.
+Prefer **PATCH** after the v1.0 line unless an ADR justifies MINOR/MAJOR.
 
 ## Quality gates (v1.0)
 
@@ -47,7 +52,7 @@ python3 -m coverage report -m --fail-under=80
 Infrastructure under `aiodoo_training/infrastructure/` remains omitted from coverage
 (quarantined adapters). Measured non-infrastructure coverage at freeze ≈81%.
 
-## Explicitly not in v1.0.0
+## Explicitly not in the v1.0 production freeze
 
 - PyPI packaging / wheels
 - Product composition (Development / Reasoning)

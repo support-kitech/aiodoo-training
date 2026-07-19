@@ -1,4 +1,4 @@
-"""Freeze / docs consistency checks for v1.0.0 release readiness."""
+"""Freeze / docs consistency checks for v1.0.1 release readiness."""
 
 from __future__ import annotations
 
@@ -10,12 +10,13 @@ ROOT = Path(__file__).resolve().parents[2]
 
 
 def test_package_version_is_v1() -> None:
-    assert __version__ == "1.0.0"
+    assert __version__ == "1.0.1"
 
 
 def test_changelog_mentions_v1() -> None:
     text = (ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
-    assert "## [1.0.0]" in text
+    assert "## [1.0.1]" in text
+    assert "## [1.0.0]" in text  # historical published tag preserved
 
 
 def test_coverage_floor_is_eighty() -> None:

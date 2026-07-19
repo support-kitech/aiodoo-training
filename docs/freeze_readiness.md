@@ -1,11 +1,12 @@
 # Freeze Readiness Documentation
 
-**Status:** Lifecycle alignment freeze criteria **met** for **v1.0.0**  
+**Status:** Lifecycle alignment freeze criteria **met** for **v1.0.1**  
 **Binding freeze statement:** [repository_freeze.md](repository_freeze.md) · [ADR-0023](adr/0023-repository-freeze-v1.md)  
 **Related:** [Frozen Public Contracts](frozen_public_contracts.md), [Ownership](ownership.md), [ADR-0022](adr/0022-package-surfaces-lifecycle-alignment.md)
 
 Phases 0–7 remain frozen as training architecture. Capability Package lifecycle
-alignment (B0–B2) is included in the v1.0.0 freeze.
+alignment (B0–B2) is included in the v1.0.1 production freeze. Historical git
+tag **v1.0.0** (2026-07-15) is preserved and not rewritten.
 
 ---
 
@@ -18,7 +19,7 @@ alignment (B0–B2) is included in the v1.0.0 freeze.
 | 3 | Contract / golden tests (B2) | **COMPLETE** |
 | 4 | No sibling imports in production code | **COMPLETE** |
 | 5 | Product composition out of scope | **COMPLETE** |
-| 6 | Coverage / version policy recorded | **COMPLETE** (`fail_under=80`, `__version__=1.0.0`) |
+| 6 | Coverage / version policy recorded | **COMPLETE** (`fail_under=80`, `__version__=1.0.1`) |
 | 7 | Section 9 / ADR-0022 / ADR-0023 | **COMPLETE** |
 
 ### Known consumer gaps (not training defects)
@@ -47,7 +48,7 @@ Lifecycle clarifications that are also stable:
 
 ## Compatibility guarantees
 
-After v1.0.0 freeze:
+After v1.0.1 freeze:
 
 - Existing Phase 0–7 ports, domain types, and registries remain stable
 - ArtifactBundle protocol `"1"` layout remains producible
@@ -92,7 +93,7 @@ aiodoo-datasets → aiodoo-training → Capability Package
 
 ---
 
-## Operator checklist (v1.0.0)
+## Operator checklist (v1.0.1)
 
 - [x] B0 documentation accepted
 - [x] ADR-0022 accepted
@@ -101,4 +102,4 @@ aiodoo-datasets → aiodoo-training → Capability Package
 - [x] Coverage / version policy recorded
 - [x] ADR-0023 repository freeze accepted
 - [x] README / CONTRIBUTING navigation updated
-- [ ] Git tag `v1.0.0` created when release is cut (operator action)
+- [x] Release identity set to **v1.0.1** (historical **v1.0.0** tag preserved)

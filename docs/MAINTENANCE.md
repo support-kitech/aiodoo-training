@@ -1,6 +1,7 @@
 # Maintenance Policy (v1.x)
 
-Policy after the v1.0.0 freeze. Freeze statement: [repository_freeze.md](repository_freeze.md).
+Policy after the v1.0.1 production freeze. Freeze statement: [repository_freeze.md](repository_freeze.md).
+Historical published tag **v1.0.0** remains immutable.
 
 ## When ADRs are required
 

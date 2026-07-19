@@ -4,7 +4,7 @@ Production-grade AI model training framework for the AIODOO ecosystem.
 
 ## Status
 
-**v1.0.0 — Production frozen** ([repository freeze](docs/repository_freeze.md) ·
+**v1.0.1 — Production frozen** ([repository freeze](docs/repository_freeze.md) ·
 [ADR-0023](docs/adr/0023-repository-freeze-v1.md))
 
 **Phase 0 — Permanently frozen** (foundation)  
@@ -17,7 +17,7 @@ Production-grade AI model training framework for the AIODOO ecosystem.
 **Phase 7 — Permanently frozen** (distributed readiness; ADR-0019 / ADR-0021)
 
 **AIODOO Training v1 architecture complete.** Capability Package lifecycle
-alignment (ADR-0022 / B0–B2) is included in the v1.0.0 freeze.
+alignment (ADR-0022 / B0–B2) is included in the v1.0.1 freeze.
 
 Phases 0–7 are **permanently frozen** public contracts. Later work **extends**
 them; it does not redesign them. See [Frozen Public Contracts](docs/frozen_public_contracts.md),

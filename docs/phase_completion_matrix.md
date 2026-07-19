@@ -25,7 +25,8 @@ architecture. [ADR-0020](adr/0020-phase6-freeze.md) = Phase 6 permanent freeze.
 [ADR-0021](adr/0021-phase7-freeze.md) = Phase 7 permanent freeze.
 [ADR-0022](adr/0022-package-surfaces-lifecycle-alignment.md) = package surfaces
 and lifecycle documentation alignment.
-[ADR-0023](adr/0023-repository-freeze-v1.md) = **v1.0.0 repository freeze**.
+[ADR-0023](adr/0023-repository-freeze-v1.md) = **v1.0.1 repository freeze**
+(historical tag `v1.0.0` preserved).
 
 Lifecycle docs: [terminology.md](terminology.md), [ownership.md](ownership.md),
 [lifecycle.md](lifecycle.md), [freeze_readiness.md](freeze_readiness.md),
