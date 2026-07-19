@@ -5,8 +5,9 @@
 **Related:** [Frozen Public Contracts](frozen_public_contracts.md), [Ownership](ownership.md), [ADR-0022](adr/0022-package-surfaces-lifecycle-alignment.md)
 
 Phases 0–7 remain frozen as training architecture. Capability Package lifecycle
-alignment (B0–B2) is included in the v1.0.1 production freeze. Historical git
-tag **v1.0.0** (2026-07-15) is preserved and not rewritten.
+alignment (B0–B2) landed in the **v1.0.1** production freeze and remains in
+force under tooling identity **v2.0.0**. Historical git tags **v1.0.0** and
+**v1.0.1** are preserved and not rewritten.
 
 ---
 
@@ -48,7 +49,7 @@ Lifecycle clarifications that are also stable:
 
 ## Compatibility guarantees
 
-After v1.0.1 freeze:
+After v2.0.0 tooling freeze (contracts unchanged from v1.0.1):
 
 - Existing Phase 0–7 ports, domain types, and registries remain stable
 - ArtifactBundle protocol `"1"` layout remains producible
@@ -93,13 +94,14 @@ aiodoo-datasets → aiodoo-training → Capability Package
 
 ---
 
-## Operator checklist (v1.0.1)
+## Operator checklist (v2.0.0)
 
 - [x] B0 documentation accepted
 - [x] ADR-0022 accepted
 - [x] B1 metadata enrichment complete
 - [x] B2 contract tests green
-- [x] Coverage / version policy recorded
+- [x] Coverage / version policy recorded (`fail_under=80`, `__version__=2.0.0`)
 - [x] ADR-0023 repository freeze accepted
 - [x] README / CONTRIBUTING navigation updated
-- [x] Release identity set to **v1.0.1** (historical **v1.0.0** tag preserved)
+- [x] Release identity set to **v2.0.0** (historical **v1.0.0** / **v1.0.1** preserved)
+- [x] RELEASE_REPORT.md written
