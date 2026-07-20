@@ -21,6 +21,10 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
+from aiodoo_contract.schemas.capability_package_metadata import CapabilityPackageMetadata
+from aiodoo_contract.schemas.enums import CapabilityName
+from aiodoo_contract.version import CONTRACT_VERSION
+
 from aiodoo_training.artifacts.io_utils import ensure_parent_dir
 from aiodoo_training.exceptions import ConfigError
 from aiodoo_training.naming import (
@@ -178,6 +182,44 @@ def infer_adapter_artifact_type(resolved: dict[str, Any] | None) -> str:
     return _CAPABILITY_TO_PROTOCOL_ARTIFACT_TYPE.get(capability_id, ADAPTER_PROTOCOL_ARTIFACT_TYPE)
 
 
+def _capability_package_metadata(
+    *,
+    capability_id: str,
+    adapter_type: str,
+    peft_type: str | None,
+    family: str | None,
+    architecture: str | None,
+    created_at: str,
+) -> dict[str, Any] | None:
+    """Build the canonical `CapabilityPackageMetadata` block, when derivable.
+
+    Returns ``None`` (never raises) when ``capability_id`` is not one of
+    `aiodoo_contract.schemas.enums.CapabilityName` (e.g. ``"context"`` —
+    not itself a capability, see ``CONTRACT_ADOPTION.md``) or the base
+    model family/architecture could not be resolved. Absence of this block
+    is not a publish failure: the frozen top-level fields
+    (``capability_id``, ``adapter_type``, ``peft_type``, ...) always carry
+    training's own provenance regardless; this block additionally attaches
+    the identical shape a runtime uses to check compatibility, whenever
+    there is enough information to construct it validly.
+    """
+    if not family or not architecture:
+        return None
+    try:
+        capability = CapabilityName(capability_id)
+    except ValueError:
+        return None
+    metadata = CapabilityPackageMetadata(
+        capability=capability,
+        adapter_type=adapter_type,
+        peft_type=peft_type,
+        family=family,
+        architecture=architecture,
+        created_at=created_at,
+    )
+    return metadata.model_dump(mode="json")
+
+
 def build_adapter_artifact_json(
     *,
     experiment_id: str,
@@ -191,6 +233,8 @@ def build_adapter_artifact_json(
         experiment_id.strip() if experiment_id.strip() else adapter_product_id(capability_id)
     )
     family, architecture = _resolve_family_architecture(resolved)
+    peft_type = _resolve_peft_type(resolved)
+    resolved_created_at = created_at or _utc_now_iso()
     payload: dict[str, Any] = {
         "artifact_type": ADAPTER_PROTOCOL_ARTIFACT_TYPE,
         "protocol_major": VALIDATION_PROTOCOL_MAJOR,
@@ -198,17 +242,32 @@ def build_adapter_artifact_json(
         "capability_id": capability_id,
         # Frozen validation profiles require adapter_type == profile/capability id.
         "adapter_type": capability_id,
-        "peft_type": _resolve_peft_type(resolved),
+        "peft_type": peft_type,
         "supported_odoo_versions": list(_resolve_supported_odoo_versions(resolved)),
-        "created_at": created_at or _utc_now_iso(),
+        "created_at": resolved_created_at,
         "producer": _PRODUCER_NAME,
         "training_version": _training_version(),
         "training_source": capability_id,
+        # Compatibility metadata (ADR-0009): the contract version this package's
+        # prompts/templates/schemas were built against, so a runtime can refuse
+        # to load a package trained against an incompatible contract instead of
+        # silently misinterpreting it.
+        "contract_version": CONTRACT_VERSION,
     }
     if family is not None:
         payload["model_family"] = family
     if architecture is not None:
         payload["architecture"] = architecture
+    package_metadata = _capability_package_metadata(
+        capability_id=capability_id,
+        adapter_type=capability_id,
+        peft_type=peft_type,
+        family=family,
+        architecture=architecture,
+        created_at=resolved_created_at,
+    )
+    if package_metadata is not None:
+        payload["capability_package_metadata"] = package_metadata
     dataset_version = _resolve_dataset_version(resolved)
     if dataset_version is not None:
         payload["dataset_version"] = dataset_version
@@ -230,6 +289,7 @@ def build_merged_artifact_json(
         experiment_id.strip() if experiment_id.strip() else adapter_product_id(capability_id)
     )
     family, architecture = _resolve_family_architecture(resolved)
+    resolved_created_at = created_at or _utc_now_iso()
     payload: dict[str, Any] = {
         "artifact_type": MERGED_PROTOCOL_ARTIFACT_TYPE,
         "protocol_major": VALIDATION_PROTOCOL_MAJOR,
@@ -237,15 +297,26 @@ def build_merged_artifact_json(
         "capability_id": capability_id,
         "adapter_type": capability_id,
         "supported_odoo_versions": list(_resolve_supported_odoo_versions(resolved)),
-        "created_at": created_at or _utc_now_iso(),
+        "created_at": resolved_created_at,
         "producer": _PRODUCER_NAME,
         "training_version": _training_version(),
         "training_source": capability_id,
+        "contract_version": CONTRACT_VERSION,
     }
     if family is not None:
         payload["model_family"] = family
     if architecture is not None:
         payload["architecture"] = architecture
+    package_metadata = _capability_package_metadata(
+        capability_id=capability_id,
+        adapter_type=capability_id,
+        peft_type=None,
+        family=family,
+        architecture=architecture,
+        created_at=resolved_created_at,
+    )
+    if package_metadata is not None:
+        payload["capability_package_metadata"] = package_metadata
     dataset_version = _resolve_dataset_version(resolved)
     if dataset_version is not None:
         payload["dataset_version"] = dataset_version
@@ -275,6 +346,7 @@ def build_base_model_artifact_json(
         "created_at": created_at or _utc_now_iso(),
         "producer": _PRODUCER_NAME,
         "training_version": _training_version(),
+        "contract_version": CONTRACT_VERSION,
     }
 
 

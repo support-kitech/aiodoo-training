@@ -44,6 +44,10 @@ def _skip(name: StageName, stage: PipelineStage, message: str) -> StageResult:
     return StageResult(name=name, stage=stage, status=StageStatus.SKIPPED, message=message)
 
 
+def _fail(name: StageName, stage: PipelineStage, message: str) -> StageResult:
+    return StageResult(name=name, stage=stage, status=StageStatus.FAILED, message=message)
+
+
 def _export_bind_extra(raw: dict[str, Any]) -> dict[str, object]:
     extra: dict[str, object] = {}
     dataset_version = raw.get("dataset_version")
@@ -1051,7 +1055,7 @@ class FinalizeStage(PipelineStageHandler):
         from aiodoo_training.pipeline.tracking_hooks import maybe_finalize_tracking
 
         maybe_finalize_tracking(context)
-        maybe_publish_artifacts(context)
+        published = maybe_publish_artifacts(context)
         tracker = context.get("tracker")
         # Coordinator.close already closes the tracker when present.
         if (
@@ -1063,6 +1067,16 @@ class FinalizeStage(PipelineStageHandler):
         runtime = context.get("distributed_runtime")
         if runtime is not None and hasattr(runtime, "close"):
             runtime.close()
+        if not published:
+            # ACT-101: publishing is configured and training completed, but the
+            # required adapter Capability Package could not be published — fail
+            # closed rather than reporting a training run as successful when it
+            # produced no usable output.
+            return context, _fail(
+                self._name,
+                self.stage,
+                "Required adapter Capability Package publish failed; see logs.",
+            )
         return context, _ok(self._name, self.stage)
 
 

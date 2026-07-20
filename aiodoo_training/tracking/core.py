@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import logging
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field, replace
 from datetime import UTC, datetime
@@ -48,6 +49,8 @@ from aiodoo_training.domain.tracking_reports import (
 from aiodoo_training.domain.training import MetricSnapshot
 from aiodoo_training.exceptions import TrackingError, TrackingLifecycleError
 from aiodoo_training.ports.trainer import ExperimentTracker
+
+logger = logging.getLogger("aiodoo_training.tracking")
 
 _SINK_VALID: dict[TrackingSinkStatus, frozenset[TrackingSinkStatus]] = {
     TrackingSinkStatus.CLOSED: frozenset({TrackingSinkStatus.OPEN}),
@@ -632,6 +635,17 @@ class TrackingCoordinator:
 
     def _degrade(self, message: str) -> None:
         failures = self._ctx.health.consecutive_failures + 1
+        # ACT-118: tracking sink errors are intentionally non-fatal (observational
+        # isolation — a broken tracker must never fail training) but were
+        # previously only recorded into TrackingHealth.message, never logged.
+        # Always log so operators can see degraded tracking sinks.
+        logger.warning(
+            "Tracking sink degraded for backend=%s run=%s consecutive_failures=%d: %s",
+            self._ctx.policy.backend_key,
+            self._ctx.run_record.run_id.value,
+            failures,
+            message,
+        )
         self._ctx = self._ctx.with_health(
             TrackingHealth(
                 backend_key=self._ctx.policy.backend_key,

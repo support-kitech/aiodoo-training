@@ -1,4 +1,15 @@
-"""Dataset validation against protocol expectations."""
+"""Dataset validation against protocol expectations.
+
+Structural checks (required top-level keys, manifest protocol version) stay
+training-owned: they operate on the raw record shape aiodoo-datasets writes
+to disk, which is not itself an `aiodoo_contract` schema. Once a record's
+dataset type has a canonical contract projection, this validator also
+projects a sample of records and runs them through
+`aiodoo_contract.validators.ContractValidator` — the same schema/capability
+validation the contract mandates for every consumer — so a malformed
+dataset fails fast during validation rather than surfacing later as a
+`ContractAdapterError` mid-training.
+"""
 
 from __future__ import annotations
 
@@ -6,6 +17,13 @@ import json
 from pathlib import Path
 from typing import Any
 
+from aiodoo_contract.validators import ContractValidator
+
+from aiodoo_training.contract.adapters import (
+    SUPPORTED_CAPABILITIES,
+    ContractAdapterError,
+    project_record,
+)
 from aiodoo_training.datasets.reader import ProtocolRecordReader
 from aiodoo_training.domain.enums import DatasetType
 from aiodoo_training.domain.refs import DatasetRef
@@ -27,8 +45,14 @@ REQUIRED_FIELDS: dict[DatasetType, frozenset[str]] = {
 class DatasetValidator:
     """Fail-fast validation for DatasetRef targets before training consume."""
 
-    def __init__(self, reader: ProtocolRecordReader | None = None) -> None:
+    def __init__(
+        self,
+        reader: ProtocolRecordReader | None = None,
+        *,
+        contract_validator: ContractValidator | None = None,
+    ) -> None:
         self._reader = reader or ProtocolRecordReader()
+        self._contract_validator = contract_validator or ContractValidator()
 
     def validate_ref(self, ref: DatasetRef, *, sample_limit: int = 32) -> None:
         """
@@ -54,6 +78,8 @@ class DatasetValidator:
             self._validate_manifest(manifest_path, ref)
 
         required = REQUIRED_FIELDS.get(ref.dataset_type, frozenset())
+        capability = ref.dataset_type.value
+        has_contract_projection = capability in SUPPORTED_CAPABILITIES
         seen = 0
         for record in self._reader.iter_records(path):
             seen += 1
@@ -63,10 +89,38 @@ class DatasetValidator:
                     f"Dataset {path} record missing required fields "
                     f"for {ref.dataset_type.value}: {sorted(missing)}"
                 )
+            if has_contract_projection:
+                self._validate_contract_projection(path, capability, record)
             if seen >= sample_limit:
                 break
         if seen == 0:
             raise DomainError(f"Dataset is empty: {path}")
+
+    def _validate_contract_projection(
+        self, path: Path, capability: str, record: dict[str, Any]
+    ) -> None:
+        """Project ``record`` onto its contract shape and run `ContractValidator` on it.
+
+        Raises:
+            DomainError: if the record cannot be projected, or the
+                projected request/response fails contract validation.
+        """
+        try:
+            projection = project_record(capability, record)
+        except ContractAdapterError as exc:
+            raise DomainError(
+                f"Dataset {path} record cannot be projected onto the aiodoo_contract "
+                f"{capability!r} capability: {exc}"
+            ) from exc
+
+        result = self._contract_validator.validate_request(projection.request)
+        result = result.merge(self._contract_validator.validate_response(projection.response))
+        if not result:
+            issues = "; ".join(f"{issue.path}: {issue.message}" for issue in result.issues)
+            raise DomainError(
+                f"Dataset {path} record failed aiodoo_contract validation "
+                f"for capability {capability!r}: {issues}"
+            )
 
     def _validate_manifest(self, manifest_path: Path, ref: DatasetRef) -> None:
         try:

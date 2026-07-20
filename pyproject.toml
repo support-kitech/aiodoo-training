@@ -15,6 +15,10 @@ strict = true
 warn_return_any = true
 warn_unused_configs = true
 files = ["aiodoo_training"]
+# aiodoo_contract is installed editable (PEP 660 import-hook finder), which
+# mypy's static resolver cannot follow — point it at the sibling checkout
+# directly so `aiodoo_contract.*` imports resolve during type checking.
+mypy_path = ["../aiodoo-contract"]
 
 [[tool.mypy.overrides]]
 module = ["aiodoo_training.infrastructure.*"]

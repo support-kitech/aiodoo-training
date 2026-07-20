@@ -1,6 +1,7 @@
 {
   "architecture": "qwen",
   "artifact_type": "base_model",
+  "contract_version": "1.0.0",
   "created_at": "2026-07-19T12:00:00Z",
   "identifier": "qwen3-8b",
   "model_family": "qwen",

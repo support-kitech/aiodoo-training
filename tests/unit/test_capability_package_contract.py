@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 
 import pytest
+from aiodoo_contract.version import CONTRACT_VERSION
 
 from aiodoo_training.artifacts.output_layout import ArtifactOutputLayout
 from aiodoo_training.artifacts.output_manager import ArtifactOutputManager
@@ -69,6 +70,58 @@ def test_adapter_artifact_json_self_describing(capability: str) -> None:
     assert payload["training_version"]
     assert payload["created_at"] == "2026-07-19T12:00:00Z"
     assert payload["source_checkpoint"] == "/tmp/checkpoint-1"
+
+
+@pytest.mark.parametrize("capability", list(TRAINING_IDS))
+def test_adapter_artifact_json_carries_contract_version(capability: str) -> None:
+    payload = build_adapter_artifact_json(
+        experiment_id=f"aiodoo-{capability}", resolved=_base_resolved(capability)
+    )
+    assert payload["contract_version"] == CONTRACT_VERSION
+
+
+def test_adapter_artifact_json_embeds_canonical_capability_package_metadata() -> None:
+    # "repair" is a real aiodoo_contract CapabilityName with family/architecture
+    # resolvable from the config, so the canonical block must be present.
+    payload = build_adapter_artifact_json(
+        experiment_id="aiodoo-repair",
+        resolved=_base_resolved("repair"),
+        created_at="2026-07-19T12:00:00Z",
+    )
+    package_metadata = payload["capability_package_metadata"]
+    assert package_metadata["capability"] == "repair"
+    assert package_metadata["adapter_type"] == "repair"
+    assert package_metadata["peft_type"] == "qlora"
+    assert package_metadata["family"] == "qwen"
+    assert package_metadata["architecture"] == "qwen"
+    assert package_metadata["contract_version"] == CONTRACT_VERSION
+    assert package_metadata["created_at"] == "2026-07-19T12:00:00Z"
+
+
+def test_adapter_artifact_json_omits_capability_package_metadata_for_non_capability() -> None:
+    # "context" is not an aiodoo_contract CapabilityName (it is not itself a
+    # capability — see CONTRACT_ADOPTION.md); the canonical block is
+    # intentionally omitted rather than raising or fabricating a value.
+    payload = build_adapter_artifact_json(
+        experiment_id="aiodoo-context", resolved=_base_resolved("context")
+    )
+    assert "capability_package_metadata" not in payload
+    assert payload["contract_version"] == CONTRACT_VERSION
+
+
+def test_merged_artifact_json_carries_contract_version() -> None:
+    payload = build_merged_artifact_json(
+        experiment_id="aiodoo-planner",
+        resolved=_base_resolved("planner"),
+        source_bundle="/tmp/bundle",
+    )
+    assert payload["contract_version"] == CONTRACT_VERSION
+    assert payload["capability_package_metadata"]["capability"] == "planner"
+
+
+def test_base_model_artifact_json_carries_contract_version() -> None:
+    payload = build_base_model_artifact_json(model_id="Qwen/Qwen3-8B", model_family="qwen")
+    assert payload["contract_version"] == CONTRACT_VERSION
 
 
 def test_supported_odoo_versions_from_config() -> None:

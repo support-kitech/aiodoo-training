@@ -16,27 +16,44 @@ logger = logging.getLogger("aiodoo_training.artifacts")
 _PUBLISH_IO_ERRORS = (OSError, PublishError)
 
 
-def maybe_publish_artifacts(context: PipelineContext) -> None:
+def maybe_publish_artifacts(context: PipelineContext) -> bool:
     """
     Publish final adapter, merged model, and experiment summary to Drive.
 
-    Publish failures are logged but never fail the pipeline (finalize has already
-    succeeded). Experiment summary ``success`` reflects training and evaluation
-    outcomes when present.
+    Base-model / merged-model / config-snapshot publish failures remain
+    best-effort (logged as a warning, pipeline continues): they are
+    derived or optional artifacts. The **adapter** Capability Package is
+    the run's core deliverable, so its publish outcome is authoritative
+    (ACT-101 — previously *every* publish failure, including the adapter's,
+    was only ever logged, so a run could report success with a completed
+    training loop but no usable output):
+
+    Returns:
+        ``False`` if publishing is configured for this run (an
+        :class:`ArtifactOutputManager` could be resolved), training
+        completed, and the adapter could not be published — no checkpoint
+        was available to publish, or the publish call itself raised.
+        ``True`` in every other case, including when publishing is not
+        configured at all, or training itself already failed upstream
+        (there is nothing to publish).
+
+        The experiment summary's own ``success`` field folds this outcome
+        in alongside training/evaluation/quality-gate status, so a run
+        that trained cleanly but failed to publish is recorded as failed.
     """
     raw = context.get("raw_config")
     if not isinstance(raw, dict):
-        return
+        return True
 
     progress = context.get("training_progress")
     status = getattr(getattr(progress, "status", None), "value", "")
     if status == "failed":
         logger.info("Skipping artifact publish — training did not succeed")
-        return
+        return True
 
     manager = ArtifactOutputManager.from_resolved(raw)
     if manager is None:
-        return
+        return True
 
     layout = manager.layout
     run_id = context.run_id.value if context.run_id is not None else "unknown"
@@ -51,18 +68,21 @@ def maybe_publish_artifacts(context: PipelineContext) -> None:
             logger.warning("Base model artifact publish failed: %s", exc)
 
     # Publish adapter from latest checkpoint (including final train-end save).
+    # This is the run's required deliverable — its outcome is fail-closed (ACT-101).
     ckpt_dir = layout.adapter_checkpoints_dir
     latest = manager.find_latest_checkpoint(ckpt_dir)
     adapter_dest: Path | None = None
+    adapter_published = False
     if latest is not None:
         try:
             adapter_dest = manager.publish_adapter_from_checkpoint(latest)
+            adapter_published = True
             logger.info("Published adapter to %s", adapter_dest)
         except _PUBLISH_IO_ERRORS as exc:
-            logger.warning("Adapter publish failed: %s", exc)
+            logger.error("Adapter publish failed (required artifact): %s", exc)
     else:
-        logger.warning(
-            "No checkpoint under %s — adapter was not published. "
+        logger.error(
+            "No checkpoint under %s — adapter was not published (required artifact). "
             "Training must save a final checkpoint before finalize.",
             ckpt_dir,
         )
@@ -108,7 +128,7 @@ def maybe_publish_artifacts(context: PipelineContext) -> None:
     if isinstance(dataset_version, str) and dataset_version.strip():
         extra["dataset_version"] = dataset_version
 
-    experiment_success = _experiment_success(context)
+    experiment_success = _experiment_success(context) and adapter_published
 
     try:
         manager.write_experiment_summary(
@@ -120,6 +140,8 @@ def maybe_publish_artifacts(context: PipelineContext) -> None:
         )
     except OSError as exc:
         logger.warning("Experiment summary write failed: %s", exc)
+
+    return adapter_published
 
 
 def _experiment_success(context: PipelineContext) -> bool:

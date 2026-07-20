@@ -65,8 +65,10 @@ def test_jsonl_source_formats_and_opens_session() -> None:
     assert session.mix_fingerprint == session.dataset_fingerprint
     assert session.examples_total == len(examples)
     assert len(examples) == 2
-    assert examples[0].messages[0]["role"] == "user"
-    assert examples[0].messages[1]["role"] == "assistant"
+    # coding has a contract projection: system (capability default) + user + assistant.
+    assert examples[0].messages[0]["role"] == "system"
+    assert examples[0].messages[1]["role"] == "user"
+    assert examples[0].messages[2]["role"] == "assistant"
 
 
 def test_mix_is_deterministic() -> None:
