@@ -3,6 +3,16 @@
   "architecture": "qwen",
   "artifact_type": "coding_adapter",
   "capability_id": "repair",
+  "capability_package_metadata": {
+    "adapter_type": "repair",
+    "architecture": "qwen",
+    "capability": "repair",
+    "contract_version": "1.0.0",
+    "created_at": "2026-07-19T12:00:00Z",
+    "family": "qwen",
+    "peft_type": "qlora"
+  },
+  "contract_version": "1.0.0",
   "created_at": "2026-07-19T12:00:00Z",
   "dataset_version": "v1.0.0",
   "identifier": "aiodoo-repair",

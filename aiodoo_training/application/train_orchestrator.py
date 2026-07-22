@@ -14,6 +14,7 @@ from uuid import uuid4
 from aiodoo_training.bootstrap import bootstrap_phase7
 from aiodoo_training.config import ConfigSystem
 from aiodoo_training.config.experiment_config import to_experiment_config
+from aiodoo_training.contract.version_check import ensure_contract_compatible
 from aiodoo_training.domain.identifiers import ExperimentId, RunId
 from aiodoo_training.domain.pipeline import PipelineResult
 from aiodoo_training.exceptions import AiodooTrainingError, ConfigError
@@ -224,6 +225,9 @@ def run_train_from_config(config_path: Path, *, run_id: RunId | None = None) -> 
         )
 
     try:
+        logger.info("Verifying aiodoo_contract compatibility")
+        ensure_contract_compatible()
+
         logger.info("Bootstrapping registries")
         bootstrap_phase7(overwrite=True)
 

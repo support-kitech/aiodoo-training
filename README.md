@@ -70,7 +70,10 @@ CI remains CPU-only via stub backends (no GPU, no large downloads).
 Frozen abstractions include:
 
 - `DatasetSession` — dataset consumption runtime state (shard / rank / resume fields)
-- `ChatTemplateRegistry` — model-family chat templates (decoupled from tokenizers)
+- `ChatTemplateRegistry` — model-family chat templates (decoupled from tokenizers);
+  concrete implementations delegate rendering to `aiodoo_contract.templates`
+  (see [CONTRACT_ADOPTION.md](CONTRACT_ADOPTION.md)) — the frozen `ChatTemplate`
+  port/registry shape is unchanged
 - `ResourcePlanner` + `ExecutionEnvironment` — centralized hardware decisions (ADR-0009)
 - Phase 2: `ModelLoader` / `AdaptationApplier` + registries for backends / strategies / profiles
 - Phase 3: `TrainingSession`, CheckpointManager, ResumePolicy, trainer backend contract
@@ -90,11 +93,20 @@ Frozen abstractions include:
 | Train capability adapters; Drive-publish Capability Packages; export ArtifactBundles | Product composition; registry publish (`aiodoo-model`) |
 | Training-local evaluation / quality gates | Certification (`aiodoo-validation`) |
 | Deterministic experiments | Agent runtime (`aiodoo-core`) |
+| Contract adapter/prompt-bridge, contract version compatibility gate | Schemas, prompt builder, chat templates, validators, parsers (`aiodoo_contract`) |
+
+`aiodoo_contract` is the ecosystem's canonical Capability Contract package
+(schemas, prompt builder, chat templates, validators, parsers, versioning).
+Training consumes it as its second canonical consumer (after
+`aiodoo-datasets`) via a projection/adapter layer — see
+[CONTRACT_ADOPTION.md](CONTRACT_ADOPTION.md) for what was adopted, what
+stayed local, and why.
 
 ## Execution model
 
 ```bash
 python3 -m pip install -r requirements/base.txt
+python3 -m pip install -e ../aiodoo-contract  # canonical Capability Contract
 # development / CI:
 python3 -m pip install -r requirements/dev.txt
 ```
@@ -154,6 +166,7 @@ python3 tests/run_tests.py
 - [Freeze Readiness](docs/freeze_readiness.md)
 - [MAINTENANCE](docs/MAINTENANCE.md) · [Release Checklist](docs/release_checklist.md)
 - [CHANGELOG](CHANGELOG.md)
+- [Contract Adoption](CONTRACT_ADOPTION.md) — how this repository consumes `aiodoo_contract`
 
 **Architecture & contracts:**
 

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 from pathlib import Path
 
 from aiodoo_training.builders.tracking_builders import TrackingBuilder
@@ -18,6 +19,8 @@ from aiodoo_training.factories.factories import TrackerFactory
 from aiodoo_training.pipeline.pipeline import PipelineContext
 from aiodoo_training.tracking.core import TrackingCoordinator, new_run_record
 from aiodoo_training.tracking.reports import write_run_reports
+
+logger = logging.getLogger("aiodoo_training.tracking")
 
 
 def maybe_open_tracking(context: PipelineContext) -> PipelineContext:
@@ -60,6 +63,7 @@ def maybe_open_tracking(context: PipelineContext) -> PipelineContext:
     try:
         coordinator.open()
     except Exception:  # noqa: BLE001 — observational
+        logger.warning("Tracking coordinator failed to open; tracking disabled.", exc_info=True)
         if not policy.nonfatal_sink_errors:
             raise
     return context.with_values(
@@ -88,7 +92,7 @@ def maybe_observe_progress(context: PipelineContext) -> None:
             )
             coordinator._ctx = coordinator.context.with_run(run)  # noqa: SLF001
         except Exception:  # noqa: BLE001
-            pass
+            logger.warning("Failed to observe packing/curriculum statistics.", exc_info=True)
 
 
 def maybe_observe_evaluation(context: PipelineContext) -> None:
@@ -115,7 +119,7 @@ def maybe_observe_evaluation(context: PipelineContext) -> None:
                 evaluation=summary,
             )
     except Exception:  # noqa: BLE001
-        pass
+        logger.warning("Failed to observe/report evaluation results.", exc_info=True)
 
 
 def maybe_observe_export(context: PipelineContext) -> None:
@@ -137,7 +141,7 @@ def maybe_observe_export(context: PipelineContext) -> None:
             ),
         )
     except Exception:  # noqa: BLE001
-        pass
+        logger.warning("Failed to observe/report export artifacts.", exc_info=True)
 
 
 def maybe_finalize_tracking(context: PipelineContext) -> None:
@@ -164,7 +168,8 @@ def maybe_finalize_tracking(context: PipelineContext) -> None:
             state = RunState.FAILED
         coordinator.complete(state)
     except Exception:  # noqa: BLE001
+        logger.warning("Failed to finalize tracking cleanly; forcing close.", exc_info=True)
         try:
             coordinator.close()
         except Exception:  # noqa: BLE001
-            pass
+            logger.warning("Tracking coordinator failed to close.", exc_info=True)

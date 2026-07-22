@@ -5,6 +5,63 @@ All notable changes to `aiodoo-training` are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 Versioning follows [SemVer](https://semver.org/).
 
+## [Unreleased]
+
+### Added
+
+- `aiodoo_contract` adopted as the canonical Capability Contract dependency;
+  `aiodoo-training` is now its second canonical consumer, after
+  `aiodoo-datasets` (see `CONTRACT_ADOPTION.md`).
+- `aiodoo_training/contract/`: `adapters.py` (`project_<capability>`,
+  `ContractAdapterError`, mirroring aiodoo-datasets' own projection layer
+  against the same record shape), `prompt_bridge.py` (renders capability
+  prompts exclusively via `aiodoo_contract.prompts.CapabilityPromptBuilder`
+  and serializes training labels to the canonical `CapabilityResponse`
+  JSON), `version_check.py` (`ensure_contract_compatible`,
+  `TRAINING_CONTRACT_VERSION`).
+- `datasets/formatters/formatters.py`: the six contract-mapped dataset
+  types (`planner`, `coding`, `repair`, `execution`, `conversation`,
+  `approval`) now build their `TrainingExample` exclusively through the new
+  contract bridge instead of ad-hoc instruction/context string
+  concatenation. `context`/`evaluation` are unchanged (no contract
+  projection — see `CONTRACT_ADOPTION.md`).
+- `infrastructure/huggingface/templates.py`: `ChatTemplate` implementations
+  (`QwenChatTemplate`, new `DeepSeekChatTemplate`, `GenericChatTemplate`,
+  `LlamaChatTemplate`, `MistralChatTemplate`) now delegate rendering to
+  `aiodoo_contract.templates` instead of the local `SimpleRoleChatTemplate`.
+  The frozen `ChatTemplate` port is unchanged.
+- `application/train_orchestrator.py`: calls
+  `ensure_contract_compatible()` before bootstrapping, failing early on an
+  incompatible installed `aiodoo_contract` version.
+- `datasets/validation.py`: `DatasetValidator` additionally projects sampled
+  records through `aiodoo_contract.validators.ContractValidator` for every
+  capability with a canonical contract shape.
+- `artifacts/publish_contract.py`: Capability Package `artifact.json` now
+  carries `contract_version` (always) and `capability_package_metadata` —
+  the canonical `aiodoo_contract.schemas.CapabilityPackageMetadata` — when
+  derivable. Additive; frozen protocol fields unchanged.
+- `CONTRACT_ADOPTION.md`.
+
+### Fixed
+
+- **ACT-101**: `pipeline/artifact_hooks.py::maybe_publish_artifacts` no
+  longer reports a training run as successful when the required adapter
+  Capability Package could not be published. It now returns `bool`, and
+  `pipeline/handlers.py::FinalizeStage` fails the pipeline
+  (`StageStatus.FAILED`) when publishing was configured, training
+  completed, and the adapter publish still failed.
+- **ACT-118**: `tracking/core.py`'s `_degrade` and every hook in
+  `pipeline/tracking_hooks.py` now log swallowed tracking-sink exceptions
+  (`logger.warning(..., exc_info=True)`) instead of discarding them
+  silently. Tracking remains best-effort; only observability changed.
+
+### Changed
+
+- Contract-mapped `TrainingExample.messages` now include a leading `system`
+  turn (the capability's default system prompt from
+  `CapabilityPromptBuilder`) — training and runtime inference now render
+  capability prompts identically. Golden tokenization digests regenerated.
+
 ## [2.0.0] — 2026-07-19
 
 ### Overview

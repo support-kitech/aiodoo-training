@@ -1,3 +1,9 @@
 # Base runtime dependencies (configuration, validation, CLI foundation).
 pydantic>=2.0.0
 PyYAML>=6.0
+
+# aiodoo_contract (canonical Capability Contract: schemas, prompt builder,
+# chat templates, validators, versioning — see ../CONTRACT_ADOPTION.md) is
+# an internal sibling package, not published to PyPI. Install it from the
+# workspace instead of listing it here as a version-pinned requirement:
+#   python3 -m pip install -e ../aiodoo-contract
