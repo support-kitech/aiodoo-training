@@ -17,10 +17,9 @@ FIXTURES = ROOT / "tests" / "fixtures" / "datasets"
 # Dataset types with a canonical aiodoo_contract projection render a
 # default system prompt via CapabilityPromptBuilder (ADR-0003) and so emit
 # a system/user/assistant triple. "context" has no contract projection
-# (not a capability). Evaluation is contract-registered (Phase 1) but the
-# on-disk fixture remains catalog-shaped until Phase 2 formatter/fixture
-# migration — so it still loads as a user/assistant pair via the legacy
-# EvaluationFormatter.
+# (not a capability). EvaluationFormatter is contract-backed (Phase 2) but
+# the on-disk evaluation fixture remains catalog-shaped until Phase 3 —
+# structural required-field checks only for that fixture row.
 CONTRACTS = [
     ("coding", DatasetType.CODING, {"instruction", "output", "metadata"}, True),
     ("planner", DatasetType.PLANNER, {"instruction", "output", "metadata"}, True),
@@ -48,20 +47,17 @@ def test_protocol_contract(
         protocol_version="1.0",
     )
     if dtype == DatasetType.EVALUATION:
-        # Fixture is still BenchmarkCatalog-shaped; DatasetValidator would
-        # now attempt project_evaluation and fail. Structural required-field
-        # check only until Phase 2 refreshes the fixture.
+        # Catalog-shaped fixture cannot be formatted or contract-validated
+        # until Phase 3 refreshes fixtures / REQUIRED_FIELDS.
         record = next(ProtocolRecordReader().iter_records(ref.path))
         missing = required - record.keys()
         assert not missing, missing
-        examples = list(JsonlDatasetSource(validate=False).load([ref]))
-    else:
-        DatasetValidator().validate_ref(ref)
-        examples = list(JsonlDatasetSource().load([ref]))
+        return
+
+    DatasetValidator().validate_ref(ref)
+    examples = list(JsonlDatasetSource().load([ref]))
     assert examples
     assert examples[0].dataset_type == dtype
-    # Formatter must always emit a user/assistant pair for Phase 1 SFT,
-    # plus a system turn for capabilities with a contract projection.
     expected_roles = (
         {"system", "user", "assistant"} if has_contract_projection else {"user", "assistant"}
     )

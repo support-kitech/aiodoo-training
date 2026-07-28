@@ -1,19 +1,17 @@
 """Protocol → TrainingExample formatters for all dataset types.
 
-Six of the eight dataset types (planner, coding, repair, execution,
-conversation, approval) map onto a capability the Capability Contract
-defines a shape for. Those formatters build their `TrainingExample`
-exclusively through :mod:`aiodoo_training.contract` — projecting the raw
-record onto `aiodoo_contract.schemas`, rendering the prompt with
-`aiodoo_contract.prompts.CapabilityPromptBuilder`, and teaching the model
-the canonical `CapabilityResponse` JSON as its label. Training does not
-hand-assemble instruction/context strings for these six (ADR-0003).
+Seven of the eight dataset types (planner, coding, repair, execution,
+conversation, approval, evaluation) map onto a capability the Capability
+Contract defines a shape for. Those formatters build their
+`TrainingExample` exclusively through :mod:`aiodoo_training.contract` —
+projecting the raw record onto `aiodoo_contract.schemas`, rendering the
+prompt with `aiodoo_contract.prompts.CapabilityPromptBuilder`, and teaching
+the model the canonical `CapabilityResponse` JSON as its label. Training
+does not hand-assemble instruction/context strings for these seven
+(ADR-0003).
 
-``context`` and ``evaluation`` have no contract projection — the same gap
-aiodoo-datasets documents for its own contract adapter (evaluation's
-BenchmarkCatalog domain does not map onto EvaluationRequest/Response;
-``context`` is not itself a capability). Those two keep the prior
-dataset-specific formatting; see ``CONTRACT_ADOPTION.md``.
+``context`` has no contract projection — it is not itself a capability —
+and keeps the prior dataset-specific formatting; see ``CONTRACT_ADOPTION.md``.
 """
 
 from __future__ import annotations
@@ -31,7 +29,7 @@ from aiodoo_training.exceptions import DomainError
 
 
 class _ContractFormatter(BaseFormatter):
-    """Shared `_format` for the six dataset types with a contract projection.
+    """Shared `_format` for dataset types with a contract projection.
 
     Subclasses only set :attr:`dataset_type`; the capability name passed to
     :mod:`aiodoo_training.contract` is always ``dataset_type.value`` because
@@ -80,6 +78,12 @@ class ApprovalFormatter(_ContractFormatter):
     dataset_type = DatasetType.APPROVAL
 
 
+class EvaluationFormatter(_ContractFormatter):
+    """Project Evaluation SFT judgments via the standard contract pipeline."""
+
+    dataset_type = DatasetType.EVALUATION
+
+
 class ContextFormatter(BaseFormatter):
     """No contract projection: `context` is not itself a capability (see module docstring)."""
 
@@ -96,24 +100,4 @@ class ContextFormatter(BaseFormatter):
             record,
             user_text=query,
             assistant_text=_json_dump(assistant_payload),
-        )
-
-
-class EvaluationFormatter(BaseFormatter):
-    """No contract projection: evaluation's BenchmarkCatalog domain does not map onto
-
-    `EvaluationRequest`/`EvaluationResponse` (see module docstring; matches the
-    same documented gap in aiodoo-datasets' contract adapter).
-    """
-
-    dataset_type = DatasetType.EVALUATION
-
-    def _format(self, record: Mapping[str, Any]) -> TrainingExample:
-        catalog = record.get("catalog")
-        user = f"Evaluate using the following catalog:\n{_json_dump(catalog)}"
-        return user_assistant(
-            self.dataset_type,
-            record,
-            user_text=user,
-            assistant_text=_json_dump({"evaluation_id": record.get("evaluation_id")}),
         )
