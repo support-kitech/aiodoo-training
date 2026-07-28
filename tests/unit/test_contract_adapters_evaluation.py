@@ -1,7 +1,6 @@
 """Unit tests for Evaluation contract projection (Phase 1 adoption).
 
-Covers ``project_evaluation`` registration and request/response mapping only.
-Formatter / fixture / DatasetValidator migration is deferred to later phases.
+Covers ``project_evaluation`` registration and request/response mapping.
 """
 
 from __future__ import annotations

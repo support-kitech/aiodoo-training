@@ -5,7 +5,6 @@ from pathlib import Path
 import pytest
 
 from aiodoo_training.bootstrap import bootstrap_phase1
-from aiodoo_training.datasets.reader import ProtocolRecordReader
 from aiodoo_training.datasets.source import JsonlDatasetSource
 from aiodoo_training.datasets.validation import DatasetValidator
 from aiodoo_training.domain.enums import DatasetType
@@ -17,9 +16,7 @@ FIXTURES = ROOT / "tests" / "fixtures" / "datasets"
 # Dataset types with a canonical aiodoo_contract projection render a
 # default system prompt via CapabilityPromptBuilder (ADR-0003) and so emit
 # a system/user/assistant triple. "context" has no contract projection
-# (not a capability). EvaluationFormatter is contract-backed (Phase 2) but
-# the on-disk evaluation fixture remains catalog-shaped until Phase 3 —
-# structural required-field checks only for that fixture row.
+# (not a capability).
 CONTRACTS = [
     ("coding", DatasetType.CODING, {"instruction", "output", "metadata"}, True),
     ("planner", DatasetType.PLANNER, {"instruction", "output", "metadata"}, True),
@@ -28,7 +25,20 @@ CONTRACTS = [
     ("execution", DatasetType.EXECUTION, {"instruction", "output", "metadata"}, True),
     ("approval", DatasetType.APPROVAL, {"review_id", "decision", "metadata"}, True),
     ("conversation", DatasetType.CONVERSATION, {"instruction", "output", "metadata"}, True),
-    ("evaluation", DatasetType.EVALUATION, {"evaluation_id", "metadata"}, False),
+    (
+        "evaluation",
+        DatasetType.EVALUATION,
+        {
+            "record_id",
+            "candidate_id",
+            "evaluation_case_key",
+            "capability_under_test",
+            "candidate",
+            "verdict",
+            "metadata",
+        },
+        True,
+    ),
 ]
 
 
@@ -46,14 +56,6 @@ def test_protocol_contract(
         dataset_type=dtype,
         protocol_version="1.0",
     )
-    if dtype == DatasetType.EVALUATION:
-        # Catalog-shaped fixture cannot be formatted or contract-validated
-        # until Phase 3 refreshes fixtures / REQUIRED_FIELDS.
-        record = next(ProtocolRecordReader().iter_records(ref.path))
-        missing = required - record.keys()
-        assert not missing, missing
-        return
-
     DatasetValidator().validate_ref(ref)
     examples = list(JsonlDatasetSource().load([ref]))
     assert examples
@@ -62,3 +64,7 @@ def test_protocol_contract(
         {"system", "user", "assistant"} if has_contract_projection else {"user", "assistant"}
     )
     assert {m["role"] for m in examples[0].messages} == expected_roles
+    if dtype == DatasetType.EVALUATION:
+        assert examples[0].example_id.startswith("evaluation:EVL-")
+        assert examples[0].metadata["capability"] == "evaluation"
+        assert "verdict" in examples[0].messages[2]["content"]

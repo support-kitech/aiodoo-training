@@ -1,6 +1,7 @@
 {
   "protocol_version": "1.0",
   "dataset_type": "evaluation",
+  "schema_version": "2.0",
   "record_count": 1,
   "checksum": "fixture"
 }

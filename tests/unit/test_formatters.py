@@ -19,9 +19,7 @@ ROOT = Path(__file__).resolve().parents[2]
 FIXTURES = ROOT / "tests" / "fixtures" / "datasets"
 
 # Capabilities with aiodoo_contract projections render system/user/assistant
-# via CapabilityPromptBuilder (ADR-0003). Fixture-backed cases exclude
-# evaluation until Phase 3 refreshes the still-catalog-shaped fixture;
-# evaluation is covered by dedicated judgment-record tests below.
+# via CapabilityPromptBuilder (ADR-0003). "context" keeps a user/assistant pair.
 CONTRACT_CASES = [
     ("coding", DatasetType.CODING),
     ("planner", DatasetType.PLANNER),
@@ -29,21 +27,11 @@ CONTRACT_CASES = [
     ("execution", DatasetType.EXECUTION),
     ("approval", DatasetType.APPROVAL),
     ("conversation", DatasetType.CONVERSATION),
+    ("evaluation", DatasetType.EVALUATION),
 ]
 NON_CONTRACT_CASES = [
     ("context", DatasetType.CONTEXT),
 ]
-
-_JUDGMENT_RECORD = {
-    "record_id": "EVL-test00000000000000000000000001",
-    "candidate": {"capability": "coding", "output": {"goal": "x"}},
-    "expectation": {"capability": "coding", "output": {"goal": "x"}},
-    "rubric": "Judge coding quality",
-    "verdict": "pass",
-    "score": 1.0,
-    "explanation": "matches expectation",
-    "metadata": {"protocol_version": "1.0", "module": "sale"},
-}
 
 
 @pytest.fixture(autouse=True)
@@ -82,23 +70,23 @@ def test_non_contract_formatter_produces_user_assistant_messages(
     assert examples[0].dataset_type == dtype
 
 
-def test_evaluation_formatter_uses_contract_pipeline() -> None:
-    example = EvaluationFormatter().format(dict(_JUDGMENT_RECORD), "evaluation")
-    assert example.dataset_type == DatasetType.EVALUATION
-    assert len(example.messages) == 3
-    assert example.messages[0]["role"] == "system"
-    assert example.messages[1]["role"] == "user"
-    assert example.messages[2]["role"] == "assistant"
-    assert example.metadata["capability"] == "evaluation"
-    assert example.metadata["contract_version"]
-
-    label = json.loads(example.messages[2]["content"])
+def test_evaluation_formatter_label_is_evaluation_response() -> None:
+    source = JsonlDatasetSource(validate=True)
+    ref = DatasetRef(
+        path=FIXTURES / "evaluation.jsonl",
+        dataset_type=DatasetType.EVALUATION,
+        protocol_version="1.0",
+    )
+    examples = list(source.load([ref]))
+    assert examples
+    label = json.loads(examples[0].messages[2]["content"])
     assert label["capability"] == "evaluation"
     assert label["verdict"] == "pass"
-    assert label["score"] == 1.0
-    assert label["explanation"] == "matches expectation"
     assert "evaluation_id" not in label
-    assert "catalog" not in example.messages[1]["content"]
+    assert "catalog" not in examples[0].messages[1]["content"]
+    assert examples[0].example_id == (
+        "evaluation:EVL-fixture000000000000000000000001"
+    )
 
 
 def test_evaluation_formatter_rejects_catalog_shaped_record() -> None:

@@ -59,7 +59,7 @@ def mix_examples(
 
 def stable_example_id(dataset_type: str, record: Mapping[str, object], index: int) -> str:
     """Derive a stable example id from record fields or content hash."""
-    for key in ("id", "review_id", "evaluation_id", "example_id"):
+    for key in ("record_id", "id", "review_id", "evaluation_id", "example_id"):
         value = record.get(key)
         if isinstance(value, str) and value.strip():
             return f"{dataset_type}:{value.strip()}"
