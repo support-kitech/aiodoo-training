@@ -1,11 +1,10 @@
 # approval — Production Training Configuration
 
-> **Dataset note:** v1.0.0 currently ships 1 approval record — expand in a future dataset release.
 **Training ID:** `approval`  
 **Published adapter:** `aiodoo-approval`  
 **Catalog stage:** 7 / 8 (label only — not a weight chain)  
 **Input adapter:** none (fresh from base model)  
-**Dataset:** `datasets/v1.0.0/approval_dataset.jsonl` (1 records)
+**Dataset:** `datasets/v1.0.0/approval_dataset.jsonl` (17,094 records)
 
 ## Invoke
 

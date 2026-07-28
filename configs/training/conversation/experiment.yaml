@@ -7,7 +7,7 @@
 # Public training id: conversation
 # Published adapter:  aiodoo-conversation
 # Independent skill adapter (catalog stage 6/8)
-# Dataset file:       datasets/v1.0.0/conversation_dataset.jsonl (1 records)
+# Dataset file:       datasets/v1.0.0/conversation_dataset.jsonl (29,016 records)
 # ============================================================
 
 schema_version: "1.0"

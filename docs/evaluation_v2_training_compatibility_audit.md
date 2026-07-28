@@ -1,15 +1,24 @@
-# Evaluation Capability Migration Audit — Phase 1
+# Evaluation Capability Migration Audit — HISTORICAL
 
-**Date:** 2026-07-28  
+> **Status (2026-07-28):** Superseded. Phases 1–4 of Evaluation contract
+> adoption / formatter / validation / production finalization are complete.
+> Training now uses judgment SFT via `project_evaluation` +
+> `_ContractFormatter`. Keep this document only as the pre-migration audit
+> snapshot. Current architecture: `CONTRACT_ADOPTION.md`,
+> `PRODUCTION_TRAINING.md`, `configs/training/evaluation/`.
+
+**Original audit date:** 2026-07-28  
 **Repository:** `aiodoo-training`  
-**Scope:** Architecture & compatibility audit only (no code changes)  
+**Original scope:** Architecture & compatibility audit only (no code changes)  
 **Dataset baseline:** Production-certified Evaluation v2 (`evaluation_dataset.jsonl`, 189,615 judgments) + separate BenchmarkCatalog
 
 ---
 
-## Final decision
+## Original final decision (pre-migration)
 
 ### B) Evaluation training pipeline is NOT compatible.
+
+*(Resolved by Phases 1–4. Do not treat this conclusion as current status.)*
 
 List of required implementation tasks is in **§10**. Do not begin implementation in this phase.
 

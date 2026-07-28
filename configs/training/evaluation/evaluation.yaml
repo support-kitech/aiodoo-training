@@ -39,8 +39,10 @@ schedule:
 sample_prompts:
   - id: evaluation_smoke_01
     prompt: >
-      Evaluate an Odoo engineering response using the provided evaluation catalog and return a structured evaluation identifier/result.
-    expect: Structured evaluation output aligned to catalog criteria.
+      Judge an Odoo engineering candidate against the provided expectation and
+      rubric; return a structured EvaluationResponse with verdict, score, and
+      explanation.
+    expect: Canonical EvaluationResponse JSON (verdict/score/explanation).
 
 expected_metrics:
   smoke:

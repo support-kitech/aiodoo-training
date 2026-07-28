@@ -3,7 +3,7 @@
 # ============================================================
 # Hardware envelope: Google Colab Tesla T4 (16 GB).
 # Progressive stage 6/8 — resume from prior product adapter.
-# Dataset: datasets/v1.0.0/conversation_dataset.jsonl (1 records)
+# Dataset: datasets/v1.0.0/conversation_dataset.jsonl (29,016 records)
 # ============================================================
 
 training:

@@ -8,9 +8,12 @@
 # aiodoo-colab sets AIODOO_COLAB_DATASET_PATH to the version root.
 # Independent skill adapter: train from base model, publish aiodoo-evaluation.
 # Product composition (Development / Reasoning) lives in aiodoo-model.
+#
+# Training data: Evaluation v2 judgment SFT (EvaluationRequest→Response).
+# Do NOT point this pack at evaluation_benchmark_catalog.jsonl
+# (certification-only; training_forbidden=true).
 # ============================================================
 
-# NOTE: v1.0.0 currently ships 1 evaluation record — expand in a future dataset release.
 dataset_version: "v1.0.0"
 dataset_root: "v1.0.0"
 
@@ -19,7 +22,8 @@ skill_training:
   enabled: true
   description: >
     Independent product adapter for evaluation. Trains from the configured base
-    model (fresh LoRA). resume_from is for same-run checkpoint recovery only.
+    model (fresh LoRA) on certified judgment SFT. resume_from is for same-run
+    checkpoint recovery only.
   adapter_naming: "aiodoo-{stage_name}"
   stages:
     - stage: 8
@@ -42,4 +46,4 @@ datasets:
 stage_catalog:
   - file: evaluation_dataset.jsonl
     dataset_type: evaluation
-    record_count: 1
+    record_count: 189615

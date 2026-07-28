@@ -1,4 +1,4 @@
-"""Unit tests for Evaluation contract projection (Phase 1 adoption).
+"""Unit tests for Evaluation contract projection.
 
 Covers ``project_evaluation`` registration and request/response mapping.
 """

@@ -1,11 +1,10 @@
 # conversation — Production Training Configuration
 
-> **Dataset note:** v1.0.0 currently ships 1 conversation record — expand in a future dataset release.
 **Training ID:** `conversation`  
 **Published adapter:** `aiodoo-conversation`  
 **Catalog stage:** 6 / 8 (label only — not a weight chain)  
 **Input adapter:** none (fresh from base model)  
-**Dataset:** `datasets/v1.0.0/conversation_dataset.jsonl` (1 records)
+**Dataset:** `datasets/v1.0.0/conversation_dataset.jsonl` (29,016 records)
 
 ## Invoke
 

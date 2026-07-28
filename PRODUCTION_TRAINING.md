@@ -59,25 +59,31 @@ exists in `aiodoo-colab`.
 | 3 | `execution` | `execution_dataset.jsonl` | 5,459 | Training-scale | PASS | `capabilities/execution/` (full) | ~13–14 GB | ~1.5–3 h | `models/adapters/aiodoo-execution/` |
 | 4 | `repair` | `repair_v1_0.jsonl` | 481 | Training-scale (smaller) | PASS | `capabilities/repair/` (full) | ~13–14 GB | ~15–30 min | `models/adapters/aiodoo-repair/` |
 | 5 | `context` | `context_v1_0.jsonl` | 50,161 | Training-scale (largest) | PASS | **N/A — infrastructure adapter, not a Capability Contract member** (see §10) | ~13–14 GB | ~10–20 h — **may exceed a single Colab session; same-run `resume_from` is required here** (see §6) | `models/adapters/aiodoo-context/` |
-| 6 | `conversation` | `conversation_dataset.jsonl` | 1 | **Not training-scale — placeholder** | PASS (schema-valid, but content is a single stub record) | `capabilities/conversation/` (profile exists, corpus unusable) | N/A until dataset rebuilt | N/A until dataset rebuilt | `models/adapters/aiodoo-conversation/` |
-| 7 | `approval` | `approval_dataset.jsonl` | 1 | **Not training-scale — placeholder** | PASS (schema-valid, but content is a single stub record) | `capabilities/approval/` (profile exists, corpus unusable) | N/A until dataset rebuilt | N/A until dataset rebuilt | `models/adapters/aiodoo-approval/` |
-| 8 | `evaluation` | `evaluation_dataset.jsonl` | 1 | **Not training-scale — placeholder** | PASS (schema-valid, but content is a single stub record) | `capabilities/evaluation/` (profile exists, corpus unusable) | N/A until dataset rebuilt | N/A until dataset rebuilt | `models/adapters/aiodoo-evaluation/` |
+| 6 | `conversation` | `conversation_dataset.jsonl` | 29,016 | Training-scale (v2) | PASS | `capabilities/conversation/` (full) | ~13–14 GB | ~3–6 h | `models/adapters/aiodoo-conversation/` |
+| 7 | `approval` | `approval_dataset.jsonl` | 17,094 | Training-scale (v2) | PASS | `capabilities/approval/` (full) | ~13–14 GB | ~2–4 h | `models/adapters/aiodoo-approval/` |
+| 8 | `evaluation` | `evaluation_dataset.jsonl` | 189,615 | Training-scale (v2 judgment SFT) | PASS | `capabilities/evaluation/` (full) | ~13–14 GB | ~15–30 h — plan checkpoint/resume | `models/adapters/aiodoo-evaluation/` |
 
 All 8 configuration packs (`experiment.yaml` + fragments) pass
 `python3 validate_config.py --config configs/training/<id>/experiment.yaml`
 (compose → validate → resolve → fingerprint), confirmed for every row in this
 table during this phase.
 
-**Training-ready today: `coding`, `planner`, `execution`, `repair`, `context`
-(5 of 8).** `conversation`, `approval`, `evaluation` have valid configuration
-and a valid (schema-passing) dataset *file*, but the dataset *content* is a
-single placeholder record each — this is a pre-existing, explicitly documented
-limitation of `aiodoo-datasets` (its own `docs/production_freeze_report.md`:
-*"Do not train on approval / conversation / evaluation at scale until
-rebuilt"*), not a training-pipeline or configuration defect, and it is outside
-this phase's mandate to regenerate datasets. GPU/duration estimates are
-intentionally omitted for these three until real corpora exist — estimating
-against a 1-record corpus would be meaningless.
+**Training-ready today: all 8 capability adapters** (planner, coding, repair,
+execution, context, conversation, approval, evaluation judgment SFT). Do
+**not** train on `evaluation_benchmark_catalog.jsonl` (certification-only;
+`training_forbidden=true`; rejected by `DatasetValidator`).
+
+Evaluation training path (identical architecture to the other six contract
+capabilities):
+
+```text
+evaluation_dataset.jsonl
+  → DatasetValidator (judgment REQUIRED_FIELDS + contract sample)
+  → project_evaluation → EvaluationRequest / EvaluationResponse
+  → CapabilityPromptBuilder (system / user / assistant)
+  → TrainingExample → tokenization / packing / LoRA
+  → models/adapters/aiodoo-evaluation/
+```
 
 Estimates above are planning-grade order-of-magnitude figures (QLoRA 4-bit,
 rank 16, effective batch 16, seq 2048, on a Tesla T4), not measured
@@ -88,17 +94,20 @@ convention applied there).
 
 ## 3. Training sequence
 
-Each of the 5 training-ready capabilities is launched **independently** —
+Each of the 8 training-ready capabilities is launched **independently** —
 there is no required ordering between them, since none resumes from another's
 weights. A sensible operational sequence for a single-GPU Colab session,
 smallest-to-largest by wall-clock cost:
 
 ```text
-1. repair      (481 records    — fastest, good smoke/sanity run first)
-2. coding      (5,459 records)
-3. execution   (5,459 records)
-4. planner     (5,695 records)
-5. context     (50,161 records — longest; plan for checkpoint/resume across sessions)
+1. repair        (481 records)
+2. coding        (5,459 records)
+3. execution     (5,459 records)
+4. planner       (5,695 records)
+5. approval      (17,094 records)
+6. conversation  (29,016 records)
+7. context       (50,161 records — longest supporting corpus; plan resume)
+8. evaluation    (189,615 judgment SFT — longest reasoning corpus; plan resume)
 ```
 
 Each run independently produces one Capability Package
@@ -176,12 +185,12 @@ must produce byte-identical results to an uninterrupted one — the strongest
 possible resume-reliability guarantee, and it is CI-enforced, not just
 smoke-tested).
 
-`context` (50,161 records, the largest corpus by ~9×) is the one capability
-where multi-session resume is operationally likely, not just a theoretical
-safety net — its estimated 10–20 h wall-clock (§2) can plausibly exceed one
-Colab session. The shared `save_steps: 200` / `save_total_limit: 3` /
-`resume_from` mechanism already covers this without any capability-specific
-configuration; no change was needed or made.
+`context` (50,161 records) and `evaluation` (189,615 judgment SFT) are the
+largest corpora — plan checkpoint/resume across Colab sessions for both.
+Their estimated wall-clock can plausibly exceed one Colab session. The shared
+`save_steps: 200` / `save_total_limit: 3` / `resume_from` mechanism already
+covers this without any capability-specific configuration; no change was
+needed or made.
 
 ## 7. Validation handoff
 
@@ -271,16 +280,11 @@ contracts on both sides of each arrow in this phase; no stage was modified.
 
 ## 10. Known limitations
 
-1. **Three of eight capability datasets are placeholders, not training-scale
-   corpora** (`conversation`, `approval`, `evaluation` — 1 record each). This
-   is a pre-existing, explicitly documented `aiodoo-datasets` limitation
-   (`docs/production_freeze_report.md`, `docs/FUTURE_INTEGRATION_
-   IMPROVEMENTS.md`), not something this phase introduced, hid, or was asked
-   to fix (`aiodoo-datasets` is frozen; "no regeneration unless genuinely
-   required" — regenerating richer corpora is exactly the kind of dataset
-   redesign this phase is explicitly told not to do). Their training configs
-   are fully valid and would work correctly the moment richer datasets are
-   published; nothing in `aiodoo-training` blocks that.
+1. **`evaluation_benchmark_catalog.jsonl` is not training data.** It is a
+   certification/regression BenchmarkCatalog (`training_forbidden=true`).
+   LoRA training uses only `evaluation_dataset.jsonl` (189,615 judgment SFT
+   records). `DatasetValidator` rejects catalog paths, catalog-shaped
+   records, and `training_forbidden` metadata.
 
 2. **`context` is a training product, not a Capability Contract member.**
    It produces a real, trainable, publishable adapter (`aiodoo-context`) with
@@ -311,14 +315,8 @@ contracts on both sides of each arrow in this phase; no stage was modified.
    `aiodoo_contract.validators.ContractValidator` **before** writing it, so
    the files on disk are contract-valid; it is only the dataset repo's own
    *second*, unrelated legacy schema check that misfires on them.
-   **Not fixed by this phase**: `aiodoo-datasets` is frozen, this heuristic
-   predates and is unrelated to production training readiness (training
-   never reads `*_eval_corpus.jsonl` files — only `aiodoo-validation` does,
-   and it uses its own contract-aware corpus loader, not this heuristic),
-   and correcting a shared, hash-fingerprinted schema-registry module is a
-   scope decision for whoever owns `aiodoo-datasets` next, not a training
-   readiness blocker. Recorded here so it is not mistaken for something this
-   phase missed.
+   Training never reads `*_eval_corpus.jsonl` files — only `aiodoo-validation`
+   does, and it uses its own contract-aware corpus loader.
 
 4. **GPU/duration estimates in §2 are planning-grade, not measured.** No
    actual Qwen3-8B QLoRA run was performed on real GPU hardware during this

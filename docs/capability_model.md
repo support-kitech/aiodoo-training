@@ -38,7 +38,7 @@ Capability ≠ Product
 | `context` | `aiodoo-context` | `context_v1_0.jsonl` | **Independent capability** (see below) |
 | `conversation` | `aiodoo-conversation` | `conversation_dataset.jsonl` | Reasoning skill |
 | `approval` | `aiodoo-approval` | `approval_dataset.jsonl` | Reasoning skill |
-| `evaluation` | `aiodoo-evaluation` | `evaluation_dataset.jsonl` | Reasoning skill |
+| `evaluation` | `aiodoo-evaluation` | `evaluation_dataset.jsonl` | Reasoning skill — judgment SFT (v2); not BenchmarkCatalog |
 
 Catalog stage numbers in pack READMEs are **labels only**. They do **not** imply
 weight chaining. `checkpointing.resume_from` is same-run recovery only.

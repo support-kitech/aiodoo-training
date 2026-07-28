@@ -10,7 +10,7 @@
 # Product composition (Development / Reasoning) lives in aiodoo-model.
 # ============================================================
 
-# NOTE: v1.0.0 currently ships 1 approval record — expand in a future dataset release.
+# NOTE: Certified Approval v2 subject-decision SFT (17,094 records).
 dataset_version: "v1.0.0"
 dataset_root: "v1.0.0"
 
@@ -42,4 +42,4 @@ datasets:
 stage_catalog:
   - file: approval_dataset.jsonl
     dataset_type: approval
-    record_count: 1
+    record_count: 17094

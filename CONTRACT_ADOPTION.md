@@ -34,11 +34,11 @@ New package, training's consumer-side equivalent of aiodoo-datasets'
 
 - **`adapters.py`** — `project_<capability>(record) -> ContractProjection`
   for every capability with a canonical shape (`planner`, `coding`,
-  `repair`, `execution`, `conversation`, `approval`), mapping a raw JSONL
-  record onto the exact `aiodoo_contract.schemas.<capability>` Pydantic
-  request/response models. Field-mapping decisions are kept identical to
-  aiodoo-datasets' own adapter so a record projects the same way regardless
-  of which repository reads it. Malformed input raises
+  `repair`, `execution`, `conversation`, `approval`, `evaluation`), mapping
+  a raw JSONL record onto the exact `aiodoo_contract.schemas.<capability>`
+  Pydantic request/response models. Field-mapping decisions are kept
+  identical to aiodoo-datasets' own adapter so a record projects the same
+  way regardless of which repository reads it. Malformed input raises
   `ContractAdapterError` (never a bare `KeyError`/`TypeError`).
 - **`prompt_bridge.py`** — the *only* place in this repository that turns a
   capability request into prompt text. `render_capability_prompt()`
@@ -62,10 +62,10 @@ New package, training's consumer-side equivalent of aiodoo-datasets'
 **Removed:** every capability formatter's ad-hoc instruction/context string
 assembly (`datasets/formatters/formatters.py`'s `PlannerFormatter`,
 `CodingFormatter`, `RepairFormatter`, `ExecutionFormatter`,
-`ConversationFormatter`, `ApprovalFormatter` each concatenated
-`f"{instruction}\n\nContext:\n{...}"` by hand).
+`ConversationFormatter`, `ApprovalFormatter`, `EvaluationFormatter` each
+previously owned custom prompt text).
 
-**Replaced with:** `_ContractFormatter._format()` — shared by all six —
+**Replaced with:** `_ContractFormatter._format()` — shared by all seven —
 which projects the record via `aiodoo_training.contract.adapters` and
 renders it via `aiodoo_training.contract.prompt_bridge.build_training_example()`,
 which calls `aiodoo_contract.prompts.CapabilityPromptBuilder` exclusively.
@@ -189,27 +189,21 @@ deliberately **not** replaced with imports:
   caching, and CLI config — replacing it with `CapabilityName` would be an
   architectural redesign of a frozen abstraction, which this phase is
   explicitly forbidden from doing. It is also not a strict duplicate:
-  `DatasetType` includes `context`, `evaluation`, and `mixed`, none of
-  which are capabilities the contract defines a request/response shape
-  for (`evaluation` is a `CapabilityName` member, but training's
-  `evaluation` dataset type is a `BenchmarkCatalog` — see next item — not a
-  single evaluation request/response). The six values that do overlap
-  (`planner`/`coding`/`repair`/`execution`/`conversation`/`approval`) are
-  kept in lockstep by convention and enforced by
-  `aiodoo_training.contract.adapters._PROJECTORS`/`SUPPORTED_CAPABILITIES`
+  `DatasetType` includes `context` and `mixed`, which are not capability
+  request/response shapes. The seven values that overlap with
+  `CapabilityName` (`planner`/`coding`/`repair`/`execution`/`conversation`/
+  `approval`/`evaluation`) are kept in lockstep by convention and enforced
+  by `aiodoo_training.contract.adapters._PROJECTORS`/`SUPPORTED_CAPABILITIES`
   using the identical string values — see `_ContractFormatter`'s docstring
   in `formatters.py`.
-- **`evaluation` dataset type has no contract projection** —
-  `aiodoo_contract.schemas.evaluation.EvaluationRequest`/`Response` model a
-  single judgment of one candidate output against one expectation
-  (`candidate`, `expectation`, `rubric` → `verdict`, `score`,
-  `explanation`). Training's `evaluation.jsonl` records are
-  `BenchmarkCatalog`s — a whole suite specification (`suites[].cases[]`
-  with `prompt`/`expected_output`/`ground_truth`/`rules`) describing *what
-  to evaluate*, not a verdict on a candidate. There is no meaningful 1:1
-  projection between the two — this is the same documented gap
-  aiodoo-datasets' own contract adapter records for the same dataset type.
-  `EvaluationFormatter` keeps its prior (Phase-1) formatting.
+- **`evaluation` is a first-class contract capability** —
+  Training consumes certified Evaluation v2 judgment SFT
+  (`evaluation_dataset.jsonl`: `candidate` / `expectation` / `rubric` →
+  `verdict` / `score` / `explanation`) via `project_evaluation` and
+  `EvaluationFormatter` (`_ContractFormatter`). The separate
+  `evaluation_benchmark_catalog.jsonl` artifact remains
+  certification/regression-only (`metadata.training_forbidden=true`) and
+  is rejected by `DatasetValidator` — it is not LoRA training data.
 - **`context` dataset type is not a capability** — `context` (retrieval
   results for a query) is infrastructure that other capabilities consume,
   not itself something `aiodoo_contract.schemas` defines a request/response

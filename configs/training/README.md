@@ -24,9 +24,9 @@ not here. Training creates capabilities only.
 | 3 | `execution` | `execution_dataset.jsonl` | 5459 | `aiodoo-execution` |
 | 4 | `repair` | `repair_v1_0.jsonl` | 481 | `aiodoo-repair` |
 | 5 | `context` | `context_v1_0.jsonl` | 50161 | `aiodoo-context` |
-| 6 | `conversation` | `conversation_dataset.jsonl` | 1 | `aiodoo-conversation` |
-| 7 | `approval` | `approval_dataset.jsonl` | 1 | `aiodoo-approval` |
-| 8 | `evaluation` | `evaluation_dataset.jsonl` | 1 | `aiodoo-evaluation` |
+| 6 | `conversation` | `conversation_dataset.jsonl` | 29016 | `aiodoo-conversation` |
+| 7 | `approval` | `approval_dataset.jsonl` | 17094 | `aiodoo-approval` |
+| 8 | `evaluation` | `evaluation_dataset.jsonl` | 189615 | `aiodoo-evaluation` |
 
 Dataset root (Drive / local workspace):
 
