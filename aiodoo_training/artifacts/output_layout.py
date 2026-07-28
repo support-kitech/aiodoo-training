@@ -17,13 +17,17 @@ class ArtifactOutputLayout:
     Repository source code must never be used as an output root.
 
     Path roles:
-    - ``training_id`` (e.g. ``coding``): cache + experiment metadata folders
+    - ``training_id`` (e.g. ``coding``): experiment metadata folders
     - ``adapter_id`` (e.g. ``aiodoo-coding``): published adapters / merged / exports
+    - ``cache_id`` (defaults to ``training_id``): checkpoint cache folder
+      (use a distinct cache id when the same training id is trained on two bases,
+      e.g. ``context-qwen`` / ``context-deepseek``)
     """
 
     workspace_root: Path
     training_id: str
     adapter_id: str
+    cache_id: str = ""
 
     @classmethod
     def for_training(
@@ -32,13 +36,16 @@ class ArtifactOutputLayout:
         training_id: str,
         *,
         adapter_id: str | None = None,
+        cache_id: str | None = None,
     ) -> ArtifactOutputLayout:
         """Build layout from a public training id (normalizes legacy EXP ids)."""
         tid = normalize_training_id(training_id)
+        resolved_cache = (cache_id or "").strip() or tid
         return cls(
             workspace_root=workspace_root,
             training_id=tid,
             adapter_id=adapter_id or adapter_product_id(tid),
+            cache_id=resolved_cache,
         )
 
     @property
@@ -53,8 +60,8 @@ class ArtifactOutputLayout:
 
     @property
     def adapter_checkpoints_dir(self) -> Path:
-        """Training checkpoints: ``training/cache/{training_id}/checkpoints/``."""
-        return self.workspace_root / "training" / "cache" / self.training_id / "checkpoints"
+        """Training checkpoints: ``training/cache/{cache_id}/checkpoints/``."""
+        return self.workspace_root / "training" / "cache" / self.cache_id / "checkpoints"
 
     @property
     def merged_dir(self) -> Path:

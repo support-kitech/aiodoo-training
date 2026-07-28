@@ -128,8 +128,15 @@ class ArtifactOutputManager:
         if root is None:
             return None
         training_id = resolve_training_id(resolved)
+        adapter_override = os.environ.get("AIODOO_COLAB_ADAPTER_ID", "").strip() or None
+        cache_override = os.environ.get("AIODOO_COLAB_CACHE_ID", "").strip() or None
         return cls(
-            layout=ArtifactOutputLayout.for_training(root, training_id),
+            layout=ArtifactOutputLayout.for_training(
+                root,
+                training_id,
+                adapter_id=adapter_override,
+                cache_id=cache_override,
+            ),
             resolved=resolved,
         )
 
