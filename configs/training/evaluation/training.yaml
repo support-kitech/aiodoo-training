@@ -1,9 +1,13 @@
 # ============================================================
-# evaluation — Training (Tesla T4 / Colab production profile)
+# evaluation — Training (Colab A100 40GB VRAM profile)
 # ============================================================
-# Hardware envelope: Google Colab Tesla T4 (16 GB).
+# Hardware envelope: Google Colab A100 (40 GB).
 # Progressive stage 8/8 — resume from prior product adapter.
 # Dataset: datasets/v1.0.0/evaluation_dataset.jsonl (189,615 judgment SFT records)
+#
+# Effective batch kept at 16 (was 1×16 on T4): 4×4 on A100 uses free VRAM.
+# If OOM: drop to per_device_batch_size=2 / gradient_accumulation_steps=8.
+# If VRAM stays <~28 GB: try per_device_batch_size=8 / gradient_accumulation_steps=2.
 # ============================================================
 
 training:
@@ -13,8 +17,8 @@ training:
   learning_rate: 0.0001
   weight_decay: 0.01
   warmup_ratio: 0.03
-  per_device_batch_size: 1
-  gradient_accumulation_steps: 16
+  per_device_batch_size: 4
+  gradient_accumulation_steps: 4
 
 adaptation:
   adapter_type: qlora
@@ -45,14 +49,14 @@ scheduler:
 
 gradient:
   max_norm: 1.0
-  accumulation_steps: 16
+  accumulation_steps: 4
 
 execution:
   device:
     preferred: auto
     allow_cpu_fallback: false
   precision:
-    compute: fp16
+    compute: bf16
     load_in_4bit: true
     load_in_8bit: false
   memory:
@@ -62,7 +66,7 @@ execution:
   resource_planner: torch
 
 precision:
-  precision: fp16
+  precision: bf16
   gradient_checkpointing: true
 
 packing:
@@ -105,6 +109,8 @@ checkpointing:
   # last same-run checkpoint, e.g.:
   #   resume_from: training/cache/evaluation/checkpoints/checkpoint-200
   # Do NOT chain other product adapters here (composition belongs in aiodoo-model).
+  # Prefer a fresh start after switching T4→A100 batch/accum (do not resume
+  # step counts from the old 1×16 run unless you intentionally want that).
   resume_from: null
 
 resume:
