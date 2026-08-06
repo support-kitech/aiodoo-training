@@ -1,3 +1,8 @@
+> **Historical document.** Written when Git tags / release identity existed.
+> Git tags and GitHub Releases were later removed ecosystem-wide.
+> **Current source of truth:** branch `main` only. See `docs/STATUS.md`.
+> Do not treat tag or release recommendations in this file as current instructions.
+
 # Phase 6 — Tracking, Experiment Management & CLI Architecture
 
 **Status:** **Permanently frozen** (implementation complete; [ADR-0018](adr/0018-phase6-tracking-cli.md) Accepted; [ADR-0020](adr/0020-phase6-freeze.md) freeze)  

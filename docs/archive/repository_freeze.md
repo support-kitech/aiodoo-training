@@ -1,3 +1,8 @@
+> **Historical document.** Written when Git tags / release identity existed.
+> Git tags and GitHub Releases were later removed ecosystem-wide.
+> **Current source of truth:** branch `main` only. See `docs/STATUS.md`.
+> Do not treat tag or release recommendations in this file as current instructions.
+
 # Repository Freeze (v2.0.0)
 
 **Status:** Phases 0–7 and Capability Package lifecycle alignment are **COMPLETE**.  
@@ -15,7 +20,7 @@ Binding references:
 - [release_checklist.md](release_checklist.md)
 - [ADR-0022](adr/0022-package-surfaces-lifecycle-alignment.md)
 - [ADR-0023](adr/0023-repository-freeze-v1.md)
-- [AUDIT_RESOLUTION.md](../AUDIT_RESOLUTION.md)
+- [docs/archive/AUDIT_RESOLUTION.md](../docs/archive/AUDIT_RESOLUTION.md)
 - [CHANGELOG.md](../CHANGELOG.md)
 
 ## What is frozen

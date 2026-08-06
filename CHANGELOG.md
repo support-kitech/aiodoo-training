@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Documentation sync: `main` is source of truth; living posture in `docs/STATUS.md`; historical reports under `docs/archive/`; cross-references updated after archive moves and Git tag metadata reset.
+
+
 All notable changes to `aiodoo-training` are documented here.
 
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
@@ -11,7 +16,7 @@ Versioning follows [SemVer](https://semver.org/).
 
 - `aiodoo_contract` adopted as the canonical Capability Contract dependency;
   `aiodoo-training` is now its second canonical consumer, after
-  `aiodoo-datasets` (see `CONTRACT_ADOPTION.md`).
+  `aiodoo-datasets` (see `docs/CONTRACT_ADOPTION.md`).
 - `aiodoo_training/contract/`: `adapters.py` (`project_<capability>`,
   `ContractAdapterError`, mirroring aiodoo-datasets' own projection layer
   against the same record shape), `prompt_bridge.py` (renders capability
@@ -24,7 +29,7 @@ Versioning follows [SemVer](https://semver.org/).
   `approval`) now build their `TrainingExample` exclusively through the new
   contract bridge instead of ad-hoc instruction/context string
   concatenation. `context`/`evaluation` are unchanged (no contract
-  projection — see `CONTRACT_ADOPTION.md`).
+  projection — see `docs/CONTRACT_ADOPTION.md`).
 - `infrastructure/huggingface/templates.py`: `ChatTemplate` implementations
   (`QwenChatTemplate`, new `DeepSeekChatTemplate`, `GenericChatTemplate`,
   `LlamaChatTemplate`, `MistralChatTemplate`) now delegate rendering to
@@ -40,7 +45,7 @@ Versioning follows [SemVer](https://semver.org/).
   carries `contract_version` (always) and `capability_package_metadata` —
   the canonical `aiodoo_contract.schemas.CapabilityPackageMetadata` — when
   derivable. Additive; frozen protocol fields unchanged.
-- `CONTRACT_ADOPTION.md`.
+- `docs/CONTRACT_ADOPTION.md`.
 
 ### Fixed
 
@@ -105,7 +110,7 @@ documentation honesty for deferred CLI wrappers.
 
 - Coverage gate raised to **80%** (infrastructure omitted; measured ≈81%)
 - Package version **1.0.1** — production freeze release identity
-- Preserves published historical git tag **v1.0.0** (immutable; see below)
+- Originally preserved historical git tag **v1.0.0** (later removed in ecosystem metadata reset; `main` is SoT)
 
 ### Frozen
 
@@ -116,7 +121,7 @@ documentation honesty for deferred CLI wrappers.
 
 ## [1.0.0] — 2026-07-15
 
-Published git tag `v1.0.0` (immutable). Phases 0–7 architecture freeze and
+Published git tag `v1.0.0` at the time (later removed; `main` is SoT). Phases 0–7 architecture freeze and
 release hardening on that tree. Package `__version__` on that commit remained
 `0.1.0`. Capability Package lifecycle (ADR-0022), repository freeze governance
 (ADR-0023), and the production freeze package identity are released as **1.0.1**.

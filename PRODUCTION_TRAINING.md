@@ -293,7 +293,7 @@ contracts on both sides of each arrow in this phase; no stage was modified.
    in `aiodoo_contract.schemas.enums.CapabilityName` — by design, not by
    omission (`context` is retrieval-result infrastructure other capabilities
    consume, not itself an invokable capability). This is already correctly
-   reflected everywhere it matters: `aiodoo-training/CONTRACT_ADOPTION.md`
+   reflected everywhere it matters: `aiodoo-training/docs/CONTRACT_ADOPTION.md`
    §7, `aiodoo_training/artifacts/publish_contract.py`'s `_capability_
    package_metadata` (returns `None` rather than fabricating a contract
    block for `context`), and confirmed by this phase's audit of

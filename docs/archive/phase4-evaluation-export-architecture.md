@@ -1,3 +1,8 @@
+> **Historical document.** Written when Git tags / release identity existed.
+> Git tags and GitHub Releases were later removed ecosystem-wide.
+> **Current source of truth:** branch `main` only. See `docs/STATUS.md`.
+> Do not treat tag or release recommendations in this file as current instructions.
+
 # Phase 4 — Evaluation & Export Architecture
 
 **Status:** **Permanently frozen** (ADR-0015 Accepted; implementation complete)  

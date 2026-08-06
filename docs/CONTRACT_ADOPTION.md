@@ -5,7 +5,7 @@ Capability Contract package — see `ecosystem-v2-certification/
 ARCHITECTURE_FREEZE_REPORT.md` and the ADRs in `aiodoo-contract/docs/adr/`).
 
 `aiodoo-training` is the **second** canonical consumer of `aiodoo_contract`,
-after `aiodoo-datasets` (see `aiodoo-datasets/CONTRACT_ADOPTION.md`). This
+after `aiodoo-datasets` (see `aiodoo-datasets/docs/CONTRACT_ADOPTION.md`). This
 document records what was adopted, how, and why, and — per the
 ADR-0005/ADR-0007 ownership rules ("everything shared lives in exactly one
 place") — every case where this repository still defines something of its

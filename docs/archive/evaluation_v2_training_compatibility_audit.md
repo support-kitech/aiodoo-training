@@ -4,7 +4,7 @@
 > adoption / formatter / validation / production finalization are complete.
 > Training now uses judgment SFT via `project_evaluation` +
 > `_ContractFormatter`. Keep this document only as the pre-migration audit
-> snapshot. Current architecture: `CONTRACT_ADOPTION.md`,
+> snapshot. Current architecture: `docs/CONTRACT_ADOPTION.md`,
 > `PRODUCTION_TRAINING.md`, `configs/training/evaluation/`.
 
 **Original audit date:** 2026-07-28  
@@ -86,7 +86,7 @@ For Evaluation today, the formatter **skips** contract projection and hand-build
 
 | Path | Role |
 |------|------|
-| `CONTRACT_ADOPTION.md` §7 | Explicitly: evaluation dataset = BenchmarkCatalog; no projection |
+| `docs/CONTRACT_ADOPTION.md` §7 | Explicitly: evaluation dataset = BenchmarkCatalog; no projection |
 | `PRODUCTION_TRAINING.md` | Evaluation = 1 placeholder record; not training-scale |
 | `docs/capability_model.md` | Maps evaluation → `evaluation_dataset.jsonl` (filename OK; grain outdated) |
 
@@ -208,7 +208,7 @@ Config currently names `evaluation_dataset.jsonl` only (good convention), but sa
 3. **`REQUIRED_FIELDS` require `evaluation_id`** — rejects certified SFT rows.
 4. **Fixtures + unit/contract tests lock in catalog semantics** — green CI does not prove v2 readiness.
 5. **No `training_forbidden` / catalog-filename guard** — catalog can be trained accidentally.
-6. **Docs/`CONTRACT_ADOPTION.md` still assert “evaluation = BenchmarkCatalog, no projection”** — contradicts datasets v2 + contract.
+6. **Docs/`docs/CONTRACT_ADOPTION.md` still assert “evaluation = BenchmarkCatalog, no projection”** — contradicts datasets v2 + contract.
 
 ### Non-blocking (follow-ups during migration)
 
@@ -228,7 +228,7 @@ Config currently names `evaluation_dataset.jsonl` only (good convention), but sa
 5. Move Evaluation into contract formatter/contract test cases (3-message examples; `has_contract_projection=True`).
 6. Add hard reject: refuse paths containing `benchmark_catalog` and/or records with `metadata.training_forbidden is True`.
 7. Prefer `record_id` in `stable_example_id`.
-8. Refresh `configs/training/evaluation/*` counts/docs and `CONTRACT_ADOPTION.md` / `PRODUCTION_TRAINING.md` Evaluation rows.
+8. Refresh `configs/training/evaluation/*` counts/docs and `docs/CONTRACT_ADOPTION.md` / `PRODUCTION_TRAINING.md` Evaluation rows.
 9. Optionally retune Phase-4 smoke prompts to judgment language (not catalog).
 
 ---
@@ -245,7 +245,7 @@ Ordered, no redesign of architecture/contracts/datasets:
 | 4 | `record_id` in stable ids | `datasets/mixing.py` |
 | 5 | Refresh fixtures | `tests/fixtures/datasets/evaluation.jsonl` |
 | 6 | Update formatter + contract tests | `tests/unit/test_formatters.py`, `tests/contract/test_dataset_contracts.py` |
-| 7 | Update adoption + production docs/config comments | `CONTRACT_ADOPTION.md`, `PRODUCTION_TRAINING.md`, `configs/training/evaluation/*` |
+| 7 | Update adoption + production docs/config comments | `docs/CONTRACT_ADOPTION.md`, `PRODUCTION_TRAINING.md`, `configs/training/evaluation/*` |
 | 8 | Smoke: validate_ref + format one certified SFT row end-to-end | local / CI |
 
 **Out of scope for the migration:** regenerating datasets; changing `aiodoo-contract` Evaluation schemas; Phase-4 engine redesign; product merge.

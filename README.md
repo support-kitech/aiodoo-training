@@ -72,7 +72,7 @@ Frozen abstractions include:
 - `DatasetSession` — dataset consumption runtime state (shard / rank / resume fields)
 - `ChatTemplateRegistry` — model-family chat templates (decoupled from tokenizers);
   concrete implementations delegate rendering to `aiodoo_contract.templates`
-  (see [CONTRACT_ADOPTION.md](CONTRACT_ADOPTION.md)) — the frozen `ChatTemplate`
+  (see [CONTRACT_ADOPTION.md](docs/CONTRACT_ADOPTION.md)) — the frozen `ChatTemplate`
   port/registry shape is unchanged
 - `ResourcePlanner` + `ExecutionEnvironment` — centralized hardware decisions (ADR-0009)
 - Phase 2: `ModelLoader` / `AdaptationApplier` + registries for backends / strategies / profiles
@@ -99,7 +99,7 @@ Frozen abstractions include:
 (schemas, prompt builder, chat templates, validators, parsers, versioning).
 Training consumes it as its second canonical consumer (after
 `aiodoo-datasets`) via a projection/adapter layer — see
-[CONTRACT_ADOPTION.md](CONTRACT_ADOPTION.md) for what was adopted, what
+[CONTRACT_ADOPTION.md](docs/CONTRACT_ADOPTION.md) for what was adopted, what
 stayed local, and why.
 
 ## Execution model
@@ -141,7 +141,7 @@ use the training pipeline / application APIs instead):
 ```bash
 python3 evaluate.py --config configs/experiments/example.yaml
 python3 export.py --config configs/experiments/example.yaml
-# merge / resume CLI wrappers likewise deferred — see AUDIT_RESOLUTION.md
+# merge / resume CLI wrappers likewise deferred — see docs/archive/AUDIT_RESOLUTION.md
 ```
 
 ## Tests
@@ -166,7 +166,7 @@ python3 tests/run_tests.py
 - [Freeze Readiness](docs/freeze_readiness.md)
 - [MAINTENANCE](docs/MAINTENANCE.md) · [Release Checklist](docs/release_checklist.md)
 - [CHANGELOG](CHANGELOG.md)
-- [Contract Adoption](CONTRACT_ADOPTION.md) — how this repository consumes `aiodoo_contract`
+- [Contract Adoption](docs/CONTRACT_ADOPTION.md) — how this repository consumes `aiodoo_contract`
 
 **Architecture & contracts:**
 
@@ -185,3 +185,8 @@ python3 tests/run_tests.py
 - [Trainer Backend Contract](docs/trainer_backend_contract.md)
 - [ADRs](docs/adr/) — including [0022](docs/adr/0022-package-surfaces-lifecycle-alignment.md) and
   [0023 Repository Freeze](docs/adr/0023-repository-freeze-v1.md)
+
+## Status
+
+Living repository posture: [`docs/STATUS.md`](docs/STATUS.md).
+Historical reports: [`docs/archive/`](docs/archive/).

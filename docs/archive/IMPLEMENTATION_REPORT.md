@@ -1,3 +1,8 @@
+> **Historical document.** Written when Git tags / release identity existed.
+> Git tags and GitHub Releases were later removed ecosystem-wide.
+> **Current source of truth:** branch `main` only. See `docs/STATUS.md`.
+> Do not treat tag or release recommendations in this file as current instructions.
+
 # aiodoo-training — Implementation Report (v2.0.0)
 
 ## Summary
@@ -14,7 +19,7 @@ AUDIT_RESOLUTION initial table, rooted `/adapters/` from post-v1.0.1.
 
 | File | Why |
 | --- | --- |
-| `AUDIT_RESOLUTION.md` | Batch A DONE + Batch B residuals |
+| `docs/archive/AUDIT_RESOLUTION.md` | Batch A DONE + Batch B residuals |
 | `docs/freeze_readiness.md` | Current identity v2.0.0; checklist |
 | `docs/frozen_public_contracts.md` | Effective freeze identity v2.0.0 |
 

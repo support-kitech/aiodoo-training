@@ -1,5 +1,7 @@
 # ADR-0023: Repository Freeze (v1 line)
 
+> **Governance note (post metadata reset):** Git tags referenced below (`v1.0.0`, `v1.0.1`, etc.) were later removed ecosystem-wide. Package/version policy in this ADR still informs `main`; consume via `main` checkout, not tags.
+
 ## Status
 
 **Accepted** — 2026-07-19  

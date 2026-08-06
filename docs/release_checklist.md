@@ -42,8 +42,7 @@ python3 -m coverage report -m --fail-under=80
 
 ## Distribution note
 
-This repository is **not** published to PyPI. A release is a **git tag**
-(e.g. `v1.0.1`) plus CHANGELOG section. Historical tag `v1.0.0` is preserved.
+This repository is **not** published to PyPI. Current SoT is branch **`main`** plus CHANGELOG. Git tags were removed ecosystem-wide; do not require a tag to consume.
 Run from source:
 
 ```bash
