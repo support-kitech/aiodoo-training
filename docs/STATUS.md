@@ -1,13 +1,16 @@
 # Status — aiodoo-training
 
-**Living document.** `main` is the only source of truth.  
+**Living document.** Code on `main` is the only implementation Source of Truth
+for this **Training** repository.  
+**System documentation SoT (separate ecosystem):** `aiodoo-core/docs/SYSTEM.md`  
 **Permanent branch:** `main`  
-**Git tags / GitHub Releases:** none (metadata reset)  
 **Historical evidence:** `docs/archive/`
 
 ## Purpose
 
-Train independent capability adapters; publish Capability Packages (+ ArtifactBundle sibling).
+Train optional capability adapters; publish Capability Packages. **Training
+never defines the System.** The System must operate correctly with foundation
+models only; adapters are optional.
 
 ## Current implementation (on main)
 
@@ -16,6 +19,7 @@ Train independent capability adapters; publish Capability Packages (+ ArtifactBu
 | Capability training plane | Shipped / frozen surface on `main` |
 | Emits Development / Reasoning product packages | **Never** (ownership: `aiodoo-model`) |
 | Product composition | Out of scope |
+| Required for System correctness | **No** |
 
 ## Living docs
 
