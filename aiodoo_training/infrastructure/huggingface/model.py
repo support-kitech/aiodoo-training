@@ -78,15 +78,24 @@ class HuggingFaceCausalLMBackend(ModelBackend):
             ) from exc
 
         quantization = QuantizationPolicy.from_precision_policy(execution.precision_policy)
-        source = (
-            str(model_ref.local_path) if model_ref.local_path is not None else model_ref.identifier
-        )
         if model_ref.local_path is not None and not Path(model_ref.local_path).exists():
             raise DomainError(f"Model local_path does not exist: {model_ref.local_path}")
-
+        path = (
+            str(model_ref.local_path) if model_ref.local_path is not None else model_ref.identifier
+        )
         load_kwargs: dict[str, Any] = {
             "trust_remote_code": True,
         }
+        # Prefer offline when local_path is set or AIODOO_HF_LOCAL_FILES_ONLY is truthy.
+        import os
+
+        force_local = os.environ.get("AIODOO_HF_LOCAL_FILES_ONLY", "").strip().lower() in {
+            "1",
+            "true",
+            "yes",
+        }
+        if model_ref.local_path is not None or force_local:
+            load_kwargs["local_files_only"] = True
         if model_ref.revision:
             load_kwargs["revision"] = model_ref.revision
 
@@ -97,13 +106,17 @@ class HuggingFaceCausalLMBackend(ModelBackend):
             load_kwargs["device_map"] = _device_map_for(execution)
 
         try:
-            model = AutoModelForCausalLM.from_pretrained(source, **load_kwargs)
+            model = AutoModelForCausalLM.from_pretrained(path, **load_kwargs)
             config = AutoConfig.from_pretrained(
-                source,
-                **{k: v for k, v in load_kwargs.items() if k in {"revision", "trust_remote_code"}},
+                path,
+                **{
+                    k: v
+                    for k, v in load_kwargs.items()
+                    if k in {"revision", "trust_remote_code", "local_files_only"}
+                },
             )
         except Exception as exc:  # noqa: BLE001 — wrap library failures
-            raise DomainError(f"Failed to load HuggingFace model '{source}': {exc}") from exc
+            raise DomainError(f"Failed to load HuggingFace model '{path}': {exc}") from exc
 
         num_parameters = int(sum(int(p.numel()) for p in model.parameters()))
         metadata = ModelMetadata(

@@ -1,0 +1,134 @@
+{
+  "checksum": "54291891df07d9c2a45ee1b87275002c7bde6018b445e92410127006f66a3992",
+  "controlled_batch_version": "fp2-controlled-1.0.0",
+  "coverage": {
+    "coverage_pct": 100.0,
+    "covered_count": 23,
+    "preferred_total": 23,
+    "uncovered": []
+  },
+  "dataset_generation_version": "fp2-native-1.0.0",
+  "decision": "PASS",
+  "development_pack_count": 942,
+  "domain": {
+    "by_family": {
+      "capability_intent": {
+        "generic": 143,
+        "odoo": 92
+      },
+      "decision_context": {
+        "generic": 8,
+        "odoo": 7
+      },
+      "engineering_feedback": {
+        "generic": 135,
+        "odoo": 89
+      },
+      "engineering_state": {
+        "generic": 7,
+        "odoo": 8
+      },
+      "execution_work_unit": {
+        "generic": 142,
+        "odoo": 89
+      },
+      "loop_decision": {
+        "generic": 10,
+        "odoo": 5
+      },
+      "observation": {
+        "generic": 147,
+        "odoo": 90
+      },
+      "planning_decision": {
+        "generic": 140,
+        "odoo": 88
+      }
+    },
+    "generic": 732,
+    "odoo": 468,
+    "odoo_pct": 39.0
+  },
+  "duplicates": {
+    "duplicate_groups": 0,
+    "unique_fingerprints": 1200
+  },
+  "output_dir": "../aiodoo-datasets/datasets/fp2/controlled_batch_1",
+  "per_capability": {
+    "artifact.attachment": 60,
+    "artifact.export": 30,
+    "artifact.import": 53,
+    "artifact.publish": 31,
+    "communication.http": 28,
+    "diagnostics.analyze_problems": 45,
+    "diagnostics.collect_diagnostics": 31,
+    "diagnostics.collect_logs": 60,
+    "diagnostics.static_analysis": 30,
+    "execution.execute_program": 52,
+    "execution.repair": 53,
+    "repository.branch": 30,
+    "repository.compare": 41,
+    "repository.history": 53,
+    "repository.inspect": 43,
+    "repository.merge": 53,
+    "repository.modify": 30,
+    "validation.run": 31,
+    "workspace.bind": 53,
+    "workspace.navigate": 30,
+    "workspace.read": 53,
+    "workspace.search": 60,
+    "workspace.write": 31
+  },
+  "per_family": {
+    "capability_intent": 235,
+    "decision_context": 15,
+    "engineering_feedback": 224,
+    "engineering_state": 15,
+    "execution_work_unit": 231,
+    "loop_decision": 15,
+    "observation": 237,
+    "planning_decision": 228
+  },
+  "quality": {
+    "gates": {
+      "capability_coverage": "PASS",
+      "continuity": "PASS",
+      "duplicates": "PASS",
+      "feedback": "PASS",
+      "fixture_inventory": "PASS",
+      "forbidden_how": "PASS",
+      "loop_decisions": "PASS",
+      "negative_corpus": "PASS",
+      "odoo_generic_balance": "PASS",
+      "planning": "PASS",
+      "schema": "PASS",
+      "serialization": "PASS",
+      "split_strategy": "PASS",
+      "taxonomy": "PASS",
+      "work_unit": "PASS"
+    },
+    "hard_fail": [],
+    "how_violations": [],
+    "schema_failures": [],
+    "split_strategy": {
+      "leakage_prevention": "Multi-cycle scenarios (cycle1/2/3) share scenario family keys so they cannot straddle train and test.",
+      "method": "scenario_hash_bucket",
+      "ratios": {
+        "test": 0.1,
+        "train": 0.8,
+        "validation": 0.1
+      },
+      "version": "fp2-split-1.0.0"
+    },
+    "taxonomy_violations": []
+  },
+  "reasoning_pack_count": 954,
+  "split_counts": {
+    "test": 120,
+    "train": 956,
+    "validation": 124
+  },
+  "total_native": 1200,
+  "training_contract_version": "1.0.0",
+  "warnings": []
+}

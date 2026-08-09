@@ -1,0 +1,147 @@
+# AT-6.3 — Context training-path CPU smoke (NOT full Context training).
+# Uses a deterministic subset of fp2-context-controlled-1.0.0.
+# Does NOT modify controlled_batch_2, AT-6.2 fixtures, or AT-6.2.1 corpus.
+# Does NOT download foundations. Does NOT load Coding/Repair adapters.
+#
+# Invoke:
+#   AIODOO_HF_LOCAL_FILES_ONLY=1 PYTHONPATH=. \
+#     python3 train.py --config configs/training/at6_context_smoke/experiment.yaml
+
+schema_version: "1.0"
+name: at6-context-smoke
+seed: 42
+
+dataset_version: "fp2-context-controlled-1.0.0"
+
+experiment:
+  id: at6-context-smoke
+  title: "AT-6.3 Context path smoke — 16 examples / 4 steps"
+  version: "at6.3-smoke-001"
+  owner: aiodoo
+  stage: context
+
+fp2:
+  system_training_contract_version: "1.0.0"
+  corpus_version: "fp2-context-controlled-1.0.0"
+  corpus_checksum: "78e3b464d51b7e15912ca9aabc4ce65a579c4fbaddf5fa917609ac63c50ead87"
+  source_pack: "pack_context"
+  provider_capability: "context"
+  product_plane: "development"
+  split: "train_smoke"
+  split_version: "fp2-split-1.0.0"
+  training_config_id: "at6-context-smoke"
+  filter_rule: "metadata.provider_capability==context AND dataset_type==context"
+  source_eligible_count: 261
+  source_train_count: 198
+  smoke_train_count: 16
+  smoke_validation_count: 4
+  smoke_id: "at6.3-context-smoke-001"
+
+model:
+  identifier: Qwen/Qwen2.5-Coder-3B-Instruct
+  family: qwen
+  precision: fp32
+  backend: hf_causal
+  tokenizer_binding: huggingface
+  local_path: ../AIODOO/models/foundations/development/Qwen2.5-Coder-3B-Instruct
+
+adaptation:
+  adapter_type: lora
+  strategy: lora
+  rank: 8
+  alpha: 16
+  dropout: 0.05
+  target_modules:
+    - q_proj
+    - k_proj
+    - v_proj
+    - o_proj
+
+training:
+  backend: hf_trainer
+  num_epochs: 1.0
+  max_steps: 4
+  logging_steps: 1
+  learning_rate: 0.0001
+  weight_decay: 0.01
+  warmup_ratio: 0.03
+  per_device_batch_size: 1
+  gradient_accumulation_steps: 1
+
+optimizer:
+  name: adamw
+  learning_rate: 0.0001
+  weight_decay: 0.01
+
+scheduler:
+  name: cosine
+  warmup_ratio: 0.03
+
+gradient:
+  max_norm: 1.0
+  accumulation_steps: 1
+
+execution:
+  device:
+    preferred: cpu
+    allow_cpu_fallback: true
+  precision:
+    compute: fp32
+  memory:
+    activation_checkpointing: false
+  accelerator: none
+  resource_planner: static
+
+packing:
+  mode: none
+  max_sequence_length: 256
+
+determinism:
+  seed: 42
+  cudnn_deterministic: true
+  cudnn_benchmark: false
+
+checkpointing:
+  output_dir: artifacts/at6_context/smoke/checkpoints
+  save_steps: 2
+  save_total_limit: 3
+
+evaluation:
+  enabled: false
+
+export:
+  enabled: true
+  backend: hf_peft
+  profile: peft_default
+  output_dir: artifacts/at6_context/smoke/export
+  export_types:
+    - peft_adapter
+    - manifest
+  require_evaluation: false
+  require_pass_for_export: false
+
+datasets:
+  shuffle: false
+  seed: 42
+  datasets:
+    - name: at6_context_train_smoke
+      path: artifacts/at6_context/smoke/context_train_smoke.jsonl
+      dataset_type: context
+      protocol_version: "1.0.0"
+      record_format: fp2_training_example
+      weight: 1.0
+
+tracking:
+  tracker_type: null
+
+workspace:
+  layout: local
+
+metadata:
+  at63: true
+  at6_smoke: true
+  adapter: context
+  provider_capability: context
+  product_plane: development
+  smoke_id: at6.3-context-smoke-001
+  max_steps: 4

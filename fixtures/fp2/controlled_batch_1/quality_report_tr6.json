@@ -1,0 +1,488 @@
+{
+  "capabilities": {
+    "matrix_summary": {
+      "artifact.attachment": {
+        "count": 60,
+        "failureish": 15,
+        "families": [
+          "capability_intent",
+          "execution_work_unit",
+          "observation",
+          "planning_decision"
+        ],
+        "successish": 15
+      },
+      "artifact.export": {
+        "count": 30,
+        "failureish": 8,
+        "families": [
+          "capability_intent",
+          "execution_work_unit",
+          "observation",
+          "planning_decision"
+        ],
+        "successish": 7
+      },
+      "artifact.import": {
+        "count": 53,
+        "failureish": 20,
+        "families": [
+          "capability_intent",
+          "execution_work_unit",
+          "observation",
+          "planning_decision"
+        ],
+        "successish": 7
+      },
+      "artifact.publish": {
+        "count": 31,
+        "failureish": 8,
+        "families": [
+          "capability_intent",
+          "execution_work_unit",
+          "observation",
+          "planning_decision"
+        ],
+        "successish": 8
+      },
+      "communication.http": {
+        "count": 28,
+        "failureish": 7,
+        "families": [
+          "capability_intent",
+          "execution_work_unit",
+          "observation",
+          "planning_decision"
+        ],
+        "successish": 6
+      },
+      "diagnostics.analyze_problems": {
+        "count": 45,
+        "failureish": 23,
+        "families": [
+          "capability_intent",
+          "execution_work_unit",
+          "observation",
+          "planning_decision"
+        ],
+        "successish": 7
+      },
+      "diagnostics.collect_diagnostics": {
+        "count": 31,
+        "failureish": 8,
+        "families": [
+          "capability_intent",
+          "execution_work_unit",
+          "observation",
+          "planning_decision"
+        ],
+        "successish": 7
+      },
+      "diagnostics.collect_logs": {
+        "count": 60,
+        "failureish": 15,
+        "families": [
+          "capability_intent",
+          "execution_work_unit",
+          "observation",
+          "planning_decision"
+        ],
+        "successish": 15
+      },
+      "diagnostics.static_analysis": {
+        "count": 30,
+        "failureish": 8,
+        "families": [
+          "capability_intent",
+          "execution_work_unit",
+          "observation",
+          "planning_decision"
+        ],
+        "successish": 7
+      },
+      "execution.execute_program": {
+        "count": 52,
+        "failureish": 12,
+        "families": [
+          "capability_intent",
+          "execution_work_unit",
+          "observation",
+          "planning_decision"
+        ],
+        "successish": 14
+      },
+      "execution.repair": {
+        "count": 53,
+        "failureish": 14,
+        "families": [
+          "capability_intent",
+          "execution_work_unit",
+          "observation",
+          "planning_decision"
+        ],
+        "successish": 13
+      },
+      "repository.branch": {
+        "count": 30,
+        "failureish": 8,
+        "families": [
+          "capability_intent",
+          "execution_work_unit",
+          "observation",
+          "planning_decision"
+        ],
+        "successish": 7
+      },
+      "repository.compare": {
+        "count": 41,
+        "failureish": 20,
+        "families": [
+          "capability_intent",
+          "execution_work_unit",
+          "observation",
+          "planning_decision"
+        ],
+        "successish": 7
+      },
+      "repository.history": {
+        "count": 53,
+        "failureish": 13,
+        "families": [
+          "capability_intent",
+          "execution_work_unit",
+          "observation",
+          "planning_decision"
+        ],
+        "successish": 13
+      },
+      "repository.inspect": {
+        "count": 43,
+        "failureish": 19,
+        "families": [
+          "capability_intent",
+          "execution_work_unit",
+          "observation",
+          "planning_decision"
+        ],
+        "successish": 8
+      },
+      "repository.merge": {
+        "count": 53,
+        "failureish": 14,
+        "families": [
+          "capability_intent",
+          "execution_work_unit",
+          "observation",
+          "planning_decision"
+        ],
+        "successish": 13
+      },
+      "repository.modify": {
+        "count": 30,
+        "failureish": 8,
+        "families": [
+          "capability_intent",
+          "execution_work_unit",
+          "observation",
+          "planning_decision"
+        ],
+        "successish": 7
+      },
+      "validation.run": {
+        "count": 31,
+        "failureish": 10,
+        "families": [
+          "capability_intent",
+          "execution_work_unit",
+          "observation",
+          "planning_decision"
+        ],
+        "successish": 7
+      },
+      "workspace.bind": {
+        "count": 53,
+        "failureish": 13,
+        "families": [
+          "capability_intent",
+          "execution_work_unit",
+          "observation",
+          "planning_decision"
+        ],
+        "successish": 13
+      },
+      "workspace.navigate": {
+        "count": 30,
+        "failureish": 8,
+        "families": [
+          "capability_intent",
+          "execution_work_unit",
+          "observation",
+          "planning_decision"
+        ],
+        "successish": 7
+      },
+      "workspace.read": {
+        "count": 53,
+        "failureish": 15,
+        "families": [
+          "capability_intent",
+          "execution_work_unit",
+          "observation",
+          "planning_decision"
+        ],
+        "successish": 12
+      },
+      "workspace.search": {
+        "count": 60,
+        "failureish": 15,
+        "families": [
+          "capability_intent",
+          "execution_work_unit",
+          "observation",
+          "planning_decision"
+        ],
+        "successish": 15
+      },
+      "workspace.write": {
+        "count": 31,
+        "failureish": 9,
+        "families": [
+          "capability_intent",
+          "execution_work_unit",
+          "observation",
+          "planning_decision"
+        ],
+        "successish": 8
+      }
+    },
+    "overrepresented": [
+      "artifact.attachment",
+      "diagnostics.collect_logs",
+      "workspace.search"
+    ],
+    "superficial": [],
+    "underrepresented": []
+  },
+  "checksum_ok": true,
+  "continuity": {
+    "dc_count": 15,
+    "issues": [],
+    "ok": true,
+    "state_count": 15
+  },
+  "corpus_root": "../aiodoo-datasets/datasets/fp2/controlled_batch_1",
+  "diversity": {
+    "concentration_pct": 2.92,
+    "largest_family": "nav_tests",
+    "largest_family_count": 35,
+    "records_per_family_avg": 8.0,
+    "repetitive_families": [],
+    "top_families": {
+      "analyze_logs": 35,
+      "attach_patch": 35,
+      "attach_report": 35,
+      "branch_recover": 35,
+      "diag_partial": 35,
+      "export_review": 35,
+      "inspect_dirty": 33,
+      "logs_after_fail": 35,
+      "logs_odoo": 35,
+      "modify_stage": 35,
+      "nav_tests": 35,
+      "publish_repair": 35,
+      "search_deprecated": 35,
+      "search_todo": 35,
+      "static_controllers": 35
+    },
+    "unique_families": 150
+  },
+  "evaluation": "tr6",
+  "hard_gates": {
+    "checksum": "PASS",
+    "continuity": "PASS",
+    "decision_context_integrity": "PASS",
+    "forbidden_how": "PASS",
+    "inventory_1200": "PASS",
+    "negative_contamination": "PASS",
+    "objective_completion_semantics": "PASS",
+    "pack_validity": "PASS",
+    "provider_separation": "PASS",
+    "schema": "PASS",
+    "split_integrity": "PASS",
+    "taxonomy": "PASS"
+  },
+  "inventory": {
+    "checksum": "54291891df07d9c2a45ee1b87275002c7bde6018b445e92410127006f66a3992",
+    "development_pack": 942,
+    "manifest_checksum": "54291891df07d9c2a45ee1b87275002c7bde6018b445e92410127006f66a3992",
+    "manifest_decision": "PASS",
+    "manifest_total": 1200,
+    "per_family": {
+      "capability_intent": 235,
+      "decision_context": 15,
+      "engineering_feedback": 224,
+      "engineering_state": 15,
+      "execution_work_unit": 231,
+      "loop_decision": 15,
+      "observation": 237,
+      "planning_decision": 228
+    },
+    "reasoning_pack": 954,
+    "splits": 1200,
+    "total_native": 1200
+  },
+  "issues": {
+    "P0": [],
+    "P1": [
+      "continuity_family_volume_low:state=15,decision_context=15,loop=15",
+      "ambiguous_odoo_generic_labels_high:203"
+    ],
+    "P2": [
+      "overrepresented_capabilities:artifact.attachment,diagnostics.collect_logs,workspace.search",
+      "capabilities_train_only:repository.inspect,repository.branch"
+    ],
+    "P3": [
+      "pack_prompt_is_generic_contract_preamble_could_be_task_specific",
+      "context_provider_pack_underrepresented_in_development_formatter_outputs"
+    ]
+  },
+  "negatives": {
+    "issues": [],
+    "negatives_file_present": true,
+    "ok": true
+  },
+  "objective_completion": {
+    "auto_repair_policy_reasons": 0,
+    "ok": true,
+    "operation_failure_not_forced_repair": 9,
+    "operation_success_objective_incomplete": 210,
+    "repair_then_validate_plan_pairs": 1
+  },
+  "odoo": {
+    "ambiguous": 203,
+    "ambiguous_ids_sample": [
+      "fp2-ci-003",
+      "fp2-ci-004",
+      "fp2-ci-005",
+      "fp2-ci-010",
+      "fp2-ci-014",
+      "fp2-ci-018",
+      "fp2-ci-022",
+      "fp2-cb1-ci-0105",
+      "fp2-cb1-ci-0107",
+      "fp2-cb1-ci-0123",
+      "fp2-cb1-ci-0125",
+      "fp2-cb1-ci-0131",
+      "fp2-cb1-ci-0147",
+      "fp2-cb1-ci-0151",
+      "fp2-cb1-ci-0153",
+      "fp2-cb1-ci-0165",
+      "fp2-cb1-ci-0171",
+      "fp2-cb1-ci-0173",
+      "fp2-cb1-ci-0189",
+      "fp2-cb1-ci-0191"
+    ],
+    "generic": 732,
+    "odoo": 468,
+    "odoo_pct": 39.0
+  },
+  "pack_issue_samples": {
+    "development": [],
+    "reasoning": []
+  },
+  "packs": {
+    "development": {
+      "by_dataset_type": {
+        "coding": 26,
+        "evaluation": 2,
+        "execution": 640,
+        "planner": 232,
+        "repair": 42
+      },
+      "by_record_type": {
+        "capability_intent": 235,
+        "engineering_feedback": 224,
+        "engineering_state": 15,
+        "execution_work_unit": 231,
+        "observation": 237
+      },
+      "count": 942,
+      "how_hits": 0,
+      "issue_count": 0,
+      "malformed": 0,
+      "trivial_flags": 0
+    },
+    "reasoning": {
+      "by_dataset_type": {
+        "approval": 3,
+        "coding": 24,
+        "conversation": 2,
+        "evaluation": 3,
+        "execution": 425,
+        "planner": 468,
+        "repair": 29
+      },
+      "by_record_type": {
+        "capability_intent": 235,
+        "decision_context": 15,
+        "engineering_feedback": 224,
+        "loop_decision": 15,
+        "observation": 237,
+        "planning_decision": 228
+      },
+      "count": 954,
+      "how_hits": 0,
+      "issue_count": 0,
+      "malformed": 0,
+      "trivial_flags": 228
+    }
+  },
+  "provider_separation": {
+    "development_providers": [
+      "coding",
+      "context",
+      "execution",
+      "repair"
+    ],
+    "issue_count": 0,
+    "ok": true,
+    "reasoning_providers": [
+      "approval",
+      "conversation",
+      "evaluation",
+      "planner"
+    ]
+  },
+  "readiness": "READY_WITH_REQUIRED_DATA_FIXES",
+  "readiness_rationale": [
+    "continuity_family_volume_low:state=15,decision_context=15,loop=15",
+    "ambiguous_odoo_generic_labels_high:203",
+    "structural_gates_pass_but_semantic_pack_quality_requires_fixes"
+  ],
+  "soft_metrics": {
+    "capability_balance": "PASS",
+    "continuity_volume": "WARN",
+    "domain_balance": "WARN",
+    "edge_case_coverage": "PASS",
+    "pack_balance": "PASS",
+    "repetition": "PASS",
+    "scenario_diversity": "PASS",
+    "split_capability_balance": "WARN"
+  },
+  "splits": {
+    "capabilities_test_only": [],
+    "capabilities_train_only": [
+      "repository.inspect",
+      "repository.branch"
+    ],
+    "counts": {
+      "test": 120,
+      "train": 956,
+      "validation": 124
+    },
+    "leakage_count": 0,
+    "narrative_leakage": {},
+    "ok": true
+  },
+  "training_contract_version": "1.0.0"
+}

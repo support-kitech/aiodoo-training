@@ -1,0 +1,11 @@
+{
+  "actual_count": 252,
+  "family_count": 63,
+  "legacy_projection": "NOT PERFORMED",
+  "provider_capability": "evaluation",
+  "record_types": [
+    "evaluation_judgment"
+  ],
+  "scenario_family_mechanism": "metadata.scenario_family groups related variants; assign_split uses family: key (fp2-split-1.0.0)",
+  "version": "fp2-evaluation-controlled-1.0.0"
+}

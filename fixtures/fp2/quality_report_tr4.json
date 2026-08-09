@@ -1,0 +1,607 @@
+{
+  "continuity": {
+    "issues": [],
+    "ok": true,
+    "scenarios_found": [
+      "blocked_approval",
+      "cancelled",
+      "cycle1_validation_failed",
+      "cycle2_repair_applied",
+      "cycle3_validation_passed",
+      "escalated",
+      "inspect_cycle0",
+      "previous_complete",
+      "previous_complete_current_failure",
+      "previous_failure",
+      "previous_failure_current_success",
+      "unknown"
+    ]
+  },
+  "corpus_root": "fixtures/fp2",
+  "coverage": {
+    "coverage_pct": 82.61,
+    "covered_count": 19,
+    "matrix": {
+      "artifact.attachment": {
+        "count": 0,
+        "failureish": 0,
+        "families": [],
+        "generic": 0,
+        "odoo": 0,
+        "successish": 0
+      },
+      "artifact.export": {
+        "count": 2,
+        "failureish": 0,
+        "families": [
+          "execution_work_unit",
+          "planning_decision"
+        ],
+        "generic": 2,
+        "odoo": 0,
+        "successish": 0
+      },
+      "artifact.import": {
+        "count": 0,
+        "failureish": 0,
+        "families": [],
+        "generic": 0,
+        "odoo": 0,
+        "successish": 0
+      },
+      "artifact.publish": {
+        "count": 3,
+        "failureish": 0,
+        "families": [
+          "capability_intent",
+          "observation",
+          "planning_decision"
+        ],
+        "generic": 3,
+        "odoo": 0,
+        "successish": 1
+      },
+      "communication.http": {
+        "count": 4,
+        "failureish": 0,
+        "families": [
+          "capability_intent",
+          "execution_work_unit",
+          "observation",
+          "planning_decision"
+        ],
+        "generic": 4,
+        "odoo": 0,
+        "successish": 0
+      },
+      "diagnostics.analyze_problems": {
+        "count": 2,
+        "failureish": 0,
+        "families": [
+          "execution_work_unit",
+          "planning_decision"
+        ],
+        "generic": 2,
+        "odoo": 0,
+        "successish": 0
+      },
+      "diagnostics.collect_diagnostics": {
+        "count": 3,
+        "failureish": 0,
+        "families": [
+          "capability_intent",
+          "observation",
+          "planning_decision"
+        ],
+        "generic": 3,
+        "odoo": 0,
+        "successish": 0
+      },
+      "diagnostics.collect_logs": {
+        "count": 0,
+        "failureish": 0,
+        "families": [],
+        "generic": 0,
+        "odoo": 0,
+        "successish": 0
+      },
+      "diagnostics.static_analysis": {
+        "count": 2,
+        "failureish": 0,
+        "families": [
+          "capability_intent",
+          "planning_decision"
+        ],
+        "generic": 0,
+        "odoo": 2,
+        "successish": 0
+      },
+      "execution.execute_program": {
+        "count": 4,
+        "failureish": 0,
+        "families": [
+          "capability_intent",
+          "execution_work_unit",
+          "observation"
+        ],
+        "generic": 4,
+        "odoo": 0,
+        "successish": 2
+      },
+      "execution.repair": {
+        "count": 5,
+        "failureish": 1,
+        "families": [
+          "capability_intent",
+          "execution_work_unit",
+          "observation",
+          "planning_decision"
+        ],
+        "generic": 1,
+        "odoo": 4,
+        "successish": 1
+      },
+      "repository.branch": {
+        "count": 2,
+        "failureish": 0,
+        "families": [
+          "execution_work_unit",
+          "planning_decision"
+        ],
+        "generic": 2,
+        "odoo": 0,
+        "successish": 0
+      },
+      "repository.compare": {
+        "count": 4,
+        "failureish": 0,
+        "families": [
+          "capability_intent",
+          "execution_work_unit",
+          "observation",
+          "planning_decision"
+        ],
+        "generic": 4,
+        "odoo": 0,
+        "successish": 1
+      },
+      "repository.history": {
+        "count": 1,
+        "failureish": 0,
+        "families": [
+          "capability_intent"
+        ],
+        "generic": 1,
+        "odoo": 0,
+        "successish": 0
+      },
+      "repository.inspect": {
+        "count": 4,
+        "failureish": 0,
+        "families": [
+          "capability_intent",
+          "execution_work_unit",
+          "observation",
+          "planning_decision"
+        ],
+        "generic": 4,
+        "odoo": 0,
+        "successish": 1
+      },
+      "repository.merge": {
+        "count": 0,
+        "failureish": 0,
+        "families": [],
+        "generic": 0,
+        "odoo": 0,
+        "successish": 0
+      },
+      "repository.modify": {
+        "count": 2,
+        "failureish": 0,
+        "families": [
+          "capability_intent",
+          "planning_decision"
+        ],
+        "generic": 2,
+        "odoo": 0,
+        "successish": 0
+      },
+      "validation.run": {
+        "count": 7,
+        "failureish": 1,
+        "families": [
+          "capability_intent",
+          "execution_work_unit",
+          "observation",
+          "planning_decision"
+        ],
+        "generic": 1,
+        "odoo": 6,
+        "successish": 1
+      },
+      "workspace.bind": {
+        "count": 1,
+        "failureish": 0,
+        "families": [
+          "capability_intent"
+        ],
+        "generic": 1,
+        "odoo": 0,
+        "successish": 0
+      },
+      "workspace.navigate": {
+        "count": 2,
+        "failureish": 0,
+        "families": [
+          "capability_intent",
+          "planning_decision"
+        ],
+        "generic": 0,
+        "odoo": 2,
+        "successish": 0
+      },
+      "workspace.read": {
+        "count": 5,
+        "failureish": 1,
+        "families": [
+          "capability_intent",
+          "execution_work_unit",
+          "observation",
+          "planning_decision"
+        ],
+        "generic": 1,
+        "odoo": 4,
+        "successish": 0
+      },
+      "workspace.search": {
+        "count": 4,
+        "failureish": 0,
+        "families": [
+          "capability_intent",
+          "execution_work_unit",
+          "observation",
+          "planning_decision"
+        ],
+        "generic": 0,
+        "odoo": 4,
+        "successish": 1
+      },
+      "workspace.write": {
+        "count": 7,
+        "failureish": 1,
+        "families": [
+          "capability_intent",
+          "execution_work_unit",
+          "observation",
+          "planning_decision"
+        ],
+        "generic": 3,
+        "odoo": 4,
+        "successish": 2
+      }
+    },
+    "overrepresented": [
+      "validation.run",
+      "workspace.write"
+    ],
+    "preferred_total": 23,
+    "uncovered": [
+      "artifact.attachment",
+      "artifact.import",
+      "diagnostics.collect_logs",
+      "repository.merge"
+    ],
+    "uncovered_count": 4,
+    "weak": [
+      "repository.history",
+      "workspace.bind"
+    ]
+  },
+  "domain": {
+    "by_family": {
+      "capability_intent": {
+        "generic": 9,
+        "odoo": 7
+      },
+      "decision_context": {
+        "generic": 8,
+        "odoo": 4
+      },
+      "engineering_feedback": {
+        "generic": 6,
+        "odoo": 6
+      },
+      "engineering_state": {
+        "generic": 7,
+        "odoo": 5
+      },
+      "execution_work_unit": {
+        "generic": 8,
+        "odoo": 4
+      },
+      "loop_decision": {
+        "generic": 10,
+        "odoo": 2
+      },
+      "observation": {
+        "generic": 11,
+        "odoo": 5
+      },
+      "planning_decision": {
+        "generic": 8,
+        "odoo": 4
+      }
+    },
+    "generic": 67,
+    "odoo": 37,
+    "odoo_pct": 35.58
+  },
+  "duplicate_record_ids": {},
+  "duplicates": {
+    "duplicate_groups": 0,
+    "unique_fingerprints": 104
+  },
+  "feedback": {
+    "feedback_count": 12,
+    "ok": true,
+    "operation_success_objective_incomplete_examples": 4
+  },
+  "gates": {
+    "capability_coverage": "PASS",
+    "continuity": "PASS",
+    "duplicates": "PASS",
+    "feedback": "PASS",
+    "fixture_inventory": "PASS",
+    "forbidden_how": "PASS",
+    "loop_decisions": "PASS",
+    "negative_corpus": "PASS",
+    "odoo_generic_balance": "PASS",
+    "planning": "PASS",
+    "schema": "PASS",
+    "serialization": "PASS",
+    "split_strategy": "PASS",
+    "taxonomy": "PASS",
+    "work_unit": "PASS"
+  },
+  "how_violations": [],
+  "loops": {
+    "auto_policy_reasons": [],
+    "counts": {
+      "approve": 1,
+      "cancel": 1,
+      "clarify": 1,
+      "complete": 1,
+      "continue": 1,
+      "escalate": 1,
+      "modify": 1,
+      "pause": 1,
+      "recover": 1,
+      "reject": 1,
+      "replan": 1,
+      "retry": 1
+    },
+    "missing_required_kinds": [],
+    "ok": true
+  },
+  "negatives": [
+    {
+      "accepted": false,
+      "case_id": "neg_forbidden_local",
+      "expected": "rejected",
+      "how_issues": [
+        "forbidden_how:forbidden implementation id as capability: 'local_workspace'",
+        "forbidden_how_token:local_workspace"
+      ],
+      "matched": true,
+      "provenance_issues": [],
+      "schema_error": "capability_id is forbidden HOW: 'local_workspace'",
+      "schema_ok": false,
+      "taxonomy_issues": [
+        "non_preferred_engineering_capability:local_workspace"
+      ]
+    },
+    {
+      "accepted": false,
+      "case_id": "neg_invalid_capability",
+      "expected": "rejected",
+      "how_issues": [],
+      "matched": true,
+      "provenance_issues": [],
+      "schema_error": "capability_id must be preferred Engineering WHAT, got 'fabricated.magic'",
+      "schema_ok": false,
+      "taxonomy_issues": [
+        "non_preferred_engineering_capability:fabricated.magic"
+      ]
+    },
+    {
+      "accepted": false,
+      "case_id": "neg_provider_as_engineering",
+      "expected": "rejected",
+      "how_issues": [],
+      "matched": true,
+      "provenance_issues": [],
+      "schema_error": "capability_id must be Engineering WHAT, not provider pack: 'coding'",
+      "schema_ok": false,
+      "taxonomy_issues": [
+        "non_preferred_engineering_capability:coding",
+        "provider_used_as_engineering:coding"
+      ]
+    },
+    {
+      "accepted": false,
+      "case_id": "neg_engineering_as_provider",
+      "expected": "rejected",
+      "how_issues": [],
+      "matched": true,
+      "provenance_issues": [],
+      "schema_error": "provider_capability must be a provider pack id, got 'workspace.write' (engineering)",
+      "schema_ok": false,
+      "taxonomy_issues": [
+        "engineering_used_as_provider:workspace.write",
+        "invalid_provider_capability:workspace.write"
+      ]
+    },
+    {
+      "accepted": false,
+      "case_id": "neg_missing_objective",
+      "expected": "rejected",
+      "how_issues": [],
+      "matched": true,
+      "provenance_issues": [],
+      "schema_error": "objective is required",
+      "schema_ok": false,
+      "taxonomy_issues": []
+    },
+    {
+      "accepted": false,
+      "case_id": "neg_wrong_record_type",
+      "expected": "rejected",
+      "how_issues": [],
+      "matched": true,
+      "provenance_issues": [],
+      "schema_error": "unknown or missing record_type: 'not_a_real_type'",
+      "schema_ok": false,
+      "taxonomy_issues": []
+    },
+    {
+      "accepted": false,
+      "case_id": "neg_invalid_loop_kind",
+      "expected": "rejected",
+      "how_issues": [],
+      "matched": true,
+      "provenance_issues": [],
+      "schema_error": "unknown loop decision_kind: 'teleport'",
+      "schema_ok": false,
+      "taxonomy_issues": []
+    },
+    {
+      "accepted": false,
+      "case_id": "neg_missing_provenance_projected",
+      "expected": "rejected",
+      "how_issues": [],
+      "matched": true,
+      "provenance_issues": [
+        "missing_provenance_field:source_dataset",
+        "missing_provenance_field:source_record_id",
+        "missing_provenance_field:source_schema_version",
+        "missing_provenance_field:projection_version",
+        "missing_provenance_field:projection_status"
+      ],
+      "schema_error": "",
+      "schema_ok": true,
+      "taxonomy_issues": []
+    },
+    {
+      "accepted": false,
+      "case_id": "neg_shell_command_args",
+      "expected": "rejected",
+      "how_issues": [
+        "forbidden_how:forbidden arg key: 'command'",
+        "forbidden_how_token:pytest"
+      ],
+      "matched": true,
+      "provenance_issues": [],
+      "schema_error": "forbidden arg key: 'command'",
+      "schema_ok": false,
+      "taxonomy_issues": []
+    },
+    {
+      "accepted": false,
+      "case_id": "neg_complete_with_steps",
+      "expected": "rejected",
+      "how_issues": [],
+      "matched": true,
+      "provenance_issues": [],
+      "schema_error": "COMPLETE planning must not include execution steps",
+      "schema_ok": false,
+      "taxonomy_issues": []
+    },
+    {
+      "accepted": true,
+      "case_id": "neg_contradictory_not_schema",
+      "expected": "accepted_with_warn",
+      "how_issues": [],
+      "matched": true,
+      "provenance_issues": [],
+      "schema_error": "",
+      "schema_ok": true,
+      "taxonomy_issues": []
+    },
+    {
+      "accepted": true,
+      "case_id": "pos_control_valid",
+      "expected": "accepted",
+      "how_issues": [],
+      "matched": true,
+      "provenance_issues": [],
+      "schema_error": "",
+      "schema_ok": true,
+      "taxonomy_issues": []
+    },
+    {
+      "accepted": true,
+      "case_id": "pos_historical_meta_ok",
+      "expected": "accepted",
+      "how_issues": [],
+      "matched": true,
+      "provenance_issues": [],
+      "schema_error": "",
+      "schema_ok": true,
+      "taxonomy_issues": []
+    }
+  ],
+  "per_family": {
+    "capability_intent": 16,
+    "decision_context": 12,
+    "engineering_feedback": 12,
+    "engineering_state": 12,
+    "execution_work_unit": 12,
+    "loop_decision": 12,
+    "observation": 16,
+    "planning_decision": 12
+  },
+  "planning": {
+    "count": 12,
+    "has_complete": true,
+    "has_escalate": true,
+    "has_replan": true,
+    "issues": [],
+    "kinds": {
+      "complete": 1,
+      "escalate": 1,
+      "replan": 10
+    },
+    "ok": true
+  },
+  "readiness": "READY_FOR_TR5",
+  "readiness_reasons": [
+    "tr5_prerequisite:expand_coverage_for_4_uncovered_preferred_ids:artifact.attachment,artifact.import,diagnostics.collect_logs,repository.merge"
+  ],
+  "schema_failures": [],
+  "serialization_failures": [],
+  "split_counts": {
+    "test": 9,
+    "train": 85,
+    "validation": 10
+  },
+  "split_strategy": {
+    "leakage_prevention": "Multi-cycle scenarios (cycle1/2/3) share scenario family keys so they cannot straddle train and test.",
+    "method": "scenario_hash_bucket",
+    "ratios": {
+      "test": 0.1,
+      "train": 0.8,
+      "validation": 0.1
+    },
+    "version": "fp2-split-1.0.0"
+  },
+  "taxonomy_violations": [],
+  "total_native_records": 104,
+  "total_projection_records": 7,
+  "training_contract_version": "1.0.0",
+  "work_units": {
+    "count": 12,
+    "issues": [],
+    "ok": true
+  }
+}

@@ -11,9 +11,17 @@ from aiodoo_training.domain.enums import (
 )
 
 
+# Explicit record wire formats — never guess from JSON shape.
+RECORD_FORMAT_PROTOCOL_V1: str = "protocol_v1"
+RECORD_FORMAT_FP2_TRAINING_EXAMPLE: str = "fp2_training_example"
+KNOWN_RECORD_FORMATS: frozenset[str] = frozenset(
+    {RECORD_FORMAT_PROTOCOL_V1, RECORD_FORMAT_FP2_TRAINING_EXAMPLE}
+)
+
+
 @dataclass(frozen=True, slots=True)
 class DatasetRef:
-    """Reference to a protocol dataset produced by aiodoo-datasets."""
+    """Reference to a protocol or FP2 TrainingExample dataset."""
 
     path: Path
     dataset_type: DatasetType
@@ -21,6 +29,17 @@ class DatasetRef:
     checksum: str | None = None
     weight: float = 1.0
     name: str | None = None
+    # Explicit input format (AT-2). Default preserves Protocol V1 formatter path.
+    record_format: str = RECORD_FORMAT_PROTOCOL_V1
+
+    def __post_init__(self) -> None:
+        fmt = (self.record_format or RECORD_FORMAT_PROTOCOL_V1).strip().lower()
+        if fmt not in KNOWN_RECORD_FORMATS:
+            raise ValueError(
+                f"DatasetRef.record_format must be one of {sorted(KNOWN_RECORD_FORMATS)}; "
+                f"got {self.record_format!r}"
+            )
+        object.__setattr__(self, "record_format", fmt)
 
 
 @dataclass(frozen=True, slots=True)

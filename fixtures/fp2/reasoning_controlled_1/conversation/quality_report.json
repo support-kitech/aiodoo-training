@@ -1,0 +1,142 @@
+{
+  "by_family": {
+    "conv_gen_api_auth_scheme": 4,
+    "conv_gen_batch_size": 4,
+    "conv_gen_cache_ttl": 4,
+    "conv_gen_config_source": 4,
+    "conv_gen_conflict_resolution": 4,
+    "conv_gen_consent_scope": 4,
+    "conv_gen_data_retention": 4,
+    "conv_gen_error_surface": 4,
+    "conv_gen_export_format": 4,
+    "conv_gen_feature_flag": 4,
+    "conv_gen_healthcheck": 4,
+    "conv_gen_idempotency": 4,
+    "conv_gen_locale_format": 4,
+    "conv_gen_logging_redaction": 4,
+    "conv_gen_notification_channel": 4,
+    "conv_gen_pagination": 4,
+    "conv_gen_queue_priority": 4,
+    "conv_gen_rate_limit": 4,
+    "conv_gen_retry_budget": 4,
+    "conv_gen_rollback_window": 4,
+    "conv_gen_schema_version": 4,
+    "conv_gen_search_ranking": 4,
+    "conv_gen_secret_rotation": 4,
+    "conv_gen_sla_breach": 4,
+    "conv_gen_storage_backend": 4,
+    "conv_gen_timeout_budget": 4,
+    "conv_gen_timezone": 4,
+    "conv_gen_webhook_retry": 4,
+    "conv_odoo_access_group": 4,
+    "conv_odoo_account_journal": 4,
+    "conv_odoo_analytic_account": 4,
+    "conv_odoo_bank_reconcile": 4,
+    "conv_odoo_bom_variant": 4,
+    "conv_odoo_crm_stage": 4,
+    "conv_odoo_currency_rate": 4,
+    "conv_odoo_delivery_carrier": 4,
+    "conv_odoo_expense_category": 4,
+    "conv_odoo_fleet_vehicle": 4,
+    "conv_odoo_helpdesk_sla": 4,
+    "conv_odoo_hr_leave_type": 4,
+    "conv_odoo_invoice_tax_mapping": 4,
+    "conv_odoo_loyalty_program": 4,
+    "conv_odoo_mail_template": 4,
+    "conv_odoo_multi_company": 4,
+    "conv_odoo_partner_vat_scope": 4,
+    "conv_odoo_payment_term": 4,
+    "conv_odoo_pos_payment": 4,
+    "conv_odoo_pricelist": 4,
+    "conv_odoo_product_attribute": 4,
+    "conv_odoo_project_task_owner": 4,
+    "conv_odoo_purchase_rfq_vendor": 4,
+    "conv_odoo_sale_confirm_policy": 4,
+    "conv_odoo_sequence_reset": 4,
+    "conv_odoo_sign_template": 4,
+    "conv_odoo_stock_route": 4,
+    "conv_odoo_uom_conversion": 4,
+    "conv_odoo_warehouse_dest": 4,
+    "conv_odoo_website_publish": 4
+  },
+  "by_record_type": {
+    "decision_context": 116,
+    "loop_decision": 116
+  },
+  "decision_kinds": {
+    "clarify": 116
+  },
+  "domain": {
+    "by_family": {
+      "decision_context": {
+        "generic": 56,
+        "odoo": 60
+      },
+      "loop_decision": {
+        "generic": 56,
+        "odoo": 60
+      }
+    },
+    "generic": 112,
+    "odoo": 120,
+    "odoo_pct": 51.72
+  },
+  "duplicates": {
+    "duplicate_groups": 0,
+    "duplicate_record_ids": {},
+    "unique_fingerprints": 232
+  },
+  "fail_reasons": [],
+  "leakage": {},
+  "normalized_duplicates": {
+    "normalized_duplicate_groups": 0,
+    "normalized_duplicate_record_ids": {},
+    "unique_normalized_fingerprints": 232
+  },
+  "pack_count": 232,
+  "provider_capability": "conversation",
+  "scorecard": {
+    "by_record_type": {
+      "decision_context": 116,
+      "loop_decision": 116
+    },
+    "decision_kinds": {
+      "clarify": 116
+    },
+    "duplicate_groups": 0,
+    "family_leakage": 0,
+    "forbidden_how": 0,
+    "generic": 112,
+    "largest_family_concentration": 4,
+    "legacy_contamination": 0,
+    "native_records": 232,
+    "negative_contamination": 0,
+    "negatives_ok": true,
+    "normalized_duplicate_groups": 0,
+    "odoo": 120,
+    "pack_validity": true,
+    "provider_dataset_equivalence": true,
+    "scenario_families": 58,
+    "taxonomy_violations": 0,
+    "test": 24,
+    "train": 180,
+    "validation": 28
+  },
+  "split_strategy": {
+    "leakage_prevention": "Multi-cycle scenarios (cycle1/2/3) share scenario family keys so they cannot straddle train and test.",
+    "method": "scenario_hash_bucket",
+    "ratios": {
+      "test": 0.1,
+      "train": 0.8,
+      "validation": 0.1
+    },
+    "version": "fp2-split-1.0.0"
+  },
+  "splits": {
+    "test": 24,
+    "train": 180,
+    "validation": 28
+  },
+  "verdict": "CONVERSATION_CORPUS_READY",
+  "version": "fp2-reasoning-sparse-1.0.0"
+}

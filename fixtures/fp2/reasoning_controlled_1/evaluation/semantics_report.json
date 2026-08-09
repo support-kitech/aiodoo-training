@@ -1,0 +1,59 @@
+{
+  "answers": {
+    "candidate_representation": "Generic dict payload on evaluation_judgment \u2014 NOT separate families per judged capability",
+    "engineering_what": "none \u2014 Evaluation is provider-plane judgment",
+    "evaluates_candidate_actions": "Yes \u2014 when candidate payload is an action/capability output dump",
+    "evaluates_conversations": "Yes \u2014 when candidate is conversation output",
+    "evaluates_generated_code": "Yes \u2014 when candidate is coding/repair output",
+    "evaluates_plans": "Yes \u2014 when candidate is planner output",
+    "evaluates_tool_results": "Yes \u2014 when candidate encodes tool/observation output",
+    "fp2_families_authorized": [
+      "evaluation_judgment"
+    ],
+    "fp2_families_rejected": [
+      "capability_intent",
+      "execution_work_unit",
+      "planning_decision",
+      "observation",
+      "engineering_feedback",
+      "engineering_state",
+      "decision_context",
+      "loop_decision"
+    ],
+    "inputs": "candidate (+ optional expectation, rubric)",
+    "judges_other_capability": true,
+    "learns": "Emit EvaluationResponse-shaped judgments given EvaluationRequest-shaped inputs",
+    "outputs": "verdict, optional score [0,1], optional explanation",
+    "produces_rubric_verdict_score": true
+  },
+  "at73_status": "EVALUATION_SEMANTICS_UNRESOLVED",
+  "definition": "Evaluation is the Reasoning provider capability that judges a generic candidate (typically another capability's request/response dump) against optional expectation/rubric and returns verdict, optional score [0,1], and optional explanation. Training teaches this structured judgment behavior; Runtime/Agents execute EvaluationRequest handling.",
+  "evidence": [
+    "aiodoo_contract.schemas.evaluation.EvaluationRequest (candidate required; expectation?, rubric?)",
+    "aiodoo_contract.schemas.evaluation.EvaluationResponse (verdict: pass|fail|inconclusive; score? [0,1]; explanation?)",
+    "aiodoo_contract.schemas.enums.EvaluationVerdict",
+    "aiodoo_contract.foundations.REASONING_CAPABILITIES includes evaluation",
+    "aiodoo_contract.prompts.capability._extract_evaluation",
+    "docs/capability_model.md: evaluation = judgment SFT; not BenchmarkCatalog",
+    "legacy evaluation_dataset.jsonl matches meta-judge request/response shape"
+  ],
+  "fp2_generation_authorized": false,
+  "fp2_representation_resolved": true,
+  "legacy_projection": "NOT PERFORMED \u2014 recommend future Evaluation Legacy \u2192 FP2 Projection",
+  "mapping_decision": {
+    "allowed": [
+      "evaluation_judgment"
+    ],
+    "reason": "Existing Continuity/observation/feedback families do not encode EvaluationRequest/Response. Forcing judgment fields into them would fabricate a Training Contract surface.",
+    "removed_from": [
+      "observation",
+      "engineering_feedback",
+      "decision_context"
+    ]
+  },
+  "next_phase": "AT-7.5 Controlled Evaluation FP2 Corpus Generation & Readiness Audit",
+  "record_type": "evaluation_judgment",
+  "status": "EVALUATION_MAPPING_READY",
+  "system_capability_resolved": true,
+  "system_contract": "capability.evaluation"
+}

@@ -1,0 +1,75 @@
+{
+  "approval_corpus_modified": false,
+  "at74_mapping": "EVALUATION_MAPPING_READY",
+  "by_record_type": {
+    "evaluation_judgment": 252
+  },
+  "controlled_batch_2_modified": false,
+  "conversation_corpus_modified": false,
+  "generator": "evaluation_controlled",
+  "legacy_projection": false,
+  "legacy_projection_status": "NOT PERFORMED",
+  "notes": [
+    "AT-7.5 controlled Evaluation corpus",
+    "evaluation_judgment only; no Continuity/observation families",
+    "Preserves AT-7.4 semantics_report.json",
+    "Not for certification / not a production adapter pack"
+  ],
+  "product_plane": "reasoning",
+  "provider_capability": "evaluation",
+  "record_type": "evaluation_judgment",
+  "scorecard": {
+    "by_record_type": {
+      "evaluation_judgment": 252
+    },
+    "candidate_categories": {
+      "approval": 32,
+      "coding": 32,
+      "context": 32,
+      "conversation": 32,
+      "execution": 32,
+      "generic": 28,
+      "planner": 32,
+      "repair": 32
+    },
+    "duplicate_groups": 0,
+    "family_leakage": 0,
+    "field_patterns": {
+      "candidate_expectation": 63,
+      "candidate_expectation_rubric": 63,
+      "candidate_only": 63,
+      "candidate_rubric": 63
+    },
+    "forbidden_how": 0,
+    "generic": 128,
+    "largest_family_concentration": 4,
+    "legacy_contamination": 0,
+    "native_records": 252,
+    "negative_contamination": 0,
+    "negatives_ok": true,
+    "normalized_duplicate_groups": 0,
+    "odoo": 124,
+    "pack_validity": true,
+    "provider_dataset_equivalence": true,
+    "scenario_families": 63,
+    "semantic_issue_count": 0,
+    "taxonomy_violations": 0,
+    "test": 4,
+    "train": 200,
+    "validation": 48,
+    "verdicts": {
+      "fail": 63,
+      "inconclusive": 63,
+      "pass": 126
+    },
+    "with_explanation": 177,
+    "with_score": 168,
+    "without_explanation": 75,
+    "without_score": 84
+  },
+  "split_version": "fp2-split-1.0.0",
+  "total_records": 252,
+  "training_contract_version": "1.0.0",
+  "verdict": "EVALUATION_CORPUS_READY",
+  "version": "fp2-evaluation-controlled-1.0.0"
+}

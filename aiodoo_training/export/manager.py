@@ -379,8 +379,24 @@ class ExportManager:
             if not descriptor.required:
                 continue
             file_path = tmp_root / descriptor.relative_path
-            if not file_path.is_file():
-                raise ExportError(f"Required artifact missing: {descriptor.relative_path}")
+            if file_path.is_file():
+                continue
+            if file_path.is_dir() and descriptor.role == ExportType.PEFT_ADAPTER.value:
+                # Real PEFT exports are directories (adapter_config + adapter_model.*).
+                weights = [
+                    p
+                    for p in file_path.iterdir()
+                    if p.is_file()
+                    and p.name.startswith("adapter_model.")
+                    and p.stat().st_size > 0
+                ]
+                config = file_path / "adapter_config.json"
+                if weights and config.is_file():
+                    continue
+                raise ExportError(
+                    f"Required PEFT adapter directory incomplete: {descriptor.relative_path}"
+                )
+            raise ExportError(f"Required artifact missing: {descriptor.relative_path}")
 
         if policy in {ArtifactValidationPolicy.STRICT, ArtifactValidationPolicy.WARN}:
             for descriptor in manifest.artifacts:

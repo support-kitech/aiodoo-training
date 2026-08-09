@@ -53,6 +53,29 @@ def _export_bind_extra(raw: dict[str, Any]) -> dict[str, object]:
     dataset_version = raw.get("dataset_version")
     if isinstance(dataset_version, str) and dataset_version.strip():
         extra["dataset_version"] = dataset_version
+    fp2 = raw.get("fp2")
+    if isinstance(fp2, dict):
+        # Carry FP2 / System Training Contract provenance into export + publish.
+        # Enrich foundation id from model config (same rule as publish_contract).
+        prov = dict(fp2)
+        model = raw.get("model")
+        if isinstance(model, dict):
+            foundation = model.get("identifier")
+            if (
+                isinstance(foundation, str)
+                and foundation.strip()
+                and not prov.get("foundation_model_id")
+            ):
+                prov["foundation_model_id"] = foundation.strip()
+        if not prov.get("provider_contract_version"):
+            try:
+                from aiodoo_contract.version import CONTRACT_VERSION
+
+                prov["provider_contract_version"] = str(CONTRACT_VERSION)
+            except Exception:
+                pass
+        extra["fp2_provenance"] = prov
+        extra["fp2"] = dict(fp2)
     return extra
 
 
@@ -300,7 +323,26 @@ class TokenizeStage(PipelineStageHandler):
         updates: dict[str, object] = {}
         if tokenizer is None:
             backend = model_backend_key(context, config)
-            tokenizer = TokenizerFactory().create(tokenizer_registry_key(backend))
+            tok_key = tokenizer_registry_key(backend)
+            # Honour packing.max_sequence_length for HF tokenizers (AT-2.1 smoke).
+            from aiodoo_training.domain.examples import TokenizationConfig
+
+            max_len = int(config.packing.max_sequence_length or 2048)
+            raw = context.get("raw_config") or {}
+            packing_raw = raw.get("packing") if isinstance(raw, dict) else None
+            if isinstance(packing_raw, dict) and packing_raw.get("max_sequence_length") is not None:
+                max_len = int(packing_raw["max_sequence_length"])
+            chat_name = "qwen"
+            family = str(config.model.family.value)
+            if family in {"deepseek", "llama", "mistral", "qwen"}:
+                chat_name = family
+            tok_cfg = TokenizationConfig(
+                max_length=max(16, max_len),
+                chat_template_name=chat_name,
+            )
+            tokenizer = TokenizerFactory().create(tok_key)
+            if hasattr(tokenizer, "_config"):
+                tokenizer._config = tok_cfg  # type: ignore[attr-defined]
             tokenizer.load(config.model)
             updates["tokenizer"] = tokenizer
             if hasattr(tokenizer, "fingerprint"):

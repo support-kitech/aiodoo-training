@@ -1,0 +1,140 @@
+# AT-3 — Controlled coding skill adapter (production path, not full-scale).
+# Isolated from production configs/training/coding/* and from AT-2 smoke.
+# Does NOT modify controlled_batch_2. Does NOT download foundations.
+#
+# Invoke:
+#   AIODOO_HF_LOCAL_FILES_ONLY=1 PYTHONPATH=. \
+#     python3 train.py --config configs/training/at3_coding/experiment.yaml
+
+schema_version: "1.0"
+name: at3-coding
+seed: 42
+
+dataset_version: "fp2-controlled-2.0.0-tr7"
+
+experiment:
+  id: at3-coding
+  title: "AT-3 controlled coding skill adapter (FP2 / local Qwen)"
+  version: "at3-coding-001"
+  owner: aiodoo
+  stage: coding
+
+fp2:
+  system_training_contract_version: "1.0.0"
+  corpus_version: "fp2-controlled-2.0.0-tr7"
+  corpus_checksum: "728d9bad313626b470ff155e1211f779b6330758eab57301672a617692e3f227"
+  source_pack: "pack_development"
+  provider_capability: "coding"
+  product_plane: "development"
+  split: "train"
+  split_version: "fp2-split-1.0.0"
+  training_config_id: "at3-coding"
+  filter_rule: "metadata.provider_capability==coding AND dataset_type==coding"
+
+# Verified local Development foundation (AT-2.1). No Hub download.
+model:
+  identifier: Qwen/Qwen2.5-Coder-3B-Instruct
+  family: qwen
+  precision: fp32
+  backend: hf_causal
+  tokenizer_binding: huggingface
+  local_path: ../AIODOO/models/foundations/development/Qwen2.5-Coder-3B-Instruct
+
+# Controlled LoRA (CPU-safe). Production coding uses QLoRA@T4 — not this host.
+adaptation:
+  adapter_type: lora
+  strategy: lora
+  rank: 8
+  alpha: 16
+  dropout: 0.05
+  target_modules:
+    - q_proj
+    - k_proj
+    - v_proj
+    - o_proj
+
+training:
+  backend: hf_trainer
+  num_epochs: 1.0
+  # 22 coding train examples × batch 1 → 22 optimizer steps (full coding train split)
+  logging_steps: 1
+  learning_rate: 0.0001
+  weight_decay: 0.01
+  warmup_ratio: 0.03
+  per_device_batch_size: 1
+  gradient_accumulation_steps: 1
+
+optimizer:
+  name: adamw
+  learning_rate: 0.0001
+  weight_decay: 0.01
+
+scheduler:
+  name: cosine
+  warmup_ratio: 0.03
+
+gradient:
+  max_norm: 1.0
+  accumulation_steps: 1
+
+execution:
+  device:
+    preferred: cpu
+    allow_cpu_fallback: true
+  precision:
+    compute: fp32
+  memory:
+    activation_checkpointing: false
+  accelerator: none
+  resource_planner: static
+
+packing:
+  mode: none
+  max_sequence_length: 256
+
+determinism:
+  seed: 42
+  cudnn_deterministic: true
+  cudnn_benchmark: false
+
+checkpointing:
+  output_dir: artifacts/at3_coding/checkpoints
+  save_steps: 11
+  save_total_limit: 3
+
+evaluation:
+  enabled: false
+
+export:
+  enabled: true
+  backend: hf_peft
+  profile: peft_default
+  output_dir: artifacts/at3_coding/export
+  export_types:
+    - peft_adapter
+    - manifest
+  require_evaluation: false
+  require_pass_for_export: false
+
+datasets:
+  shuffle: false
+  seed: 42
+  datasets:
+    - name: at3_coding_train
+      path: artifacts/at3_coding/data/coding_train.jsonl
+      dataset_type: coding
+      protocol_version: "1.0.0"
+      record_format: fp2_training_example
+      weight: 1.0
+
+tracking:
+  tracker_type: null
+
+workspace:
+  layout: local
+
+metadata:
+  at3: true
+  adapter: coding
+  provider_capability: coding
+  product_plane: development

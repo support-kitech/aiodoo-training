@@ -34,6 +34,7 @@ from aiodoo_training.naming import (
     normalize_training_id,
     resolve_public_training_id,
 )
+from aiodoo_training.system_training_contract.version import SYSTEM_TRAINING_CONTRACT_VERSION
 
 # Checkpoint sidecars written by CheckpointManager — never published.
 CHECKPOINT_SIDECAR_FILENAMES: frozenset[str] = frozenset(
@@ -220,6 +221,51 @@ def _capability_package_metadata(
     return metadata.model_dump(mode="json")
 
 
+def _apply_fp2_provenance(payload: dict[str, Any], resolved: dict[str, Any] | None) -> None:
+    """Attach System Training Contract + FP2 corpus identity when configured.
+
+    Does not replace ``contract_version`` (provider ``aiodoo_contract``).
+    """
+    if not isinstance(resolved, dict):
+        return
+    fp2 = resolved.get("fp2")
+    if not isinstance(fp2, dict):
+        # Also accept nested under export.bind / metadata bags.
+        meta = resolved.get("metadata")
+        if isinstance(meta, dict) and isinstance(meta.get("fp2"), dict):
+            fp2 = meta["fp2"]
+        else:
+            return
+    payload["system_training_contract_version"] = str(
+        fp2.get("system_training_contract_version") or SYSTEM_TRAINING_CONTRACT_VERSION
+    )
+    corpus_version = fp2.get("corpus_version") or fp2.get("controlled_batch_version")
+    if isinstance(corpus_version, str) and corpus_version.strip():
+        payload["corpus_version"] = corpus_version.strip()
+    checksum = fp2.get("corpus_checksum") or fp2.get("manifest_checksum")
+    if isinstance(checksum, str) and checksum.strip():
+        payload["corpus_checksum"] = checksum.strip()
+    if isinstance(fp2.get("source_pack"), str):
+        payload["source_pack"] = fp2["source_pack"]
+    if isinstance(fp2.get("split"), str):
+        payload["split"] = fp2["split"]
+    if isinstance(fp2.get("smoke_id"), str):
+        payload["smoke_id"] = fp2["smoke_id"]
+    foundation = None
+    model = resolved.get("model")
+    if isinstance(model, dict):
+        foundation = model.get("identifier")
+    if isinstance(foundation, str) and foundation.strip():
+        # Dual keys: Training provenance uses foundation_model_id; System discovery
+        # historically reads foundation_hub_id. Emit both for a stable handoff.
+        fid = foundation.strip()
+        payload["foundation_model_id"] = fid
+        payload["foundation_hub_id"] = fid
+    cfg_id = fp2.get("training_config_id") or resolved.get("name")
+    if isinstance(cfg_id, str) and cfg_id.strip():
+        payload["training_config_id"] = cfg_id.strip()
+
+
 def build_adapter_artifact_json(
     *,
     experiment_id: str,
@@ -253,7 +299,10 @@ def build_adapter_artifact_json(
         # to load a package trained against an incompatible contract instead of
         # silently misinterpreting it.
         "contract_version": CONTRACT_VERSION,
+        # Explicit alias — provider Protocol plane (distinct from System Training).
+        "provider_contract_version": CONTRACT_VERSION,
     }
+    _apply_fp2_provenance(payload, resolved)
     if family is not None:
         payload["model_family"] = family
     if architecture is not None:

@@ -1,0 +1,163 @@
+{
+  "by_family": {
+    "appr_gen_audit_export": 2,
+    "appr_gen_backup_restore": 2,
+    "appr_gen_beta_invite": 2,
+    "appr_gen_canary_abort": 2,
+    "appr_gen_capacity_scale": 2,
+    "appr_gen_cdn_purge": 2,
+    "appr_gen_certificate": 2,
+    "appr_gen_cost_budget": 2,
+    "appr_gen_data_export": 2,
+    "appr_gen_dataset_delete": 2,
+    "appr_gen_delete_tenant": 2,
+    "appr_gen_dependency_bump": 2,
+    "appr_gen_dns_cutover": 2,
+    "appr_gen_docs_publish": 2,
+    "appr_gen_emergency_acl": 2,
+    "appr_gen_feature_flag": 2,
+    "appr_gen_firewall_change": 2,
+    "appr_gen_hotfix": 2,
+    "appr_gen_incident_page": 2,
+    "appr_gen_log_retention": 2,
+    "appr_gen_mirror_sync": 2,
+    "appr_gen_ml_dataset": 2,
+    "appr_gen_model_prompt": 2,
+    "appr_gen_oncall_override": 2,
+    "appr_gen_partner_api_key": 2,
+    "appr_gen_pii_access": 2,
+    "appr_gen_prod_deploy": 2,
+    "appr_gen_quota_exception": 2,
+    "appr_gen_rate_limit_raise": 2,
+    "appr_gen_region_failover": 2,
+    "appr_gen_research_access": 2,
+    "appr_gen_s3_public": 2,
+    "appr_gen_schema_migration": 2,
+    "appr_gen_secret_rotation": 2,
+    "appr_gen_sla_credit": 2,
+    "appr_gen_support_impersonation": 2,
+    "appr_gen_vendor_contract": 2,
+    "appr_gen_webhook_endpoint": 2,
+    "appr_odoo_access_rights": 2,
+    "appr_odoo_analytic_override": 2,
+    "appr_odoo_asset_dispose": 2,
+    "appr_odoo_bank_statement": 2,
+    "appr_odoo_commission": 2,
+    "appr_odoo_consignment": 2,
+    "appr_odoo_crm_won_exception": 2,
+    "appr_odoo_delivery_exception": 2,
+    "appr_odoo_downpayment": 2,
+    "appr_odoo_dropship": 2,
+    "appr_odoo_expense_claim": 2,
+    "appr_odoo_fiscal_close": 2,
+    "appr_odoo_gift_card": 2,
+    "appr_odoo_inventory_adjust": 2,
+    "appr_odoo_invoice_credit": 2,
+    "appr_odoo_kit_delivery": 2,
+    "appr_odoo_landed_cost": 2,
+    "appr_odoo_landed_customs": 2,
+    "appr_odoo_leave_request": 2,
+    "appr_odoo_loyalty_override": 2,
+    "appr_odoo_mass_mailing": 2,
+    "appr_odoo_mrp_mo_cancel": 2,
+    "appr_odoo_multi_company_invoice": 2,
+    "appr_odoo_partner_merge": 2,
+    "appr_odoo_payment_batch": 2,
+    "appr_odoo_payment_token": 2,
+    "appr_odoo_payroll_run": 2,
+    "appr_odoo_portal_user": 2,
+    "appr_odoo_pricelist_publish": 2,
+    "appr_odoo_project_budget": 2,
+    "appr_odoo_purchase_po": 2,
+    "appr_odoo_quality_alert": 2,
+    "appr_odoo_recruit_offer": 2,
+    "appr_odoo_refund_pos": 2,
+    "appr_odoo_repair_order": 2,
+    "appr_odoo_rma": 2,
+    "appr_odoo_sale_discount": 2,
+    "appr_odoo_sign_contract": 2,
+    "appr_odoo_stock_scrap": 2,
+    "appr_odoo_subscription_cancel": 2,
+    "appr_odoo_tax_lock": 2,
+    "appr_odoo_vendor_bill": 2,
+    "appr_odoo_warehouse_transfer": 2
+  },
+  "by_record_type": {
+    "loop_decision": 162
+  },
+  "decision_kinds": {
+    "approve": 81,
+    "modify": 38,
+    "reject": 43
+  },
+  "domain": {
+    "by_family": {
+      "loop_decision": {
+        "generic": 76,
+        "odoo": 86
+      }
+    },
+    "generic": 76,
+    "odoo": 86,
+    "odoo_pct": 53.09
+  },
+  "duplicates": {
+    "duplicate_groups": 0,
+    "duplicate_record_ids": {},
+    "unique_fingerprints": 162
+  },
+  "fail_reasons": [],
+  "leakage": {},
+  "normalized_duplicates": {
+    "normalized_duplicate_groups": 0,
+    "normalized_duplicate_record_ids": {},
+    "unique_normalized_fingerprints": 162
+  },
+  "pack_count": 162,
+  "provider_capability": "approval",
+  "scorecard": {
+    "by_record_type": {
+      "loop_decision": 162
+    },
+    "decision_kinds": {
+      "approve": 81,
+      "modify": 38,
+      "reject": 43
+    },
+    "duplicate_groups": 0,
+    "family_leakage": 0,
+    "forbidden_how": 0,
+    "generic": 76,
+    "largest_family_concentration": 2,
+    "legacy_contamination": 0,
+    "native_records": 162,
+    "negative_contamination": 0,
+    "negatives_ok": true,
+    "normalized_duplicate_groups": 0,
+    "odoo": 86,
+    "pack_validity": true,
+    "provider_dataset_equivalence": true,
+    "scenario_families": 81,
+    "taxonomy_violations": 0,
+    "test": 14,
+    "train": 134,
+    "validation": 14
+  },
+  "split_strategy": {
+    "leakage_prevention": "Multi-cycle scenarios (cycle1/2/3) share scenario family keys so they cannot straddle train and test.",
+    "method": "scenario_hash_bucket",
+    "ratios": {
+      "test": 0.1,
+      "train": 0.8,
+      "validation": 0.1
+    },
+    "version": "fp2-split-1.0.0"
+  },
+  "splits": {
+    "test": 14,
+    "train": 134,
+    "validation": 14
+  },
+  "verdict": "APPROVAL_CORPUS_READY",
+  "version": "fp2-reasoning-sparse-1.0.0"
+}

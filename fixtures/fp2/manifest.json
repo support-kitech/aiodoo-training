@@ -1,0 +1,28 @@
+{
+  "classification": "fp2_native_fixture",
+  "dataset_generation_version": "fp2-native-1.0.0",
+  "generators": [
+    "capability_intent",
+    "execution_work_unit",
+    "planning_decision",
+    "observation",
+    "engineering_feedback",
+    "engineering_state",
+    "decision_context",
+    "loop_decision"
+  ],
+  "legacy_datasets_untouched": true,
+  "notes": "Experimental FP2-native fixtures. Not production Certified V1 corpora. Do not mix silently with legacy provider JSONL.",
+  "record_counts": {
+    "capability_intent": 22,
+    "decision_context": 12,
+    "engineering_feedback": 12,
+    "engineering_state": 12,
+    "execution_work_unit": 18,
+    "loop_decision": 12,
+    "observation": 24,
+    "planning_decision": 16,
+    "projection": 7
+  },
+  "training_contract_version": "1.0.0"
+}

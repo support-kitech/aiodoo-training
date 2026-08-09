@@ -1,0 +1,13 @@
+{
+  "actual_count": 261,
+  "family_count": 60,
+  "locate_capabilities": [
+    "repository.inspect",
+    "workspace.navigate",
+    "workspace.read",
+    "workspace.search"
+  ],
+  "scenario_family_mechanism": "metadata.scenario_family groups intent + observation variants; assign_split uses family: key (fp2-split-1.0.0)",
+  "target_preferred": 250,
+  "version": "fp2-context-controlled-1.0.0"
+}

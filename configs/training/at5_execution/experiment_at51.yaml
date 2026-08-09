@@ -1,0 +1,147 @@
+# AT-5.1 — Execution training-path CPU smoke (NOT full Execution training).
+# Isolated from experiment.yaml (64-step controlled attempt — do not resume).
+# Smoke data is a deterministic subset of the authoritative 522-train population.
+# Does NOT modify controlled_batch_2 or artifacts/at5_execution/data/*.
+#
+# Invoke:
+#   AIODOO_HF_LOCAL_FILES_ONLY=1 PYTHONPATH=. \
+#     python3 train.py --config configs/training/at5_execution/experiment_at51.yaml
+
+schema_version: "1.0"
+name: at5-execution-at51
+seed: 42
+
+dataset_version: "fp2-controlled-2.0.0-tr7"
+
+experiment:
+  id: at5-execution-at51
+  title: "AT-5.1 Execution path smoke — 16 examples / 4 steps"
+  version: "at5.1-smoke-001"
+  owner: aiodoo
+  stage: execution
+
+fp2:
+  system_training_contract_version: "1.0.0"
+  corpus_version: "fp2-controlled-2.0.0-tr7"
+  corpus_checksum: "728d9bad313626b470ff155e1211f779b6330758eab57301672a617692e3f227"
+  source_pack: "pack_development"
+  provider_capability: "execution"
+  product_plane: "development"
+  split: "train_smoke"
+  split_version: "fp2-split-1.0.0"
+  training_config_id: "at5-execution-at51"
+  filter_rule: "metadata.provider_capability==execution AND dataset_type==execution"
+  source_eligible_count: 640
+  source_train_count: 522
+  smoke_train_count: 16
+  smoke_validation_count: 4
+  smoke_id: "at5.1-execution-smoke-001"
+
+model:
+  identifier: Qwen/Qwen2.5-Coder-3B-Instruct
+  family: qwen
+  precision: fp32
+  backend: hf_causal
+  tokenizer_binding: huggingface
+  local_path: ../AIODOO/models/foundations/development/Qwen2.5-Coder-3B-Instruct
+
+adaptation:
+  adapter_type: lora
+  strategy: lora
+  rank: 8
+  alpha: 16
+  dropout: 0.05
+  target_modules:
+    - q_proj
+    - k_proj
+    - v_proj
+    - o_proj
+
+training:
+  backend: hf_trainer
+  num_epochs: 1.0
+  max_steps: 4
+  logging_steps: 1
+  learning_rate: 0.0001
+  weight_decay: 0.01
+  warmup_ratio: 0.03
+  per_device_batch_size: 1
+  gradient_accumulation_steps: 1
+
+optimizer:
+  name: adamw
+  learning_rate: 0.0001
+  weight_decay: 0.01
+
+scheduler:
+  name: cosine
+  warmup_ratio: 0.03
+
+gradient:
+  max_norm: 1.0
+  accumulation_steps: 1
+
+execution:
+  device:
+    preferred: cpu
+    allow_cpu_fallback: true
+  precision:
+    compute: fp32
+  memory:
+    activation_checkpointing: false
+  accelerator: none
+  resource_planner: static
+
+packing:
+  mode: none
+  max_sequence_length: 256
+
+determinism:
+  seed: 42
+  cudnn_deterministic: true
+  cudnn_benchmark: false
+
+checkpointing:
+  output_dir: artifacts/at5_execution/smoke/checkpoints
+  save_steps: 2
+  save_total_limit: 3
+
+evaluation:
+  enabled: false
+
+export:
+  enabled: true
+  backend: hf_peft
+  profile: peft_default
+  output_dir: artifacts/at5_execution/smoke/export
+  export_types:
+    - peft_adapter
+    - manifest
+  require_evaluation: false
+  require_pass_for_export: false
+
+datasets:
+  shuffle: false
+  seed: 42
+  datasets:
+    - name: at5_execution_train_smoke
+      path: artifacts/at5_execution/smoke/execution_train_smoke.jsonl
+      dataset_type: execution
+      protocol_version: "1.0.0"
+      record_format: fp2_training_example
+      weight: 1.0
+
+tracking:
+  tracker_type: null
+
+workspace:
+  layout: local
+
+metadata:
+  at51: true
+  at5_smoke: true
+  adapter: execution
+  provider_capability: execution
+  product_plane: development
+  smoke_id: at5.1-execution-smoke-001
+  max_steps: 4

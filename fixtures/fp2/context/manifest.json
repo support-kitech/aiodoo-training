@@ -1,0 +1,19 @@
+{
+  "by_record_type": {
+    "capability_intent": 16,
+    "observation": 10
+  },
+  "controlled_batch_2_modified": false,
+  "generator": "context",
+  "legacy_projection": false,
+  "notes": [
+    "AT-6.2 Context coverage fixtures only",
+    "Not a production training pack",
+    "Legacy context_v1_0.jsonl not included"
+  ],
+  "product_plane": "development",
+  "provider_capability": "context",
+  "total_records": 26,
+  "training_contract_version": "1.0.0",
+  "version": "fp2-context-1.0.0"
+}

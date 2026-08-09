@@ -1,0 +1,149 @@
+# AT-7.6 — Evaluation training-path CPU smoke (NOT full Evaluation training).
+# Uses a deterministic subset of fp2-evaluation-controlled-1.0.0.
+# Does NOT modify controlled_batch_2, Conversation, Approval, Planner, or Evaluation corpus.
+# Does NOT download foundations. Does NOT merge adapters. Does NOT project legacy Evaluation.
+#
+# Invoke:
+#   AIODOO_HF_LOCAL_FILES_ONLY=1 PYTHONPATH=. \
+#     python3 train.py --config configs/training/at7_evaluation_smoke/experiment.yaml
+
+schema_version: "1.0"
+name: at7-evaluation-smoke
+seed: 42
+
+dataset_version: "fp2-evaluation-controlled-1.0.0"
+
+experiment:
+  id: at7-evaluation-smoke
+  title: "AT-7.6 Evaluation path smoke — 16 examples / 4 steps"
+  version: "at7.6-smoke-001"
+  owner: aiodoo
+  stage: evaluation
+
+fp2:
+  system_training_contract_version: "1.0.0"
+  corpus_version: "fp2-evaluation-controlled-1.0.0"
+  corpus_checksum: "764dba2849519c2b3cf1f5ff24acb84c644f3506b99dbc958762e470310e0883"
+  source_pack: "pack_evaluation"
+  provider_capability: "evaluation"
+  product_plane: "reasoning"
+  record_type: "evaluation_judgment"
+  split: "train_smoke"
+  split_version: "fp2-split-1.0.0"
+  training_config_id: "at7-evaluation-smoke"
+  filter_rule: "metadata.provider_capability==evaluation AND dataset_type==evaluation AND record_type==evaluation_judgment"
+  source_eligible_count: 252
+  source_train_count: 200
+  smoke_train_count: 16
+  smoke_validation_count: 4
+  smoke_id: "at7.6-evaluation-smoke-001"
+
+model:
+  identifier: Qwen/Qwen2.5-Coder-3B-Instruct
+  family: qwen
+  precision: fp32
+  backend: hf_causal
+  tokenizer_binding: huggingface
+  local_path: ../AIODOO/models/foundations/development/Qwen2.5-Coder-3B-Instruct
+
+adaptation:
+  adapter_type: lora
+  strategy: lora
+  rank: 8
+  alpha: 16
+  dropout: 0.05
+  target_modules:
+    - q_proj
+    - k_proj
+    - v_proj
+    - o_proj
+
+training:
+  backend: hf_trainer
+  num_epochs: 1.0
+  max_steps: 4
+  logging_steps: 1
+  learning_rate: 0.0001
+  weight_decay: 0.01
+  warmup_ratio: 0.03
+  per_device_batch_size: 1
+  gradient_accumulation_steps: 1
+
+optimizer:
+  name: adamw
+  learning_rate: 0.0001
+  weight_decay: 0.01
+
+scheduler:
+  name: cosine
+  warmup_ratio: 0.03
+
+gradient:
+  max_norm: 1.0
+  accumulation_steps: 1
+
+execution:
+  device:
+    preferred: cpu
+    allow_cpu_fallback: true
+  precision:
+    compute: fp32
+  memory:
+    activation_checkpointing: false
+  accelerator: none
+  resource_planner: static
+
+packing:
+  mode: none
+  max_sequence_length: 256
+
+determinism:
+  seed: 42
+  cudnn_deterministic: true
+  cudnn_benchmark: false
+
+checkpointing:
+  output_dir: artifacts/at7_evaluation/smoke/checkpoints
+  save_steps: 2
+  save_total_limit: 3
+
+evaluation:
+  enabled: false
+
+export:
+  enabled: true
+  backend: hf_peft
+  profile: peft_default
+  output_dir: artifacts/at7_evaluation/smoke/export
+  export_types:
+    - peft_adapter
+    - manifest
+  require_evaluation: false
+  require_pass_for_export: false
+
+datasets:
+  shuffle: false
+  seed: 42
+  datasets:
+    - name: at7_evaluation_train_smoke
+      path: artifacts/at7_evaluation/smoke/data/evaluation_train_smoke.jsonl
+      dataset_type: evaluation
+      protocol_version: "1.0.0"
+      record_format: fp2_training_example
+      weight: 1.0
+
+tracking:
+  tracker_type: null
+
+workspace:
+  layout: local
+
+metadata:
+  at76: true
+  at7_smoke: true
+  adapter: evaluation
+  provider_capability: evaluation
+  product_plane: reasoning
+  record_type: evaluation_judgment
+  smoke_id: at7.6-evaluation-smoke-001
+  max_steps: 4

@@ -1,0 +1,48 @@
+{
+  "by_record_type": {
+    "loop_decision": 162
+  },
+  "controlled_batch_2_modified": false,
+  "generator": "approval_controlled",
+  "legacy_projection": false,
+  "notes": [
+    "AT-7.3 controlled approval corpus",
+    "Independent from controlled_batch_2 and Planner",
+    "Not a production adapter pack / not for certification"
+  ],
+  "product_plane": "reasoning",
+  "provider_capability": "approval",
+  "scorecard": {
+    "by_record_type": {
+      "loop_decision": 162
+    },
+    "decision_kinds": {
+      "approve": 81,
+      "modify": 38,
+      "reject": 43
+    },
+    "duplicate_groups": 0,
+    "family_leakage": 0,
+    "forbidden_how": 0,
+    "generic": 76,
+    "largest_family_concentration": 2,
+    "legacy_contamination": 0,
+    "native_records": 162,
+    "negative_contamination": 0,
+    "negatives_ok": true,
+    "normalized_duplicate_groups": 0,
+    "odoo": 86,
+    "pack_validity": true,
+    "provider_dataset_equivalence": true,
+    "scenario_families": 81,
+    "taxonomy_violations": 0,
+    "test": 14,
+    "train": 134,
+    "validation": 14
+  },
+  "split_version": "fp2-split-1.0.0",
+  "total_records": 162,
+  "training_contract_version": "1.0.0",
+  "verdict": "APPROVAL_CORPUS_READY",
+  "version": "fp2-reasoning-sparse-1.0.0"
+}

@@ -1,0 +1,46 @@
+{
+  "at62_fixtures_modified": false,
+  "by_record_type": {
+    "capability_intent": 103,
+    "observation": 158
+  },
+  "controlled_batch_2_modified": false,
+  "generator": "context_controlled",
+  "legacy_projection": false,
+  "notes": [
+    "AT-6.2.1 controlled Context corpus",
+    "Independent from controlled_batch_2 and AT-6.2 fixtures",
+    "Not a production adapter pack / not for certification"
+  ],
+  "product_plane": "development",
+  "provider_capability": "context",
+  "scorecard": {
+    "capability_intents": 103,
+    "duplicate_groups": 0,
+    "family_leakage": 0,
+    "forbidden_how": 0,
+    "generic": 103,
+    "largest_family_concentration": 8,
+    "native_records": 261,
+    "negative_contamination": 0,
+    "negatives_ok": true,
+    "normalized_duplicate_groups": 0,
+    "observations": 158,
+    "odoo": 158,
+    "pack_validity": true,
+    "repository.inspect": 27,
+    "scenario_families": 60,
+    "taxonomy_violations": 0,
+    "test": 11,
+    "train": 198,
+    "validation": 52,
+    "workspace.navigate": 40,
+    "workspace.read": 53,
+    "workspace.search": 141
+  },
+  "split_version": "fp2-split-1.0.0",
+  "total_records": 261,
+  "training_contract_version": "1.0.0",
+  "verdict": "CONTEXT_CORPUS_READY",
+  "version": "fp2-context-controlled-1.0.0"
+}

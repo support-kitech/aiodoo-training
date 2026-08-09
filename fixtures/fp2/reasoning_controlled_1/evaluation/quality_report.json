@@ -1,0 +1,163 @@
+{
+  "by_family": {
+    "eval_gen_appr_budget": 4,
+    "eval_gen_appr_canary": 4,
+    "eval_gen_appr_data_export": 4,
+    "eval_gen_appr_firewall": 4,
+    "eval_gen_code_idempotency_key": 4,
+    "eval_gen_code_json_schema_check": 4,
+    "eval_gen_code_paginate": 4,
+    "eval_gen_code_retry_budget": 4,
+    "eval_gen_conv_batch_size": 4,
+    "eval_gen_conv_locale": 4,
+    "eval_gen_conv_retention": 4,
+    "eval_gen_conv_retry_budget": 4,
+    "eval_gen_ctx_find_config": 4,
+    "eval_gen_ctx_nav_module": 4,
+    "eval_gen_ctx_read_readme": 4,
+    "eval_gen_ctx_search_error": 4,
+    "eval_gen_exec_export": 4,
+    "eval_gen_exec_healthcheck": 4,
+    "eval_gen_exec_run_job": 4,
+    "eval_gen_exec_validate_schema": 4,
+    "eval_gen_generic_completeness": 4,
+    "eval_gen_generic_list_length": 4,
+    "eval_gen_generic_nonempty_summary": 4,
+    "eval_gen_generic_threshold": 4,
+    "eval_gen_plan_api_rollout": 4,
+    "eval_gen_plan_cache_invalidation": 4,
+    "eval_gen_plan_feature_flag": 4,
+    "eval_gen_plan_schema_migrate": 4,
+    "eval_gen_repair_cache_stale": 4,
+    "eval_gen_repair_partial_write": 4,
+    "eval_gen_repair_race": 4,
+    "eval_gen_repair_timeout": 4,
+    "eval_odoo_appr_credit_note": 4,
+    "eval_odoo_appr_discount": 4,
+    "eval_odoo_appr_po_threshold": 4,
+    "eval_odoo_appr_refund": 4,
+    "eval_odoo_code_compute_tax": 4,
+    "eval_odoo_code_domain_filter": 4,
+    "eval_odoo_code_partner_name_get": 4,
+    "eval_odoo_code_qty_available": 4,
+    "eval_odoo_conv_confirm_policy": 4,
+    "eval_odoo_conv_pricelist": 4,
+    "eval_odoo_conv_vat_clarify": 4,
+    "eval_odoo_conv_warehouse": 4,
+    "eval_odoo_ctx_find_model": 4,
+    "eval_odoo_ctx_find_view": 4,
+    "eval_odoo_ctx_inspect_repo": 4,
+    "eval_odoo_ctx_search_tax": 4,
+    "eval_odoo_exec_confirm_so": 4,
+    "eval_odoo_exec_post_invoice": 4,
+    "eval_odoo_exec_receive_po": 4,
+    "eval_odoo_exec_reconcile": 4,
+    "eval_odoo_generic_company_scope": 4,
+    "eval_odoo_generic_currency": 4,
+    "eval_odoo_generic_state_machine": 4,
+    "eval_odoo_plan_invoice_tax": 4,
+    "eval_odoo_plan_partner_vat": 4,
+    "eval_odoo_plan_po_receive": 4,
+    "eval_odoo_plan_sale_confirm": 4,
+    "eval_odoo_repair_access_error": 4,
+    "eval_odoo_repair_mail_thread": 4,
+    "eval_odoo_repair_tax_npe": 4,
+    "eval_odoo_repair_uom": 4
+  },
+  "by_record_type": {
+    "evaluation_judgment": 252
+  },
+  "domain": {
+    "by_family": {
+      "evaluation_judgment": {
+        "generic": 128,
+        "odoo": 124
+      }
+    },
+    "generic": 128,
+    "odoo": 124,
+    "odoo_pct": 49.21
+  },
+  "duplicates": {
+    "duplicate_groups": 0,
+    "duplicate_record_ids": {},
+    "unique_fingerprints": 252
+  },
+  "fail_reasons": [],
+  "leakage": {},
+  "legacy_projection": "NOT PERFORMED",
+  "normalized_duplicates": {
+    "normalized_duplicate_groups": 0,
+    "normalized_duplicate_record_ids": {},
+    "unique_normalized_fingerprints": 252
+  },
+  "pack_count": 252,
+  "provider_capability": "evaluation",
+  "scorecard": {
+    "by_record_type": {
+      "evaluation_judgment": 252
+    },
+    "candidate_categories": {
+      "approval": 32,
+      "coding": 32,
+      "context": 32,
+      "conversation": 32,
+      "execution": 32,
+      "generic": 28,
+      "planner": 32,
+      "repair": 32
+    },
+    "duplicate_groups": 0,
+    "family_leakage": 0,
+    "field_patterns": {
+      "candidate_expectation": 63,
+      "candidate_expectation_rubric": 63,
+      "candidate_only": 63,
+      "candidate_rubric": 63
+    },
+    "forbidden_how": 0,
+    "generic": 128,
+    "largest_family_concentration": 4,
+    "legacy_contamination": 0,
+    "native_records": 252,
+    "negative_contamination": 0,
+    "negatives_ok": true,
+    "normalized_duplicate_groups": 0,
+    "odoo": 124,
+    "pack_validity": true,
+    "provider_dataset_equivalence": true,
+    "scenario_families": 63,
+    "semantic_issue_count": 0,
+    "taxonomy_violations": 0,
+    "test": 4,
+    "train": 200,
+    "validation": 48,
+    "verdicts": {
+      "fail": 63,
+      "inconclusive": 63,
+      "pass": 126
+    },
+    "with_explanation": 177,
+    "with_score": 168,
+    "without_explanation": 75,
+    "without_score": 84
+  },
+  "semantic_issues": [],
+  "split_strategy": {
+    "leakage_prevention": "Multi-cycle scenarios (cycle1/2/3) share scenario family keys so they cannot straddle train and test.",
+    "method": "scenario_hash_bucket",
+    "ratios": {
+      "test": 0.1,
+      "train": 0.8,
+      "validation": 0.1
+    },
+    "version": "fp2-split-1.0.0"
+  },
+  "splits": {
+    "test": 4,
+    "train": 200,
+    "validation": 48
+  },
+  "verdict": "EVALUATION_CORPUS_READY",
+  "version": "fp2-evaluation-controlled-1.0.0"
+}

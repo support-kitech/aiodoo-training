@@ -7,13 +7,20 @@ from pathlib import Path
 from types import MappingProxyType
 
 from aiodoo_training.datasets.fingerprinting import fingerprint_dataset_mix
+from aiodoo_training.datasets.fp2_example_loader import (
+    iter_fp2_training_examples,
+    validate_fp2_dataset_ref,
+)
 from aiodoo_training.datasets.mixing import mix_examples, stable_example_id
 from aiodoo_training.datasets.reader import ProtocolRecordReader
 from aiodoo_training.datasets.validation import DatasetValidator
 from aiodoo_training.domain.config import DatasetMixSpec
 from aiodoo_training.domain.enums import DatasetType
 from aiodoo_training.domain.examples import TrainingExample
-from aiodoo_training.domain.refs import DatasetRef
+from aiodoo_training.domain.refs import (
+    RECORD_FORMAT_FP2_TRAINING_EXAMPLE,
+    DatasetRef,
+)
 from aiodoo_training.domain.session import DatasetSession
 from aiodoo_training.exceptions import DomainError
 from aiodoo_training.ports.dataset import DatasetSource, ExampleFormatter
@@ -24,8 +31,10 @@ class JsonlDatasetSource(DatasetSource):
     """
     Load and format protocol JSONL datasets into TrainingExample streams.
 
-    Integrates DatasetSession metadata (fingerprint / progress counters) when
-    constructing a consumable mix.
+    Supports explicit ``DatasetRef.record_format``:
+    - ``protocol_v1`` (default): Protocol V1 → ExampleFormatter projection
+    - ``fp2_training_example``: identity load of FP2 TrainingExample packs
+      (no Protocol formatter / aiodoo_contract projection)
     """
 
     def __init__(
@@ -73,7 +82,7 @@ class JsonlDatasetSource(DatasetSource):
         """Materialize a mix and return an immutable DatasetSession snapshot."""
         if self._validate:
             for ref in mix.datasets:
-                self._validator.validate_ref(ref)
+                self._validate_ref(ref)
         fingerprint = fingerprint_dataset_mix(
             mix.datasets,
             shuffle=mix.shuffle,
@@ -97,9 +106,21 @@ class JsonlDatasetSource(DatasetSource):
         )
         return session, examples
 
+    def _validate_ref(self, ref: DatasetRef) -> None:
+        if ref.record_format == RECORD_FORMAT_FP2_TRAINING_EXAMPLE:
+            validate_fp2_dataset_ref(ref)
+            return
+        self._validator.validate_ref(ref)
+
     def _load_ref(self, ref: DatasetRef) -> Iterator[TrainingExample]:
         if self._validate:
-            self._validator.validate_ref(ref)
+            self._validate_ref(ref)
+        if ref.record_format == RECORD_FORMAT_FP2_TRAINING_EXAMPLE:
+            # Identity path — never touch Protocol V1 formatters.
+            yield from iter_fp2_training_examples(
+                ref, reader=self._reader, validate=self._validate
+            )
+            return
         formatter = self._resolve_formatter(ref.dataset_type)
         path = Path(ref.path)
         for index, record in enumerate(self._reader.iter_records(path)):

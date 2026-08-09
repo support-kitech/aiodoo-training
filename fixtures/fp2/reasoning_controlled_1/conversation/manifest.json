@@ -1,0 +1,48 @@
+{
+  "by_record_type": {
+    "decision_context": 116,
+    "loop_decision": 116
+  },
+  "controlled_batch_2_modified": false,
+  "generator": "conversation_controlled",
+  "legacy_projection": false,
+  "notes": [
+    "AT-7.3 controlled conversation corpus",
+    "Independent from controlled_batch_2 and Planner",
+    "Not a production adapter pack / not for certification"
+  ],
+  "product_plane": "reasoning",
+  "provider_capability": "conversation",
+  "scorecard": {
+    "by_record_type": {
+      "decision_context": 116,
+      "loop_decision": 116
+    },
+    "decision_kinds": {
+      "clarify": 116
+    },
+    "duplicate_groups": 0,
+    "family_leakage": 0,
+    "forbidden_how": 0,
+    "generic": 112,
+    "largest_family_concentration": 4,
+    "legacy_contamination": 0,
+    "native_records": 232,
+    "negative_contamination": 0,
+    "negatives_ok": true,
+    "normalized_duplicate_groups": 0,
+    "odoo": 120,
+    "pack_validity": true,
+    "provider_dataset_equivalence": true,
+    "scenario_families": 58,
+    "taxonomy_violations": 0,
+    "test": 24,
+    "train": 180,
+    "validation": 28
+  },
+  "split_version": "fp2-split-1.0.0",
+  "total_records": 232,
+  "training_contract_version": "1.0.0",
+  "verdict": "CONVERSATION_CORPUS_READY",
+  "version": "fp2-reasoning-sparse-1.0.0"
+}

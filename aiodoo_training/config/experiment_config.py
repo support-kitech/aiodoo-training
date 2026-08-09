@@ -119,6 +119,11 @@ def parse_dataset_mix(raw: dict[str, Any] | list[Any] | None, *, seed: int = 42)
         except ValueError as exc:
             raise ConfigError(f"datasets[{index}].dataset_type invalid: {type_raw!r}") from exc
         protocol = str(entry.get("protocol_version") or "1.0")
+        record_format = str(
+            entry.get("record_format")
+            or entry.get("input_format")
+            or "protocol_v1"
+        ).strip()
         refs.append(
             DatasetRef(
                 path=Path(path_raw),
@@ -127,6 +132,7 @@ def parse_dataset_mix(raw: dict[str, Any] | list[Any] | None, *, seed: int = 42)
                 checksum=entry.get("checksum") if isinstance(entry.get("checksum"), str) else None,
                 weight=float(entry.get("weight", 1.0)),
                 name=entry.get("name") if isinstance(entry.get("name"), str) else None,
+                record_format=record_format,
             )
         )
     return DatasetMixSpec(datasets=tuple(refs), shuffle=shuffle, seed=mix_seed)

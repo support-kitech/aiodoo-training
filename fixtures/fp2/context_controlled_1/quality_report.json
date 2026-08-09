@@ -1,0 +1,143 @@
+{
+  "by_capability": {
+    "repository.inspect": 27,
+    "workspace.navigate": 40,
+    "workspace.read": 53,
+    "workspace.search": 141
+  },
+  "by_family": {
+    "ctx_conflicting_paths": 5,
+    "ctx_controller_http": 7,
+    "ctx_controller_json_rpc": 3,
+    "ctx_data_xml_demo": 3,
+    "ctx_field_date_order": 3,
+    "ctx_field_generic_timeout": 5,
+    "ctx_field_move_state": 3,
+    "ctx_field_order_partner_id": 3,
+    "ctx_field_partner_vat": 5,
+    "ctx_field_qty_available": 3,
+    "ctx_generic_cache": 5,
+    "ctx_generic_dockerfile": 5,
+    "ctx_generic_env_example": 5,
+    "ctx_generic_logger": 8,
+    "ctx_generic_migration": 3,
+    "ctx_generic_router": 5,
+    "ctx_generic_schema": 7,
+    "ctx_impl_ref_generic": 5,
+    "ctx_impl_ref_odoo_onchange": 3,
+    "ctx_manifest_account": 4,
+    "ctx_manifest_sale": 7,
+    "ctx_method_action_confirm": 6,
+    "ctx_method_action_post": 5,
+    "ctx_method_button_validate": 5,
+    "ctx_method_create": 3,
+    "ctx_method_generic_serialize": 7,
+    "ctx_model_account_move": 3,
+    "ctx_model_auth_totp": 5,
+    "ctx_model_generic_widget": 7,
+    "ctx_model_hr_employee": 5,
+    "ctx_model_project_task": 8,
+    "ctx_model_res_partner": 8,
+    "ctx_model_sale_order": 5,
+    "ctx_nav_controllers": 3,
+    "ctx_nav_generic_config": 5,
+    "ctx_nav_partner_model": 4,
+    "ctx_nav_views_odoo": 6,
+    "ctx_no_result_odoo_ghost": 2,
+    "ctx_no_result_totally_missing": 2,
+    "ctx_ranked_exact_model": 4,
+    "ctx_ranked_fuzzy_confirm": 3,
+    "ctx_ranked_generic_init": 3,
+    "ctx_read_controller_main": 3,
+    "ctx_read_generic_readme": 3,
+    "ctx_read_manifest_sale": 2,
+    "ctx_read_odoo_security": 3,
+    "ctx_related_inherit": 3,
+    "ctx_related_xpath": 3,
+    "ctx_repo_addons_root": 3,
+    "ctx_repo_addons_sale": 4,
+    "ctx_repo_i18n": 5,
+    "ctx_repo_models_pkg": 3,
+    "ctx_repo_security_dir": 5,
+    "ctx_repo_src_layout": 5,
+    "ctx_repo_tests_tree": 2,
+    "ctx_security_access_csv": 3,
+    "ctx_view_generic_template": 5,
+    "ctx_view_invoice_tree": 5,
+    "ctx_view_partner_kanban": 3,
+    "ctx_view_sale_form": 5
+  },
+  "by_record_type": {
+    "capability_intent": 103,
+    "observation": 158
+  },
+  "domain": {
+    "by_family": {
+      "capability_intent": {
+        "generic": 41,
+        "odoo": 62
+      },
+      "observation": {
+        "generic": 62,
+        "odoo": 96
+      }
+    },
+    "generic": 103,
+    "odoo": 158,
+    "odoo_pct": 60.54
+  },
+  "duplicates": {
+    "duplicate_groups": 0,
+    "duplicate_record_ids": {},
+    "unique_fingerprints": 261
+  },
+  "fail_reasons": [],
+  "leakage": {},
+  "normalized_duplicates": {
+    "normalized_duplicate_groups": 0,
+    "normalized_duplicate_record_ids": {},
+    "unique_normalized_fingerprints": 261
+  },
+  "pack_count": 261,
+  "scorecard": {
+    "capability_intents": 103,
+    "duplicate_groups": 0,
+    "family_leakage": 0,
+    "forbidden_how": 0,
+    "generic": 103,
+    "largest_family_concentration": 8,
+    "native_records": 261,
+    "negative_contamination": 0,
+    "negatives_ok": true,
+    "normalized_duplicate_groups": 0,
+    "observations": 158,
+    "odoo": 158,
+    "pack_validity": true,
+    "repository.inspect": 27,
+    "scenario_families": 60,
+    "taxonomy_violations": 0,
+    "test": 11,
+    "train": 198,
+    "validation": 52,
+    "workspace.navigate": 40,
+    "workspace.read": 53,
+    "workspace.search": 141
+  },
+  "split_strategy": {
+    "leakage_prevention": "Multi-cycle scenarios (cycle1/2/3) share scenario family keys so they cannot straddle train and test.",
+    "method": "scenario_hash_bucket",
+    "ratios": {
+      "test": 0.1,
+      "train": 0.8,
+      "validation": 0.1
+    },
+    "version": "fp2-split-1.0.0"
+  },
+  "splits": {
+    "test": 11,
+    "train": 198,
+    "validation": 52
+  },
+  "verdict": "CONTEXT_CORPUS_READY",
+  "version": "fp2-context-controlled-1.0.0"
+}
